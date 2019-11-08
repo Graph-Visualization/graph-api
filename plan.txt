@@ -1,0 +1,80 @@
+
+Graphs to implement
+- DFS
+- BFS
+- Some DS
+- Topo Sort
+- Maze
+- Articulation Points and Bridges
+- Shortest Path
+- Longest Path
+- Check Cycle
+- MST (Kruskal and Prims)
+- Max Flow(if possible!)
+
+
+We shall create a grid where all the nodes would be present.
+On clicking a cell a node would be created.
+Dragging one node to another creates an edge.
+
+Create a backend which would contain all the algos and on providing the data
+in the given format, we can get the resultant output
+
+We get input in the following format - 
+1. Node1 Node2 Weight12
+...
+
+Backend
+- Have a class for Graph
+- Have a class for edge
+
+FrontEnd
+- Features
+- Search of an element visually
+- 
+
+---------------------
+
+// Pseudo Code for a Graphs
+class BaseGraph{
+    int vertices;
+    Map<object, vertices> map;
+
+    init(vertices)
+    addEdge(u,v,weight)
+
+    // Search Methods
+}
+
+
+class Kruskalgraph extends Graph
+{
+
+}
+...
+
+
+------------
+Two servers to be made
+1. API endpoint for Graph Algorithms
+2. Frontend to demonstrate the algorithms.
+
+------------
+
+API endpoint
+1. Add in the node values and Edge weights.
+2. Choose the algorithm.
+3. Get the values in a json format.
+4. Visualizer for that algorithm.
+5. Get the output.
+6. If used as a microservice, then send in json data.
+
+-------------
+
+FrontEnd
+1. Choose Algorithm.
+2. Choose the mazes.
+3. Clear Path.
+4. Clear Board.
+5. Clear Weights.
+6.

@@ -15,5 +15,9 @@
   "bugs": {
     "url": "https://github.com/Graph-Visualization/graph-api/issues"
   },
-  "homepage": "https://github.com/Graph-Visualization/graph-api#readme"
+  "homepage": "https://github.com/Graph-Visualization/graph-api#readme",
+  "dependencies": {
+    "live-server": "^1.2.1",
+    "nodemon": "^1.19.4"
+  }
 }

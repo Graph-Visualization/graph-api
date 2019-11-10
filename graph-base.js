@@ -86,3 +86,5 @@ graph.addEdge(2 ,3 , 3);
 graph.addEdge(3 ,0 , 2);
 
 console.log(graph)
+
+module.exports = GraphBase

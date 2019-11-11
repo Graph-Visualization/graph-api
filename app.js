@@ -10,10 +10,6 @@ app.use(express.static(publicDirectoryPath))
 app.get('', (req, res) => {
     res.sendfile('src/main.html')
    })
-app.get('/weather', (req, res) => {
-res.send('Your weather')
-})
-
 
 app.listen(3000, () => {
     console.log('Server is up on port 3000.')

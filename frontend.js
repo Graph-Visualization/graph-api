@@ -1,16 +1,29 @@
-// const graphBase = require('GraphBase')
-
 
 const inputForm = document.querySelector('#vertices')
 const vertices = document.querySelector('#verval')
 const addButton = document.querySelector('#add')
+const submitButton = document.querySelector('#submit')
+
+class GraphValues{
+    constructor(){
+        this.src = null
+        this.dest = null
+        this.weight = null
+    }
+}
+
+inputForm.addEventListener('keypress',(e)=>{
+    if(e.keyCode == 13)
+    {
+        e.preventDefault()
+        console.log('Enter!')
+    }
+})
 
 addButton.addEventListener('click', (e) =>{
     e.preventDefault()
-
     const numVer = vertices.value
     console.log(numVer)
-
 
     var submitContainer = document.querySelector('#submit')
 
@@ -21,16 +34,15 @@ addButton.addEventListener('click', (e) =>{
     var submit = document.createElement("button")
     submit.textContent = "Submit"
     submit.className += "btn btn-success btn-lg mb-3 disabled"
-    submit.addEventListener('click', ()=>{
-        inputForm.submit()
-    })
+    // submit.addEventListener('click', ()=>{
+    //     inputForm.submit()
+    // })
     submitContainer.appendChild(submit)
-
 
     var container = document.getElementById("containerJ");
     var adjform = document.getElementById("#adjlist")
-    // console.log('Y')
-            // Clear previous contents of the container
+
+    // Clear previous contents of the container
     while (container.hasChildNodes()) {
         container.removeChild(container.lastChild);
     }
@@ -45,11 +57,9 @@ addButton.addEventListener('click', (e) =>{
     addEdge.addEventListener('click', ()=>{
         if(counter < numVer)
         {
-            console.log('Clciked')
-                // Append a node with a random text
-            // container.appendChild(document.createTextNode("Member " + (counter+1)));
-            // Create an <input> element, set its type and name attributes
+            console.log('Clicked')
             var divInput = document.createElement("div")
+            divInput.id = "graph-value"
             var input = document.createElement("input");
             input.type = "text";
             input.placeholder = "Source Vertices"
@@ -68,24 +78,41 @@ addButton.addEventListener('click', (e) =>{
             divInput.appendChild(input2)
             divInput.appendChild(input3)
             divInput.className = "d-flex justify-content-around flex-row"
-            // input.name = "member" + counter;
+
             container.appendChild(divInput);
-            // Append a line break 
+            // Append a line break
             container.appendChild(document.createElement("br"));
             counter+=1
+            window.scrollBy(0,10000)
         }
         else
         {
+            
             submit.className = submit.className.split("disabled")[0]
         }
     })
-
-    
-    // console.log('Z')
-
-    // var counter = 0
-    
-    
-
 })
 
+
+submitButton.addEventListener('click', (e)=>{
+
+    e.preventDefault()
+    console.log(e)
+    if(e.target.classList[4] !== "disabled")
+    {
+
+    
+        let result = []
+
+        let divValues = document.querySelectorAll('#graph-value')
+        divValues.forEach((val, index)=>{
+            let gobj = new GraphValues()
+            gobj.src = val.childNodes[0].value
+            gobj.dest = val.childNodes[1].value
+            gobj.weight = val.childNodes[2].value
+
+            result.push(gobj)
+        })
+        console.log(result)
+    }
+})

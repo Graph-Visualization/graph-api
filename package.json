@@ -15,5 +15,8 @@
   "bugs": {
     "url": "https://github.com/Graph-Visualization/graph-api/issues"
   },
-  "homepage": "https://github.com/Graph-Visualization/graph-api#readme"
+  "homepage": "https://github.com/Graph-Visualization/graph-api#readme",
+  "dependencies": {
+    "size-limited-stack": "^1.0.0"
+  }
 }

@@ -114,5 +114,6 @@ submitButton.addEventListener('click', (e)=>{
             result.push(gobj)
         })
         console.log(result)
+        return true
     }
 })

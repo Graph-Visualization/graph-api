@@ -19,6 +19,7 @@
   "dependencies": {
     "express": "^4.17.1",
     "live-server": "^1.2.1",
-    "nodemon": "^1.19.4"
+    "nodemon": "^1.19.4",
+    "vis-network": "^6.4.0"
   }
 }

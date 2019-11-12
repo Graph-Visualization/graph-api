@@ -48,6 +48,7 @@ class GraphBase{
         this.numVertices = numVertices
         this.numEdges = numEdges
         this.adj = new Map()
+        this.Adj = {}
     }
     /**
      * 
@@ -71,6 +72,30 @@ class GraphBase{
 
         this.adj[vertices1].push(edge1)
 
+    }
+
+    getSimpleAdj(){
+
+        let Adj = new Map()
+        let mp = {}
+        Object.assign(mp, this.adj)
+        Object.keys(mp).forEach(function(key) {
+            Adj.set(key,new Array())
+        })
+        // console.log(Adj)
+        Object.keys(mp).forEach(function(key) {
+            // value = ;
+            // console.log(mp[key]);
+            // Adj.set(key, [])
+            mp[key].forEach((val,ind) => {
+                // console.log(Adj.get(String(val.src)))
+                Adj.get(String(val.src)).push(String(val.dest))
+                Adj.get(String(val.dest)).push(String(val.src))
+            })
+        });
+
+        this.Adj = Adj
+        return Adj
     }
 };
 

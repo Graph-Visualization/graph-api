@@ -11,6 +11,10 @@ app.get('', (req, res) => {
     res.sendfile('src/main.html')
    })
 
+app.get('/visual', (req, res) => {
+    res.sendfile('src/visual.html')
+})
+
 app.listen(3000, () => {
     console.log('Server is up on port 3000.')
 })

@@ -15,5 +15,12 @@
   "bugs": {
     "url": "https://github.com/Graph-Visualization/graph-api/issues"
   },
-  "homepage": "https://github.com/Graph-Visualization/graph-api#readme"
+  "homepage": "https://github.com/Graph-Visualization/graph-api#readme",
+  "dependencies": {
+    "express": "^4.17.1",
+    "live-server": "^1.2.1",
+    "nodemon": "^1.19.4",
+    "size-limited-stack": "^1.0.0",
+    "vis-network": "^6.4.0"
+  }
 }

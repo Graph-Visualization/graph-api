@@ -38,22 +38,33 @@ class GraphBase{
      * For directed graph the addEdge needs
      * to be overloaded
      */
-    constructor(numVertices=0, numEdges=0){
+    constructor(numVertices=0){
 
-        // Check if number of edges is correct for a given
-        // number of vertices
-        if(numEdges > (numVertices*(numVertices-1)))
-            throw Error("Number of edges not compatible with number of vertices!")
-        
         this.numVertices = numVertices
-        this.numEdges = numEdges
         this.adj = new Map()
+        // this.Adj = this.getSimpleAdj()
+    }
+    /**
+     * 
+     * @param {Array} vertex 
+     * Function to add the total vertex in a graph
+     * Stores a map in which each vertex points to all other vertices
+     */
+    addVertex(vertex){
+        this.adj.set(vertex, [])
     }
 
-    addEdge(vertices1, vertices2, weight){
 
-        // Attach vertices1
-        this.adj[vertices1] = this.adj[vertices2] || []
+    /**
+     * 
+     * @param {integer} vertices1 
+     * @param {integer} vertices2 
+     * @param {integer} weight 
+     * 
+     * Attach an edge to the adjacency list 
+     * Uses a weighted and directed graph
+     */
+    addEdge(vertices1, vertices2, weight){
 
         const edge1 = new Edge()
         
@@ -61,28 +72,63 @@ class GraphBase{
         edge1.dest = vertices2
         edge1.weight = weight
 
-        this.adj[vertices1].push(edge1)
+        this.adj.get(vertices1).push(edge1)
 
+    }
 
-        // Attach vertices2
-        // this.adj[vertices2] = this.adj[vertices2] || []
+    getSimpleAdj(){
 
-        // const edge2 = new Edge()
-        
-        // edge2.src = vertices2
-        // edge2.dest = vertices1
-        // edge2.weight = weight
-        
-        // this.adj[vertices2].push(edge2)
+        let Adj = new Map()
+        let mp = this.adj
+        // console.log(this.adj)
+        // Object.assign(mp, this.adj)
+        // console.log(mp)
+        mp.forEach( function(value, key) {
+            // console.log("K"+key+"V"+value)
+            Adj.set(key, [])
+        })
+        // console.log(mp)
+        mp.forEach(function(value, key) {
+            // value = ;
+            // console.log(mp[key]);
+            // Adj.set(key, [])
+            // console.log(value)
+            for(let i=0;i<value.length;i++){
+                let val = value[i]
+                Adj.get(val.src).push(val.dest)
+                // Adj.get(val.dest).push(val.src)
+            }
+            // value.forEach((val) => {
+            //     console.log(Adj.get(val))
+                // Adj.get(val.src).push(val.dest)
+                // Adj.get(val.dest).push(val.src)
+            // })
+        });
+        // console.log(Adj)
+        this.Adj = Adj
+        return Adj
     }
 };
 
-const graph = new GraphBase(4, 4)
-graph.addEdge(0 ,1 , 5);
-// console.log(graph)
-graph.addEdge(1 ,2 , 4);
-// console.log(graph)
-graph.addEdge(2 ,3 , 3);
-graph.addEdge(3 ,0 , 2);
 
-console.log(graph)
+
+// const graph = new GraphBase(4)
+// vertices = [0,1,2,3]
+
+// for(let i=0;i<vertices.length;i++)
+// {
+//     graph.addVertex(vertices[i])
+// }
+
+// // console.log(graph.adj.get(v[0]).push(9))
+// graph.addEdge(0 ,1 , 5);
+// graph.addEdge(0,2,4)
+// // // console.log(graph)
+// graph.addEdge(1 ,2 , 4);
+// // // console.log(graph)
+// graph.addEdge(2 ,3 , 3);
+// graph.addEdge(3 ,0 , 2);
+
+// console.log(graph.getSimpleAdj())
+
+module.exports = GraphBase

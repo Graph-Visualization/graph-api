@@ -93,6 +93,28 @@ addButton.addEventListener('click', (e) =>{
     })
 })
 
+const createJSON = (graphValues, algo) => {
+    // Format of JSON
+    // algo : 
+    // graph : [src:, dest:, weight:]
+
+    let values = []
+    for(let i in graphValues){
+        let nodes ={
+            src : graphValues[i].src,
+            dest : graphValues[i].dest,
+            weight : graphValues[i].weight
+        }
+        values.push(nodes)
+    }
+    // console.log(values)
+    let jsonObj = {
+        algo,
+        values
+    }
+
+    return JSON.stringify(jsonObj)
+}
 
 submitButton.addEventListener('click', (e)=>{
 
@@ -113,7 +135,35 @@ submitButton.addEventListener('click', (e)=>{
 
             result.push(gobj)
         })
-        console.log(result)
-        return true
+        console.log(result[0].src)
+        console.log(createJSON(result, "DFS"))
+
+        fetch('http://localhost:3000/dfs', {
+
+            method:'post',
+            headers : {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+
+            body : createJSON(result, "DFS")
+        }).then((data)=>{
+            console.log("SUCCESS!")
+            data.json().then((dat) => {
+                data = JSON.parse(dat)
+                console.log(data)
+                var res = document.getElementById('plaintext')
+                res.textContent = data.result
+            })
+        })
+        // return true
     }
 })
+
+
+// Code for generating the animations for the graph
+// Code for adding edges in a particular order
+
+
+
+// Code for already generated graph and update its color

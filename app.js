@@ -5,6 +5,8 @@ const prepResponse = require('./fetch_algo')
 const app = express()
 const publicDirectoryPath = path.join(__dirname, '../graph-visualization')
 
+var port = process.env.PORT || 8080;
+
 const prepErrorMsg = (error)=>{
 
     const err = {
@@ -50,6 +52,6 @@ app.post('/dfs', (req, res) => {
     
 })
 
-app.listen(3000, () => {
+app.listen(port, () => {
     console.log('Server is up on port 3000.')
 })

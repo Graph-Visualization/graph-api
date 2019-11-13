@@ -42,9 +42,30 @@ const getDFS = (graph_val) => {
 // Prepares the response to be sent back
 const prepResponse = (graph_val, algo) => {
     
+    let result
+    if(algo==='dfs')
+    {
+        result = getDFS(graph_val)
+    }
+    else if(algo==='bfs')
+    {
+        result = ''
+    }
+    else if(algo === 'mst')
+    {
+        result = ''
+    }
+    else if(algo === 'cycle')
+    {
+        result = ''
+    }
+    else{
+        throw Error('Algorithm not supported!')
+    }
+
     let resp = {
         algo,
-        result: getDFS(graph_val)
+        result
     }
 
     return JSON.stringify(resp)

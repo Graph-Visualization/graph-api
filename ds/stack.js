@@ -2,7 +2,7 @@
 class Stack{
 
     constructor(){
-        this.items = []
+        this.items = [];
     }
 
     push(element){
@@ -27,4 +27,4 @@ class Stack{
     }
 }
 
-module.exports = Stack
+module.exports = Stack;

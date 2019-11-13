@@ -64,3 +64,4 @@ class DFS extends GraphBase{
 // console.log(g.dfs())
 
 module.exports = DFS
+//Adj -> Returns simple adj list; adj->more complex(with edges)

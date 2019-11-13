@@ -147,7 +147,7 @@ submitButton.addEventListener('click', (e)=>{
         console.log(algo)
         console.log(createJSON(result, algo))
 
-        fetch(`http://localhost:3000/api`, {
+        fetch(`https://graph-apiv1.herokuapp.com/api`, {
 
             method:'post',
             headers : {

@@ -3,9 +3,13 @@ const express = require('express')
 const path = require('path')
 const prepResponse = require('./fetch_algo')
 const app = express()
-const publicDirectoryPath = path.join(__dirname, '../graph-visualization')
+const publicDirectoryPath = path.join(__dirname, '/graph-visualization')
 
 var port = process.env.PORT || 8080;
+
+app.use(express.static(publicDirectoryPath))
+app.use("/public", express.static("public"))
+app.use(express.json())
 
 const prepErrorMsg = (error)=>{
 
@@ -17,9 +21,10 @@ const prepErrorMsg = (error)=>{
     return JSON.stringify(err)
 }
 
-app.use(express.static(publicDirectoryPath))
-app.use(express.json())
-
+app.use((req, res, next) => {
+    res.header('Access-Control-Allow-Origin', '*');
+    next();
+  })
 
 app.get('', (req, res) => {
     res.sendfile('src/main.html')

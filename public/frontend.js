@@ -3,6 +3,7 @@ const inputForm = document.querySelector('#vertices')
 const vertices = document.querySelector('#verval')
 const addButton = document.querySelector('#add')
 const submitButton = document.querySelector('#submit')
+const selectOption = document.querySelector('#algorithm')
 
 class GraphValues{
     constructor(){
@@ -11,6 +12,7 @@ class GraphValues{
         this.weight = null
     }
 }
+
 
 inputForm.addEventListener('keypress',(e)=>{
     if(e.keyCode == 13)
@@ -22,9 +24,12 @@ inputForm.addEventListener('keypress',(e)=>{
 
 addButton.addEventListener('click', (e) =>{
     e.preventDefault()
+
     const numVer = vertices.value
     console.log(numVer)
 
+    var input_box = document.getElementById('input-param')
+    input_box.className = input_box.className.split('invisible')[0]
     var submitContainer = document.querySelector('#submit')
 
     while (submitContainer.hasChildNodes()) {
@@ -33,7 +38,7 @@ addButton.addEventListener('click', (e) =>{
 
     var submit = document.createElement("button")
     submit.textContent = "Submit"
-    submit.className += "btn btn-success btn-lg mb-3 disabled"
+    submit.className += "btn btn-success btn-lg ml-2 mr-2 mb-3 disabled"
     // submit.addEventListener('click', ()=>{
     //     inputForm.submit()
     // })
@@ -83,7 +88,7 @@ addButton.addEventListener('click', (e) =>{
             // Append a line break
             container.appendChild(document.createElement("br"));
             counter+=1
-            window.scrollBy(0,10000)
+            window.scrollBy(0,100)
         }
         else
         {
@@ -113,6 +118,8 @@ const createJSON = (graphValues, algo) => {
         values
     }
 
+    console.log(JSON.stringify(jsonObj))
+
     return JSON.stringify(jsonObj)
 }
 
@@ -136,9 +143,11 @@ submitButton.addEventListener('click', (e)=>{
             result.push(gobj)
         })
         console.log(result[0].src)
-        console.log(createJSON(result, "DFS"))
+        const algo = selectOption.options[selectOption.selectedIndex].value
+        console.log(algo)
+        console.log(createJSON(result, algo))
 
-        fetch('http://localhost:3000/dfs', {
+        fetch(`https://graph-apiv1.herokuapp.com/api`, {
 
             method:'post',
             headers : {
@@ -146,19 +155,51 @@ submitButton.addEventListener('click', (e)=>{
                 'Content-Type': 'application/json'
             },
 
-            body : createJSON(result, "DFS")
+            body : createJSON(result, algo)
         }).then((data)=>{
             console.log("SUCCESS!")
             data.json().then((dat) => {
                 data = JSON.parse(dat)
                 console.log(data)
+                var showVal = document.getElementById('showval')
+                showVal.className = showVal.className.split('visible')[0]
                 var res = document.getElementById('plaintext')
-                res.textContent = data.result
+                res.className += " text-monospace"
+                res.textContent = "[" + data.result + "]"
+
+                // const visualise = document.createElement('button')
+
+                
+                // visualise.textContent = "Visualise!"
+                // visualise.name = "visualise_button"
+                // visualise.id = "visualise"
+                // visualise.className = "btn btn-success btn-block p-2 mb-3"
+                // const visual = document.getElementById('visual')
+                // while (visual.hasChildNodes()) {
+                //     visual.removeChild(visual.lastChild);
+                // }
+                // // visual.appendChild(visualise)
+
+                // const getJSON = document.createElement('button')
+
+                
+                // getJSON.textContent = "getJSON!"
+                // getJSON.name = "getJSON_button"
+                // getJSON.id = "getJSON"
+                // getJSON.className = "btn btn-success btn-block p-2 mb-3"
+
+                // // visual.appendChild(getJSON)
+                // visualise.addEventListener('click', (e)=>{
+                //     window.location.href = '/visual'
+                // })
+                
             })
         })
-        // return true
+        
     }
 })
+
+
 
 
 // Code for generating the animations for the graph

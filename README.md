@@ -1,4 +1,4 @@
-# Graph-Api
+# Graph-API
 Backend containing all the algorithms of graphs.
 
 ## Description

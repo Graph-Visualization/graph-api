@@ -60,7 +60,8 @@ addButton.addEventListener('click', (e) =>{
     container.appendChild(addEdge)
     counter = 0
     addEdge.addEventListener('click', ()=>{
-        if(counter < numVer)
+        const totalVer = numVer*(numVer-1)
+        if(counter < totalVer)
         {
             console.log('Clicked')
             var divInput = document.createElement("div")

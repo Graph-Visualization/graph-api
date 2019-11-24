@@ -1,6 +1,8 @@
 # Graph-API
 Backend containing all the algorithms of graphs.
 
+<div style="text-align:center"><img src="https://github.com/Graph-Visualization/graph-api/blob/master/graph-apiv1.png" /></div>
+
 ## Description
 This project achieves to provide all the basic algorithms associated with graphs to available as a **REST-API**. 
 The request can be made as a **POST** request and the body should contain the **json** data of the edge list that defines

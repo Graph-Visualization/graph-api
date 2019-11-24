@@ -1,6 +1,9 @@
 const GraphBase = require('./graph-base')
 const Queue = require('./ds/queue')
+
+
 class BFS extends GraphBase{
+
     constructor(numVertices=0, numEdges=0, startingPoint=0){
         super(numVertices, numEdges)
         this.startingPoint = startingPoint
@@ -15,7 +18,7 @@ class BFS extends GraphBase{
 
         Adj.forEach((value,key) => {
             visited[key] = false
-            vertex.enqueue(key)
+            vertex.push(key)
         })
 
         let root = vertex[0]
@@ -27,7 +30,7 @@ class BFS extends GraphBase{
             let node = queue.dequeue()
             if(!visited[node])
             {
-                bfs_order.enque(node)
+                bfs_order.push(node)
                 visited[node] = true
             }
 
@@ -44,4 +47,19 @@ class BFS extends GraphBase{
     }
 }
 
-module.export = BFS
+// const g = new BFS(5)
+// vertices = [0,1,2,3]
+// for(let i=0;i<vertices.length;i++)
+// {
+//     g.addVertex(vertices[i])
+// }
+// g.addEdge(0,1); 
+// g.addEdge(0, 2); 
+// g.addEdge(1,2); 
+// g.addEdge(2,0); 
+// g.addEdge(2,3);
+// g.addEdge(3,3);
+// console.log(g.getSimpleAdj())
+// console.log(g.bfs())
+
+module.exports = BFS

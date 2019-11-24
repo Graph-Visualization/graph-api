@@ -1,4 +1,5 @@
 const DFS = require('./dfs')
+const BFS = require('./bfs')
 
 // This script stores all the function
 // which makes request to get the corresponding algo
@@ -24,11 +25,10 @@ const getDFS = (graph_val) => {
     graph_values = values.graph_val
     vertex = values.vertex
     vertex = Array.from(vertex)
-    // console.log(vertex)
+
     let graph = new DFS(vertex.length)
     graph.addVertex(vertex)
 
-    console.log(graph_values)
     for(let i=0;i<graph_values;i++)
     {
         let node = graph_values[i]
@@ -36,6 +36,27 @@ const getDFS = (graph_val) => {
     }
 
     return graph.dfs()
+
+}
+
+const getBFS = (graph_val) => {
+
+
+    values = purifyValue(graph_val)
+    graph_values = values.graph_val
+    vertex = values.vertex
+    vertex = Array.from(vertex)
+
+    let graph = new BFS(vertex.length)
+    graph.addVertex(vertex)
+
+    for(let i=0;i<graph_values;i++)
+    {
+        let node = graph_values[i]
+        graph.addEdge(node.src, node.dest, node.weight)
+    }
+
+    return graph.bfs()
 
 }
 
@@ -49,7 +70,7 @@ const prepResponse = (graph_val, algo) => {
     }
     else if(algo==='bfs')
     {
-        result = ''
+        result = getBFS(graph_val)
     }
     else if(algo === 'mst')
     {
@@ -67,7 +88,6 @@ const prepResponse = (graph_val, algo) => {
         algo,
         result
     }
-
     return JSON.stringify(resp)
 }
 

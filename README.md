@@ -79,4 +79,6 @@ Supported Algorithms -
 ```
 {"algo" : "bfs", "values" : [{"src" : "0", "dest" : "1", "weight" : "11"},{"src" : "1", "dest" : "2", "weight" : "11"},{"src" : "2", "dest" : "3", "weight" : "11"},{"src" : "3", "dest" : "0", "weight" : "11"}]}
 ```
-
+# Support
+If there are any issues with the API or the web-app, please create [an issue](https://github.com/Graph-Visualization/graph-api/issues/new).<br>
+_Open Source Project made with love_

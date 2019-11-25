@@ -4,7 +4,7 @@ Backend containing all the algorithms of graphs.
 <div style="text-align:center"><img src="https://github.com/Graph-Visualization/graph-api/blob/master/graph-apiv1.png" /></div>
 
 ## Description
-This project achieves to provide all the basic algorithms associated with graphs to available as a **REST-API**. 
+This project achieves to provide all the basic algorithms associated with graphs to available as an **API** endpoint. 
 The request can be made as a **POST** request and the body should contain the **json** data of the edge list that defines
 the graph. If the data is correctly parsed, a suitable algorithm can be applied to it to return a result of the 
 vertices(currently) or metadata associated to it. Below are some examples that demonstrate the usage of the rest-api.

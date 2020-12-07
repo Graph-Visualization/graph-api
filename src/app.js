@@ -1,7 +1,7 @@
-const graph = require('./graph-base.js');
+const graph = require('../ds/graph-base.js');
 const express = require('express');
 const path = require('path');
-const prepResponse = require('./fetch_algo');
+const prepResponse = require('../visualization/fetch_algo'); 
 const app = express();
 const publicDirectoryPath = path.join(__dirname, '/graph-visualization');
 

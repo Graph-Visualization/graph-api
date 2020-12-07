@@ -1,5 +1,5 @@
 const GraphBase = require('./graph-base');
-const Queue = require('./ds/queue');
+const Queue = require('./queue');
 
 class BFS extends GraphBase {
   constructor(numVertices = 0, numEdges = 0, startingPoint = 0) {

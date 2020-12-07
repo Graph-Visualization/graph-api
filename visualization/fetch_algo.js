@@ -1,5 +1,5 @@
-const DFS = require('./dfs');
-const BFS = require('./bfs');
+const DFS = require('../ds/dfs');
+const BFS = require('../ds/bfs');
 
 // This script stores all the function
 // which makes request to get the corresponding algo

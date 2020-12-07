@@ -1,5 +1,5 @@
 const GraphBase = require('./graph-base');
-const Stack = require('./ds/stack');
+const Stack = require('./stack');
 
 class DFS extends GraphBase {
   constructor(numVertices = 0, numEdges = 0, startingPoint = 0) {

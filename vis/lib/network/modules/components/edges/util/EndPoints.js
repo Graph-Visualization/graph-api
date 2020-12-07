@@ -43,7 +43,7 @@
 
 /**
  * @typedef {{x:number, y:number}} Point
- * 
+ *
  * A point in view-coordinates.
  */
 
@@ -53,7 +53,6 @@
  * @class
  */
 class EndPoint {
-
   /**
    * Apply transformation on points for display.
    *
@@ -73,19 +72,18 @@ class EndPoint {
 
     var x = arrowData.point.x;
     var y = arrowData.point.y;
-    var angle = arrowData.angle
+    var angle = arrowData.angle;
     var length = arrowData.length;
 
-    for(var i = 0; i < points.length; ++i) {
-      var p  = points[i];
+    for (var i = 0; i < points.length; ++i) {
+      var p = points[i];
       var xt = p.x * Math.cos(angle) - p.y * Math.sin(angle);
       var yt = p.x * Math.sin(angle) + p.y * Math.cos(angle);
 
-      p.x = x + length*xt;
-      p.y = y + length*yt;
+      p.x = x + length * xt;
+      p.y = y + length * yt;
     }
   }
-
 
   /**
    * Draw a closed path using the given real coordinates.
@@ -97,22 +95,18 @@ class EndPoint {
   static drawPath(ctx, points) {
     ctx.beginPath();
     ctx.moveTo(points[0].x, points[0].y);
-    for(var i = 1; i < points.length; ++i) {
+    for (var i = 1; i < points.length; ++i) {
       ctx.lineTo(points[i].x, points[i].y);
     }
     ctx.closePath();
   }
 }
 
-
-
-
 /**
  * Drawing methods for the arrow endpoint.
  * @extends EndPoint
  */
 class Arrow extends EndPoint {
-
   /**
    * Draw this shape at the end of a line.
    *
@@ -124,10 +118,10 @@ class Arrow extends EndPoint {
     // Normalized points of closed path, in the order that they should be drawn.
     // (0, 0) is the attachment point, and the point around which should be rotated
     var points = [
-      { x: 0  , y: 0  },
-      { x:-1  , y: 0.3},
-      { x:-0.9, y: 0  },
-      { x:-1  , y:-0.3},
+      { x: 0, y: 0 },
+      { x: -1, y: 0.3 },
+      { x: -0.9, y: 0 },
+      { x: -1, y: -0.3 },
     ];
 
     EndPoint.transform(points, arrowData);
@@ -135,12 +129,10 @@ class Arrow extends EndPoint {
   }
 }
 
-
 /**
  * Drawing methods for the circle endpoint.
  */
 class Circle {
-
   /**
    * Draw this shape at the end of a line.
    *
@@ -149,19 +141,17 @@ class Circle {
    * @static
    */
   static draw(ctx, arrowData) {
-    var point = {x:-0.4, y:0};
+    var point = { x: -0.4, y: 0 };
 
     EndPoint.transform(point, arrowData);
-    ctx.circle(point.x, point.y, arrowData.length*0.4);
+    ctx.circle(point.x, point.y, arrowData.length * 0.4);
   }
 }
-
 
 /**
  * Drawing methods for the bar endpoint.
  */
 class Bar {
-
   /**
    * Draw this shape at the end of a line.
    *
@@ -170,7 +160,7 @@ class Bar {
    * @static
    */
   static draw(ctx, arrowData) {
-/*
+    /*
     var points = [
       {x:0, y:0.5},
       {x:0, y:-0.5}
@@ -184,10 +174,10 @@ class Bar {
 */
 
     var points = [
-      {x:0, y:0.5},
-      {x:0, y:-0.5},
-      {x:-0.15, y:-0.5},
-      {x:-0.15, y:0.5},
+      { x: 0, y: 0.5 },
+      { x: 0, y: -0.5 },
+      { x: -0.15, y: -0.5 },
+      { x: -0.15, y: 0.5 },
     ];
 
     EndPoint.transform(points, arrowData);
@@ -195,12 +185,10 @@ class Bar {
   }
 }
 
-
 /**
  * Drawing methods for the endpoints.
  */
 class EndPoints {
-
   /**
    * Draw an endpoint
    *
@@ -215,15 +203,15 @@ class EndPoints {
     }
 
     switch (type) {
-    case 'circle':
-      Circle.draw(ctx, arrowData);
-      break;
-    case 'bar':
-      Bar.draw(ctx, arrowData);
-      break;
-    case 'arrow':  // fall-through
-    default:
-      Arrow.draw(ctx, arrowData);
+      case 'circle':
+        Circle.draw(ctx, arrowData);
+        break;
+      case 'bar':
+        Bar.draw(ctx, arrowData);
+        break;
+      case 'arrow': // fall-through
+      default:
+        Arrow.draw(ctx, arrowData);
     }
   }
 }

@@ -1,6 +1,6 @@
 'use strict';
 
-import ShapeBase from '../util/ShapeBase'
+import ShapeBase from '../util/ShapeBase';
 
 /**
  * A Diamond Node/Cluster shape.
@@ -14,7 +14,7 @@ class Diamond extends ShapeBase {
    * @param {Label} labelModule
    */
   constructor(options, body, labelModule) {
-    super(options, body, labelModule)
+    super(options, body, labelModule);
   }
 
   /**
@@ -37,7 +37,7 @@ class Diamond extends ShapeBase {
    * @returns {number}
    */
   distanceToBorder(ctx, angle) {
-    return this._distanceToBorder(ctx,angle);
+    return this._distanceToBorder(ctx, angle);
   }
 }
 

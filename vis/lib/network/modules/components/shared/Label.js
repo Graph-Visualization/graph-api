@@ -28,7 +28,6 @@ let LabelSplitter = require('./LabelSplitter').default;
  *    to the pile, in the correct order.
  */
 
-
 /**
  * List of special styles for multi-fonts
  * @private
@@ -39,7 +38,6 @@ const multiFontStyle = ['bold', 'ital', 'boldital', 'mono'];
  * A Label to be used for Nodes or Edges.
  */
 class Label {
-
   /**
    * @param {Object} body
    * @param {Object} options
@@ -49,18 +47,17 @@ class Label {
     this.body = body;
     this.pointToSelf = false;
     this.baseSize = undefined;
-    this.fontOptions = {};      // instance variable containing the *instance-local* font options
+    this.fontOptions = {}; // instance variable containing the *instance-local* font options
     this.setOptions(options);
-    this.size = {top: 0, left: 0, width: 0, height: 0, yLine: 0};
+    this.size = { top: 0, left: 0, width: 0, height: 0, yLine: 0 };
     this.isEdgeLabel = edgelabel;
   }
-
 
   /**
    * @param {Object} options the options of the parent Node-instance
    */
   setOptions(options) {
-    this.elementOptions = options;  // Reference to the options of the parent Node-instance 
+    this.elementOptions = options; // Reference to the options of the parent Node-instance
 
     this.initFontOptions(options.font);
 
@@ -71,20 +68,19 @@ class Label {
       options.label = '';
     }
 
-    if (options.font !== undefined && options.font !== null) { // font options can be deleted at various levels
+    if (options.font !== undefined && options.font !== null) {
+      // font options can be deleted at various levels
       if (typeof options.font === 'string') {
         this.baseSize = this.fontOptions.size;
-      }
-      else if (typeof options.font === 'object') {
+      } else if (typeof options.font === 'object') {
         let size = options.font.size;
- 
+
         if (size !== undefined) {
           this.baseSize = size;
         }
       }
     }
   }
-
 
   /**
    * Init the font Options structure.
@@ -116,7 +112,6 @@ class Label {
     });
   }
 
-
   /**
    * If in-variable is a string, parse it as a font specifier.
    *
@@ -132,15 +127,14 @@ class Label {
   static parseFontString(outOptions, inOptions) {
     if (!inOptions || typeof inOptions !== 'string') return false;
 
-    let newOptionsArray = inOptions.split(" ");
+    let newOptionsArray = inOptions.split(' ');
 
-    outOptions.size  = newOptionsArray[0].replace("px",'');
-    outOptions.face  = newOptionsArray[1];
+    outOptions.size = newOptionsArray[0].replace('px', '');
+    outOptions.face = newOptionsArray[1];
     outOptions.color = newOptionsArray[2];
 
     return true;
   }
-
 
   /**
    * Set the width and height constraints based on 'nearest' value
@@ -160,35 +154,49 @@ class Label {
       constrainHeight: false,
       minHgt: -1,
       valign: 'middle',
-    }
+    };
 
     let widthConstraint = util.topMost(pile, 'widthConstraint');
     if (typeof widthConstraint === 'number') {
       fontOptions.maxWdt = Number(widthConstraint);
       fontOptions.minWdt = Number(widthConstraint);
     } else if (typeof widthConstraint === 'object') {
-      let widthConstraintMaximum = util.topMost(pile, ['widthConstraint', 'maximum']);
+      let widthConstraintMaximum = util.topMost(pile, [
+        'widthConstraint',
+        'maximum',
+      ]);
       if (typeof widthConstraintMaximum === 'number') {
         fontOptions.maxWdt = Number(widthConstraintMaximum);
       }
-      let widthConstraintMinimum = util.topMost(pile, ['widthConstraint', 'minimum'])
+      let widthConstraintMinimum = util.topMost(pile, [
+        'widthConstraint',
+        'minimum',
+      ]);
       if (typeof widthConstraintMinimum === 'number') {
         fontOptions.minWdt = Number(widthConstraintMinimum);
       }
     }
 
-
     let heightConstraint = util.topMost(pile, 'heightConstraint');
     if (typeof heightConstraint === 'number') {
       fontOptions.minHgt = Number(heightConstraint);
     } else if (typeof heightConstraint === 'object') {
-      let heightConstraintMinimum = util.topMost(pile, ['heightConstraint', 'minimum']);
+      let heightConstraintMinimum = util.topMost(pile, [
+        'heightConstraint',
+        'minimum',
+      ]);
       if (typeof heightConstraintMinimum === 'number') {
         fontOptions.minHgt = Number(heightConstraintMinimum);
       }
-      let heightConstraintValign = util.topMost(pile, ['heightConstraint', 'valign']);
+      let heightConstraintValign = util.topMost(pile, [
+        'heightConstraint',
+        'valign',
+      ]);
       if (typeof heightConstraintValign === 'string') {
-        if ((heightConstraintValign === 'top')|| (heightConstraintValign === 'bottom')) {
+        if (
+          heightConstraintValign === 'top' ||
+          heightConstraintValign === 'bottom'
+        ) {
           fontOptions.valign = heightConstraintValign;
         }
       }
@@ -196,7 +204,6 @@ class Label {
 
     return fontOptions;
   }
-
 
   /**
    * Set options and update internal state
@@ -211,7 +218,6 @@ class Label {
     this.fontOptions.chooser = ComponentUtil.choosify('label', pile);
   }
 
-
   /**
    * When margins are set in an element, adjust sizes is called to remove them
    * from the width/height constraints. This must be done prior to label sizing.
@@ -219,27 +225,26 @@ class Label {
    * @param {{top: number, right: number, bottom: number, left: number}} margins
    */
   adjustSizes(margins) {
-    let widthBias =  (margins) ? (margins.right + margins.left) : 0;
+    let widthBias = margins ? margins.right + margins.left : 0;
     if (this.fontOptions.constrainWidth) {
       this.fontOptions.maxWdt -= widthBias;
       this.fontOptions.minWdt -= widthBias;
     }
-    let heightBias = (margins) ? (margins.top + margins.bottom)  : 0;
+    let heightBias = margins ? margins.top + margins.bottom : 0;
     if (this.fontOptions.constrainHeight) {
       this.fontOptions.minHgt -= heightBias;
     }
   }
 
-
-/////////////////////////////////////////////////////////
-// Methods for handling options piles
-// Eventually, these will be moved to a separate class
-/////////////////////////////////////////////////////////
+  /////////////////////////////////////////////////////////
+  // Methods for handling options piles
+  // Eventually, these will be moved to a separate class
+  /////////////////////////////////////////////////////////
 
   /**
    * Add the font members of the passed list of option objects to the pile.
    *
-   * @param {Pile} dstPile  pile of option objects add to 
+   * @param {Pile} dstPile  pile of option objects add to
    * @param {Pile} srcPile  pile of option objects to take font options from
    * @private
    */
@@ -248,7 +253,6 @@ class Label {
       this.addFontToPile(dstPile, srcPile[i]);
     }
   }
-
 
   /**
    * Add given font option object to the list of objects (the 'pile') to consider for determining
@@ -265,7 +269,6 @@ class Label {
     let item = options.font;
     pile.push(item);
   }
-
 
   /**
    * Collect all own-property values from the font pile that aren't multi-font option objectss.
@@ -288,7 +291,7 @@ class Label {
       }
 
       util.forEach(fontOptions, (opt, name) => {
-        if (opt === undefined) return;        // multi-font option need not be present 
+        if (opt === undefined) return; // multi-font option need not be present
         if (ret.hasOwnProperty(name)) return; // Keep first value we encounter
 
         if (multiFontStyle.indexOf(name) !== -1) {
@@ -302,7 +305,6 @@ class Label {
 
     return ret;
   }
-
 
   /**
    * Return the value for given option for the given multi-font.
@@ -362,9 +364,10 @@ class Label {
     }
 
     // A value **must** be found; you should never get here.
-    throw new Error("Did not find value for multi-font for property: '" + option + "'");
+    throw new Error(
+      "Did not find value for multi-font for property: '" + option + "'"
+    );
   }
-
 
   /**
    * Return all options values for the given multi-font.
@@ -378,7 +381,7 @@ class Label {
    */
   getFontOptions(pile, multiName) {
     let result = {};
-    let optionNames = ['color', 'size', 'face', 'mod', 'vadjust'];  // List of allowed options per multi-font
+    let optionNames = ['color', 'size', 'face', 'mod', 'vadjust']; // List of allowed options per multi-font
 
     for (let i = 0; i < optionNames.length; ++i) {
       let mod = optionNames[i];
@@ -388,10 +391,9 @@ class Label {
     return result;
   }
 
-/////////////////////////////////////////////////////////
-// End methods for handling options piles
-/////////////////////////////////////////////////////////
-
+  /////////////////////////////////////////////////////////
+  // End methods for handling options piles
+  /////////////////////////////////////////////////////////
 
   /**
    * Collapse the font options for the multi-font to single objects, from
@@ -401,7 +403,7 @@ class Label {
    *                     First item in list assumed to be the newly set options.
    */
   propagateFonts(pile) {
-    let fontPile = [];   // sequence of font objects to consider, order important
+    let fontPile = []; // sequence of font objects to consider, order important
 
     // Note that this.elementOptions is not used here.
     this.addFontOptionsToPile(fontPile, pile);
@@ -410,7 +412,7 @@ class Label {
     // We set multifont values even if multi === false, for consistency (things break otherwise)
     for (let i = 0; i < multiFontStyle.length; ++i) {
       let mod = multiFontStyle[i];
-      let modOptions  = this.fontOptions[mod];
+      let modOptions = this.fontOptions[mod];
       let tmpMultiFontOptions = this.getFontOptions(fontPile, mod);
 
       // Copy over found values
@@ -418,11 +420,10 @@ class Label {
         modOptions[n] = option;
       });
 
-      modOptions.size    = Number(modOptions.size);
+      modOptions.size = Number(modOptions.size);
       modOptions.vadjust = Number(modOptions.vadjust);
     }
   }
-
 
   /**
    * Main function. This is called from anything that wants to draw a label.
@@ -435,18 +436,22 @@ class Label {
    */
   draw(ctx, x, y, selected, hover, baseline = 'middle') {
     // if no label, return
-    if (this.elementOptions.label === undefined)
-      return;
+    if (this.elementOptions.label === undefined) return;
 
     // check if we have to render the label
     let viewFontSize = this.fontOptions.size * this.body.view.scale;
-    if (this.elementOptions.label && viewFontSize < this.elementOptions.scaling.label.drawThreshold - 1)
+    if (
+      this.elementOptions.label &&
+      viewFontSize < this.elementOptions.scaling.label.drawThreshold - 1
+    )
       return;
 
     // This ensures that there will not be HUGE letters on screen
     // by setting an upper limit on the visible text size (regardless of zoomLevel)
     if (viewFontSize >= this.elementOptions.scaling.label.maxVisible) {
-      viewFontSize = Number(this.elementOptions.scaling.label.maxVisible) / this.body.view.scale;
+      viewFontSize =
+        Number(this.elementOptions.scaling.label.maxVisible) /
+        this.body.view.scale;
     }
 
     // update the size cache if required
@@ -455,20 +460,21 @@ class Label {
     this._drawText(ctx, x, this.size.yLine, baseline, viewFontSize);
   }
 
-
   /**
    * Draws the label background
    * @param {CanvasRenderingContext2D} ctx
    * @private
    */
   _drawBackground(ctx) {
-    if (this.fontOptions.background !== undefined && this.fontOptions.background !== "none") {
+    if (
+      this.fontOptions.background !== undefined &&
+      this.fontOptions.background !== 'none'
+    ) {
       ctx.fillStyle = this.fontOptions.background;
       let size = this.getSize();
       ctx.fillRect(size.left, size.top, size.width, size.height);
     }
   }
-
 
   /**
    *
@@ -476,7 +482,7 @@ class Label {
    * @param {number} x
    * @param {number} y
    * @param {string} [baseline='middle']
-   * @param {number} viewFontSize 
+   * @param {number} viewFontSize
    * @private
    */
   _drawText(ctx, x, y, baseline = 'middle', viewFontSize) {
@@ -484,7 +490,7 @@ class Label {
 
     ctx.textAlign = 'left';
     x = x - this.size.width / 2; // Shift label 1/2-distance to the left
-    if ((this.fontOptions.valign) && (this.size.height > this.size.labelHeight)) {
+    if (this.fontOptions.valign && this.size.height > this.size.labelHeight) {
       if (this.fontOptions.valign === 'top') {
         y -= (this.size.height - this.size.labelHeight) / 2;
       }
@@ -499,14 +505,18 @@ class Label {
       if (line && line.blocks) {
         let width = 0;
         if (this.isEdgeLabel || this.fontOptions.align === 'center') {
-          width += (this.size.width - line.width) / 2
+          width += (this.size.width - line.width) / 2;
         } else if (this.fontOptions.align === 'right') {
-          width += (this.size.width - line.width)
+          width += this.size.width - line.width;
         }
         for (let j = 0; j < line.blocks.length; j++) {
           let block = line.blocks[j];
           ctx.font = block.font;
-          let [fontColor, strokeColor] = this._getColor(block.color, viewFontSize, block.strokeColor);
+          let [fontColor, strokeColor] = this._getColor(
+            block.color,
+            viewFontSize,
+            block.strokeColor
+          );
           if (block.strokeWidth > 0) {
             ctx.lineWidth = block.strokeWidth;
             ctx.strokeStyle = strokeColor;
@@ -537,7 +547,11 @@ class Label {
   _setAlignment(ctx, x, y, baseline) {
     // check for label alignment (for edges)
     // TODO: make alignment for nodes
-    if (this.isEdgeLabel && this.fontOptions.align !== 'horizontal' && this.pointToSelf === false) {
+    if (
+      this.isEdgeLabel &&
+      this.fontOptions.align !== 'horizontal' &&
+      this.pointToSelf === false
+    ) {
       x = 0;
       y = 0;
 
@@ -545,19 +559,16 @@ class Label {
       if (this.fontOptions.align === 'top') {
         ctx.textBaseline = 'alphabetic';
         y -= 2 * lineMargin; // distance from edge, required because we use alphabetic. Alphabetic has less difference between browsers
-      }
-      else if (this.fontOptions.align === 'bottom') {
+      } else if (this.fontOptions.align === 'bottom') {
         ctx.textBaseline = 'hanging';
-        y += 2 * lineMargin;// distance from edge, required because we use hanging. Hanging has less difference between browsers
-      }
-      else {
+        y += 2 * lineMargin; // distance from edge, required because we use hanging. Hanging has less difference between browsers
+      } else {
         ctx.textBaseline = 'middle';
       }
-    }
-    else {
+    } else {
       ctx.textBaseline = baseline;
     }
-    return [x,y];
+    return [x, y];
   }
 
   /**
@@ -574,7 +585,13 @@ class Label {
     let fontColor = color || '#000000';
     let strokeColor = initialStrokeColor || '#ffffff';
     if (viewFontSize <= this.elementOptions.scaling.label.drawThreshold) {
-      let opacity = Math.max(0, Math.min(1, 1 - (this.elementOptions.scaling.label.drawThreshold - viewFontSize)));
+      let opacity = Math.max(
+        0,
+        Math.min(
+          1,
+          1 - (this.elementOptions.scaling.label.drawThreshold - viewFontSize)
+        )
+      );
       fontColor = util.overrideOpacity(fontColor, opacity);
       strokeColor = util.overrideOpacity(strokeColor, opacity);
     }
@@ -593,10 +610,9 @@ class Label {
     return {
       width: this.size.width,
       height: this.size.height,
-      lineCount: this.lineCount
+      lineCount: this.lineCount,
     };
   }
-
 
   /**
    * Get the current dimensions of the label
@@ -605,8 +621,8 @@ class Label {
    */
   getSize() {
     let lineMargin = 2;
-    let x = this.size.left;                 // default values which might be overridden below
-    let y = this.size.top - 0.5*lineMargin; // idem
+    let x = this.size.left; // default values which might be overridden below
+    let y = this.size.top - 0.5 * lineMargin; // idem
 
     if (this.isEdgeLabel) {
       const x2 = -this.size.width * 0.5;
@@ -614,7 +630,7 @@ class Label {
       switch (this.fontOptions.align) {
         case 'middle':
           x = x2;
-          y = -this.size.height * 0.5
+          y = -this.size.height * 0.5;
           break;
         case 'top':
           x = x2;
@@ -628,15 +644,14 @@ class Label {
     }
 
     var ret = {
-      left  : x,
-      top   : y,
-      width : this.size.width,
+      left: x,
+      top: y,
+      width: this.size.width,
       height: this.size.height,
     };
 
     return ret;
   }
-
 
   /**
    *
@@ -652,13 +667,12 @@ class Label {
     this.size.left = x - this.size.width * 0.5;
     this.size.top = y - this.size.height * 0.5;
     this.size.yLine = y + (1 - this.lineCount) * 0.5 * this.fontOptions.size;
-    if (baseline === "hanging") {
+    if (baseline === 'hanging') {
       this.size.top += 0.5 * this.fontOptions.size;
-      this.size.top += 4;   // distance from node, required because we use hanging. Hanging has less difference between browsers
+      this.size.top += 4; // distance from node, required because we use hanging. Hanging has less difference between browsers
       this.size.yLine += 4; // distance from node
     }
   }
-
 
   /**
    *
@@ -669,13 +683,14 @@ class Label {
    * @returns {{color, size, face, mod, vadjust, strokeWidth: *, strokeColor: (*|string|allOptions.edges.font.strokeColor|{string}|allOptions.nodes.font.strokeColor|Array)}}
    */
   getFormattingValues(ctx, selected, hover, mod) {
-    let getValue = function(fontOptions, mod, option) {
-      if (mod === "normal") {
-        if (option === 'mod' ) return "";
+    let getValue = function (fontOptions, mod, option) {
+      if (mod === 'normal') {
+        if (option === 'mod') return '';
         return fontOptions[option];
       }
 
-      if (fontOptions[mod][option] !== undefined) {  // Grumbl leaving out test on undefined equals false for "" 
+      if (fontOptions[mod][option] !== undefined) {
+        // Grumbl leaving out test on undefined equals false for ""
         return fontOptions[mod][option];
       } else {
         // Take from parent font option
@@ -684,36 +699,45 @@ class Label {
     };
 
     let values = {
-      color  : getValue(this.fontOptions, mod, 'color'  ),
-      size   : getValue(this.fontOptions, mod, 'size'   ),
-      face   : getValue(this.fontOptions, mod, 'face'   ),
-      mod    : getValue(this.fontOptions, mod, 'mod'    ),
+      color: getValue(this.fontOptions, mod, 'color'),
+      size: getValue(this.fontOptions, mod, 'size'),
+      face: getValue(this.fontOptions, mod, 'face'),
+      mod: getValue(this.fontOptions, mod, 'mod'),
       vadjust: getValue(this.fontOptions, mod, 'vadjust'),
       strokeWidth: this.fontOptions.strokeWidth,
-      strokeColor: this.fontOptions.strokeColor
+      strokeColor: this.fontOptions.strokeColor,
     };
     if (selected || hover) {
-      if (mod === "normal" && (this.fontOptions.chooser === true) && (this.elementOptions.labelHighlightBold)) {
-          values.mod = 'bold';
+      if (
+        mod === 'normal' &&
+        this.fontOptions.chooser === true &&
+        this.elementOptions.labelHighlightBold
+      ) {
+        values.mod = 'bold';
       } else {
         if (typeof this.fontOptions.chooser === 'function') {
-          this.fontOptions.chooser(values, this.elementOptions.id, selected, hover);
+          this.fontOptions.chooser(
+            values,
+            this.elementOptions.id,
+            selected,
+            hover
+          );
         }
       }
     }
 
-    let fontString = "";
-    if (values.mod !== undefined && values.mod !== "") {  // safeguard for undefined - this happened
-      fontString += values.mod + " ";
+    let fontString = '';
+    if (values.mod !== undefined && values.mod !== '') {
+      // safeguard for undefined - this happened
+      fontString += values.mod + ' ';
     }
-    fontString += values.size + "px " + values.face;
+    fontString += values.size + 'px ' + values.face;
 
-    ctx.font = fontString.replace(/"/g, "");
+    ctx.font = fontString.replace(/"/g, '');
     values.font = ctx.font;
     values.height = values.size;
     return values;
   }
-
 
   /**
    *
@@ -722,9 +746,8 @@ class Label {
    * @returns {boolean}
    */
   differentState(selected, hover) {
-    return ((selected !== this.selectedState) || (hover !== this.hoverState));
+    return selected !== this.selectedState || hover !== this.hoverState;
   }
-   
 
   /**
    * This explodes the passed text into lines and determines the width, height and number of lines.
@@ -741,7 +764,6 @@ class Label {
     return splitter.process(inText);
   }
 
-
   /**
    * This explodes the label string into lines and sets the width, height and number of lines.
    * @param {CanvasRenderingContext2D} ctx
@@ -750,18 +772,22 @@ class Label {
    * @private
    */
   _processLabel(ctx, selected, hover) {
-
-    if(this.labelDirty === false && !this.differentState(selected,hover))
+    if (this.labelDirty === false && !this.differentState(selected, hover))
       return;
-    
-    let state = this._processLabelText(ctx, selected, hover, this.elementOptions.label);
 
-    if ((this.fontOptions.minWdt > 0) && (state.width < this.fontOptions.minWdt)) {
+    let state = this._processLabelText(
+      ctx,
+      selected,
+      hover,
+      this.elementOptions.label
+    );
+
+    if (this.fontOptions.minWdt > 0 && state.width < this.fontOptions.minWdt) {
       state.width = this.fontOptions.minWdt;
     }
 
-    this.size.labelHeight =state.height;
-    if ((this.fontOptions.minHgt > 0) && (state.height < this.fontOptions.minHgt)) {
+    this.size.labelHeight = state.height;
+    if (this.fontOptions.minHgt > 0 && state.height < this.fontOptions.minHgt) {
       state.height = this.fontOptions.minHgt;
     }
 
@@ -775,21 +801,23 @@ class Label {
     this.labelDirty = false;
   }
 
-
   /**
    * Check if this label is visible
    *
    * @return {boolean} true if this label will be show, false otherwise
    */
   visible() {
-    if ((this.size.width === 0 || this.size.height === 0)
-      || this.elementOptions.label === undefined) {
-      return false;  // nothing to display
+    if (
+      this.size.width === 0 ||
+      this.size.height === 0 ||
+      this.elementOptions.label === undefined
+    ) {
+      return false; // nothing to display
     }
 
     let viewFontSize = this.fontOptions.size * this.body.view.scale;
     if (viewFontSize < this.elementOptions.scaling.label.drawThreshold - 1) {
-      return false;  // Too small or too far away to show
+      return false; // Too small or too far away to show
     }
 
     return true;

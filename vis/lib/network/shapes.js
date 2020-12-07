@@ -2,7 +2,6 @@
  * Canvas shapes used by Network
  */
 if (typeof CanvasRenderingContext2D !== 'undefined') {
-
   /**
    * Draw a circle shape
    *
@@ -44,17 +43,14 @@ if (typeof CanvasRenderingContext2D !== 'undefined') {
 
     var s = r * 2;
     var s2 = s / 2;
-    var ir = Math.sqrt(3) / 6 * s;      // radius of inner circle
+    var ir = (Math.sqrt(3) / 6) * s; // radius of inner circle
     var h = Math.sqrt(s * s - s2 * s2); // height
-
 
     this.moveTo(x, y - (h - ir));
     this.lineTo(x + s2, y + ir);
     this.lineTo(x - s2, y + ir);
     this.lineTo(x, y - (h - ir));
     this.closePath();
-
-
   };
 
   /**
@@ -73,7 +69,7 @@ if (typeof CanvasRenderingContext2D !== 'undefined') {
 
     var s = r * 2;
     var s2 = s / 2;
-    var ir = Math.sqrt(3) / 6 * s;      // radius of inner circle
+    var ir = (Math.sqrt(3) / 6) * s; // radius of inner circle
     var h = Math.sqrt(s * s - s2 * s2); // height
 
     this.moveTo(x, y + (h - ir));
@@ -98,10 +94,10 @@ if (typeof CanvasRenderingContext2D !== 'undefined') {
     y += 0.1 * r;
 
     for (var n = 0; n < 10; n++) {
-      var radius = (n % 2 === 0) ? r * 1.3 : r * 0.5;
+      var radius = n % 2 === 0 ? r * 1.3 : r * 0.5;
       this.lineTo(
-        x + radius * Math.sin(n * 2 * Math.PI / 10),
-        y - radius * Math.cos(n * 2 * Math.PI / 10)
+        x + radius * Math.sin((n * 2 * Math.PI) / 10),
+        y - radius * Math.cos((n * 2 * Math.PI) / 10)
       );
     }
 
@@ -123,7 +119,6 @@ if (typeof CanvasRenderingContext2D !== 'undefined') {
     this.lineTo(x, y - r);
     this.lineTo(x - r, y);
 
-
     this.closePath();
   };
 
@@ -138,11 +133,11 @@ if (typeof CanvasRenderingContext2D !== 'undefined') {
    */
   CanvasRenderingContext2D.prototype.roundRect = function (x, y, w, h, r) {
     var r2d = Math.PI / 180;
-    if (w - ( 2 * r ) < 0) {
-      r = ( w / 2 );
+    if (w - 2 * r < 0) {
+      r = w / 2;
     } //ensure that the radius isn't too large for x
-    if (h - ( 2 * r ) < 0) {
-      r = ( h / 2 );
+    if (h - 2 * r < 0) {
+      r = h / 2;
     } //ensure that the radius isn't too large for y
     this.beginPath();
     this.moveTo(x + r, y);
@@ -168,13 +163,13 @@ if (typeof CanvasRenderingContext2D !== 'undefined') {
    * @param {number} h
    */
   CanvasRenderingContext2D.prototype.ellipse_vis = function (x, y, w, h) {
-    var kappa = .5522848,
+    var kappa = 0.5522848,
       ox = (w / 2) * kappa, // control point offset horizontal
       oy = (h / 2) * kappa, // control point offset vertical
-      xe = x + w,           // x-end
-      ye = y + h,           // y-end
-      xm = x + w / 2,       // x-middle
-      ym = y + h / 2;       // y-middle
+      xe = x + w, // x-end
+      ye = y + h, // y-end
+      xm = x + w / 2, // x-middle
+      ym = y + h / 2; // y-middle
 
     this.beginPath();
     this.moveTo(x, ym);
@@ -184,7 +179,6 @@ if (typeof CanvasRenderingContext2D !== 'undefined') {
     this.bezierCurveTo(xm - ox, ye, x, ym + oy, x, ym);
     this.closePath();
   };
-
 
   /**
    * http://stackoverflow.com/questions/2172798/how-to-draw-an-oval-in-html5-canvas
@@ -199,15 +193,15 @@ if (typeof CanvasRenderingContext2D !== 'undefined') {
     var wEllipse = w;
     var hEllipse = h * f;
 
-    var kappa = .5522848,
+    var kappa = 0.5522848,
       ox = (wEllipse / 2) * kappa, // control point offset horizontal
       oy = (hEllipse / 2) * kappa, // control point offset vertical
-      xe = x + wEllipse,           // x-end
-      ye = y + hEllipse,           // y-end
-      xm = x + wEllipse / 2,       // x-middle
-      ym = y + hEllipse / 2,       // y-middle
-      ymb = y + (h - hEllipse / 2),  // y-midlle, bottom ellipse
-      yeb = y + h;                 // y-end, bottom ellipse
+      xe = x + wEllipse, // x-end
+      ye = y + hEllipse, // y-end
+      xm = x + wEllipse / 2, // x-middle
+      ym = y + hEllipse / 2, // y-middle
+      ymb = y + (h - hEllipse / 2), // y-midlle, bottom ellipse
+      yeb = y + h; // y-end, bottom ellipse
 
     this.beginPath();
     this.moveTo(xe, ym);
@@ -226,7 +220,6 @@ if (typeof CanvasRenderingContext2D !== 'undefined') {
     this.lineTo(x, ym);
   };
 
-
   /**
    * Sets up the dashedLine functionality for drawing
    * Original code came from http://stackoverflow.com/questions/4576724/dotted-stroke-in-canvas
@@ -239,13 +232,19 @@ if (typeof CanvasRenderingContext2D !== 'undefined') {
    * @param {number} y2
    * @param {string} pattern
    */
-  CanvasRenderingContext2D.prototype.dashedLine = function (x, y, x2, y2, pattern) {
+  CanvasRenderingContext2D.prototype.dashedLine = function (
+    x,
+    y,
+    x2,
+    y2,
+    pattern
+  ) {
     this.beginPath();
     this.moveTo(x, y);
 
     var patternLength = pattern.length;
-    var dx = (x2 - x);
-    var dy = (y2 - y);
+    var dx = x2 - x;
+    var dy = y2 - y;
     var slope = dy / dx;
     var distRemaining = Math.sqrt(dx * dx + dy * dy);
     var patternIndex = 0;
@@ -259,13 +258,16 @@ if (typeof CanvasRenderingContext2D !== 'undefined') {
         dashLength = distRemaining;
       }
 
-      xStep = Math.sqrt(dashLength * dashLength / (1 + slope * slope));
+      xStep = Math.sqrt((dashLength * dashLength) / (1 + slope * slope));
       xStep = dx < 0 ? -xStep : xStep;
       x += xStep;
       y += slope * xStep;
 
-      if (draw === true) {this.lineTo(x,y);}
-      else               {this.moveTo(x,y);}
+      if (draw === true) {
+        this.lineTo(x, y);
+      } else {
+        this.moveTo(x, y);
+      }
 
       distRemaining -= dashLength;
       draw = !draw;
@@ -281,10 +283,10 @@ if (typeof CanvasRenderingContext2D !== 'undefined') {
   CanvasRenderingContext2D.prototype.hexagon = function (x, y, r) {
     this.beginPath();
     var sides = 6;
-    var a = (Math.PI*2)/sides;
-    this.moveTo(x+r,y);
+    var a = (Math.PI * 2) / sides;
+    this.moveTo(x + r, y);
     for (var i = 1; i < sides; i++) {
-      this.lineTo(x+r*Math.cos(a*i),y+r*Math.sin(a*i));
+      this.lineTo(x + r * Math.cos(a * i), y + r * Math.sin(a * i));
     }
     this.closePath();
   };

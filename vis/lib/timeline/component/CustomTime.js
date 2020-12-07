@@ -14,7 +14,7 @@ var locales = require('../locales');
  * @constructor CustomTime
  * @extends Component
  */
-function CustomTime (body, options) {
+function CustomTime(body, options) {
   this.body = body;
 
   // default options
@@ -23,7 +23,7 @@ function CustomTime (body, options) {
     locales: locales,
     locale: 'en',
     id: undefined,
-    title: undefined
+    title: undefined,
   };
   this.options = util.extend({}, this.defaultOptions);
 
@@ -50,10 +50,14 @@ CustomTime.prototype = new Component();
  *                                  {string} locales
  *                                  {string} locale
  */
-CustomTime.prototype.setOptions = function(options) {
+CustomTime.prototype.setOptions = function (options) {
   if (options) {
     // copy all options that we know
-    util.selectiveExtend(['moment', 'locale', 'locales', 'id'], this.options, options);
+    util.selectiveExtend(
+      ['moment', 'locale', 'locales', 'id'],
+      this.options,
+      options
+    );
   }
 };
 
@@ -61,7 +65,7 @@ CustomTime.prototype.setOptions = function(options) {
  * Create the DOM for the custom time
  * @private
  */
-CustomTime.prototype._create = function() {
+CustomTime.prototype._create = function () {
   var bar = document.createElement('div');
   bar['custom-time'] = this;
   bar.className = 'vis-custom-time ' + (this.options.id || '');
@@ -81,27 +85,29 @@ CustomTime.prototype._create = function() {
    *
    * @param {WheelEvent} e
    */
-  function onMouseWheel (e) {
+  function onMouseWheel(e) {
     this.body.range._onMouseWheel(e);
   }
 
   if (drag.addEventListener) {
     // IE9, Chrome, Safari, Opera
-    drag.addEventListener("mousewheel", onMouseWheel.bind(this), false);
+    drag.addEventListener('mousewheel', onMouseWheel.bind(this), false);
     // Firefox
-    drag.addEventListener("DOMMouseScroll", onMouseWheel.bind(this), false);
+    drag.addEventListener('DOMMouseScroll', onMouseWheel.bind(this), false);
   } else {
     // IE 6/7/8
-    drag.attachEvent("onmousewheel", onMouseWheel.bind(this));
+    drag.attachEvent('onmousewheel', onMouseWheel.bind(this));
   }
 
   bar.appendChild(drag);
   // attach event listeners
   this.hammer = new Hammer(drag);
   this.hammer.on('panstart', this._onDragStart.bind(this));
-  this.hammer.on('panmove',  this._onDrag.bind(this));
-  this.hammer.on('panend',   this._onDragEnd.bind(this));
-  this.hammer.get('pan').set({threshold:5, direction: Hammer.DIRECTION_HORIZONTAL});
+  this.hammer.on('panmove', this._onDrag.bind(this));
+  this.hammer.on('panend', this._onDragEnd.bind(this));
+  this.hammer
+    .get('pan')
+    .set({ threshold: 5, direction: Hammer.DIRECTION_HORIZONTAL });
 };
 
 /**
@@ -135,7 +141,11 @@ CustomTime.prototype.redraw = function () {
   var locale = this.options.locales[this.options.locale];
   if (!locale) {
     if (!this.warned) {
-      console.log('WARNING: options.locales[\'' + this.options.locale + '\'] not found. See http://visjs.org/docs/timeline/#Localization');
+      console.log(
+        "WARNING: options.locales['" +
+          this.options.locale +
+          "'] not found. See http://visjs.org/docs/timeline/#Localization"
+      );
       this.warned = true;
     }
     locale = this.options.locales['en']; // fall back on english when not available
@@ -144,9 +154,14 @@ CustomTime.prototype.redraw = function () {
   var title = this.options.title;
   // To hide the title completely use empty string ''.
   if (title === undefined) {
-    title = locale.time + ': ' + this.options.moment(this.customTime).format('dddd, MMMM Do YYYY, H:mm:ss');
+    title =
+      locale.time +
+      ': ' +
+      this.options
+        .moment(this.customTime)
+        .format('dddd, MMMM Do YYYY, H:mm:ss');
     title = title.charAt(0).toUpperCase() + title.substring(1);
-  } else if (typeof title === "function") {
+  } else if (typeof title === 'function') {
     title = title.call(this.customTime);
   }
 
@@ -170,7 +185,7 @@ CustomTime.prototype.hide = function () {
  * Set custom time.
  * @param {Date | number | string} time
  */
-CustomTime.prototype.setCustomTime = function(time) {
+CustomTime.prototype.setCustomTime = function (time) {
   this.customTime = util.convert(time, 'Date');
   this.redraw();
 };
@@ -179,15 +194,15 @@ CustomTime.prototype.setCustomTime = function(time) {
  * Retrieve the current custom time.
  * @return {Date} customTime
  */
-CustomTime.prototype.getCustomTime = function() {
+CustomTime.prototype.getCustomTime = function () {
   return new Date(this.customTime.valueOf());
 };
 
 /**
-  * Set custom title.
-  * @param {Date | number | string} title
-  */
-CustomTime.prototype.setCustomTitle = function(title) {
+ * Set custom title.
+ * @param {Date | number | string} title
+ */
+CustomTime.prototype.setCustomTitle = function (title) {
   this.options.title = title;
 };
 
@@ -196,7 +211,7 @@ CustomTime.prototype.setCustomTitle = function(title) {
  * @param {Event} event
  * @private
  */
-CustomTime.prototype._onDragStart = function(event) {
+CustomTime.prototype._onDragStart = function (event) {
   this.eventParams.dragging = true;
   this.eventParams.customTime = this.customTime;
 
@@ -220,7 +235,7 @@ CustomTime.prototype._onDrag = function (event) {
   this.body.emitter.emit('timechange', {
     id: this.options.id,
     time: new Date(this.customTime.valueOf()),
-    event: event
+    event: event,
   });
 
   event.stopPropagation();
@@ -238,7 +253,7 @@ CustomTime.prototype._onDragEnd = function (event) {
   this.body.emitter.emit('timechanged', {
     id: this.options.id,
     time: new Date(this.customTime.valueOf()),
-    event: event
+    event: event,
   });
 
   event.stopPropagation();
@@ -250,7 +265,7 @@ CustomTime.prototype._onDragEnd = function (event) {
  * @param {Event} event
  * @return {CustomTime | null} customTime
  */
-CustomTime.customTimeFromTarget = function(event) {
+CustomTime.customTimeFromTarget = function (event) {
   var target = event.target;
   while (target) {
     if (target.hasOwnProperty('custom-time')) {

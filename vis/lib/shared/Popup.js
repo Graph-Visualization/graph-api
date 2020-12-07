@@ -38,8 +38,7 @@ class Popup {
     if (content instanceof Element) {
       this.frame.innerHTML = '';
       this.frame.appendChild(content);
-    }
-    else {
+    } else {
       this.frame.innerHTML = content; // string containing text or HTML
     }
   }
@@ -59,10 +58,12 @@ class Popup {
       var maxHeight = this.frame.parentNode.clientHeight;
       var maxWidth = this.frame.parentNode.clientWidth;
 
-      var left = 0, top = 0;
+      var left = 0,
+        top = 0;
 
       if (this.overflowMethod == 'flip') {
-        var isLeft = false, isTop = true; // Where around the position it's located
+        var isLeft = false,
+          isTop = true; // Where around the position it's located
 
         if (this.y - height < this.padding) {
           isTop = false;
@@ -84,7 +85,7 @@ class Popup {
           top = this.y;
         }
       } else {
-        top = (this.y - height);
+        top = this.y - height;
         if (top + height + this.padding > maxHeight) {
           top = maxHeight - height - this.padding;
         }
@@ -101,12 +102,11 @@ class Popup {
         }
       }
 
-      this.frame.style.left = left + "px";
-      this.frame.style.top = top + "px";
-      this.frame.style.visibility = "visible";
+      this.frame.style.left = left + 'px';
+      this.frame.style.top = top + 'px';
+      this.frame.style.visibility = 'visible';
       this.hidden = false;
-    }
-    else {
+    } else {
       this.hide();
     }
   }
@@ -116,9 +116,9 @@ class Popup {
    */
   hide() {
     this.hidden = true;
-    this.frame.style.left = "0";
-    this.frame.style.top = "0";
-    this.frame.style.visibility = "hidden";
+    this.frame.style.left = '0';
+    this.frame.style.top = '0';
+    this.frame.style.visibility = 'hidden';
   }
 
   /**

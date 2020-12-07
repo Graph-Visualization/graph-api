@@ -10,16 +10,16 @@ var Item = require('./Item');
  * @param {Object} [options]        Configuration options
  *                                  // TODO: describe available options
  */
-function BoxItem (data, conversion, options) {
+function BoxItem(data, conversion, options) {
   this.props = {
     dot: {
       width: 0,
-      height: 0
+      height: 0,
     },
     line: {
       width: 0,
-      height: 0
-    }
+      height: 0,
+    },
   };
   this.options = options;
   // validate data
@@ -32,33 +32,37 @@ function BoxItem (data, conversion, options) {
   Item.call(this, data, conversion, options);
 }
 
-BoxItem.prototype = new Item (null, null, null);
+BoxItem.prototype = new Item(null, null, null);
 
 /**
  * Check whether this item is visible inside given range
  * @param {{start: number, end: number}} range with a timestamp for start and end
  * @returns {boolean} True if visible
  */
-BoxItem.prototype.isVisible = function(range) {
+BoxItem.prototype.isVisible = function (range) {
   // determine visibility
   var isVisible;
   var align = this.options.align;
   var widthInMs = this.width * range.getMillisecondsPerPixel();
 
   if (align == 'right') {
-    isVisible = (this.data.start.getTime() > range.start ) && (this.data.start.getTime() - widthInMs < range.end);
-  }
-  else if (align == 'left') {
-    isVisible = (this.data.start.getTime() + widthInMs > range.start ) && (this.data.start.getTime() < range.end);
-  }
-  else {
+    isVisible =
+      this.data.start.getTime() > range.start &&
+      this.data.start.getTime() - widthInMs < range.end;
+  } else if (align == 'left') {
+    isVisible =
+      this.data.start.getTime() + widthInMs > range.start &&
+      this.data.start.getTime() < range.end;
+  } else {
     // default or 'center'
-    isVisible = (this.data.start.getTime() + widthInMs/2 > range.start ) && (this.data.start.getTime() - widthInMs/2 < range.end);
+    isVisible =
+      this.data.start.getTime() + widthInMs / 2 > range.start &&
+      this.data.start.getTime() - widthInMs / 2 < range.end;
   }
   return isVisible;
 };
 
-BoxItem.prototype._createDomElement = function() {
+BoxItem.prototype._createDomElement = function () {
   if (!this.dom) {
     // create DOM
     this.dom = {};
@@ -84,31 +88,40 @@ BoxItem.prototype._createDomElement = function() {
 
     this.dirty = true;
   }
-}
+};
 
-BoxItem.prototype._appendDomElement = function() {
+BoxItem.prototype._appendDomElement = function () {
   if (!this.parent) {
     throw new Error('Cannot redraw item: no parent attached');
   }
   if (!this.dom.box.parentNode) {
     var foreground = this.parent.dom.foreground;
-    if (!foreground) throw new Error('Cannot redraw item: parent has no foreground container element');
+    if (!foreground)
+      throw new Error(
+        'Cannot redraw item: parent has no foreground container element'
+      );
     foreground.appendChild(this.dom.box);
   }
   if (!this.dom.line.parentNode) {
     var background = this.parent.dom.background;
-    if (!background) throw new Error('Cannot redraw item: parent has no background container element');
+    if (!background)
+      throw new Error(
+        'Cannot redraw item: parent has no background container element'
+      );
     background.appendChild(this.dom.line);
   }
   if (!this.dom.dot.parentNode) {
     var axis = this.parent.dom.axis;
-    if (!background) throw new Error('Cannot redraw item: parent has no axis container element');
+    if (!background)
+      throw new Error(
+        'Cannot redraw item: parent has no axis container element'
+      );
     axis.appendChild(this.dom.dot);
   }
   this.displayed = true;
-}
+};
 
-BoxItem.prototype._updateDirtyDomComponents = function() {
+BoxItem.prototype._updateDirtyDomComponents = function () {
   // An item is marked dirty when:
   // - the item is not yet rendered
   // - the item's data is changed
@@ -118,43 +131,44 @@ BoxItem.prototype._updateDirtyDomComponents = function() {
     this._updateDataAttributes(this.dom.box);
     this._updateStyle(this.dom.box);
 
-    var editable = (this.editable.updateTime || this.editable.updateGroup);
+    var editable = this.editable.updateTime || this.editable.updateGroup;
 
     // update class
-    var className = (this.data.className? ' ' + this.data.className : '') +
-        (this.selected ? ' vis-selected' : '') +
-        (editable ? ' vis-editable' : ' vis-readonly');
+    var className =
+      (this.data.className ? ' ' + this.data.className : '') +
+      (this.selected ? ' vis-selected' : '') +
+      (editable ? ' vis-editable' : ' vis-readonly');
     this.dom.box.className = 'vis-item vis-box' + className;
     this.dom.line.className = 'vis-item vis-line' + className;
-    this.dom.dot.className  = 'vis-item vis-dot' + className;
+    this.dom.dot.className = 'vis-item vis-dot' + className;
   }
-}
+};
 
-BoxItem.prototype._getDomComponentsSizes = function() {
+BoxItem.prototype._getDomComponentsSizes = function () {
   return {
     previous: {
       right: this.dom.box.style.right,
-      left: this.dom.box.style.left
+      left: this.dom.box.style.left,
     },
     dot: {
       height: this.dom.dot.offsetHeight,
-      width: this.dom.dot.offsetWidth
+      width: this.dom.dot.offsetWidth,
     },
     line: {
-      width: this.dom.line.offsetWidth
+      width: this.dom.line.offsetWidth,
     },
     box: {
       width: this.dom.box.offsetWidth,
-      height: this.dom.box.offsetHeight
-    }
-  }
-}
+      height: this.dom.box.offsetHeight,
+    },
+  };
+};
 
-BoxItem.prototype._updateDomComponentsSizes = function(sizes) {
+BoxItem.prototype._updateDomComponentsSizes = function (sizes) {
   if (this.options.rtl) {
-    this.dom.box.style.right = "0px";
+    this.dom.box.style.right = '0px';
   } else {
-    this.dom.box.style.left = "0px";
+    this.dom.box.style.left = '0px';
   }
 
   // recalculate size
@@ -172,21 +186,21 @@ BoxItem.prototype._updateDomComponentsSizes = function(sizes) {
   }
 
   this.dirty = false;
-}
+};
 
-BoxItem.prototype._repaintDomAdditionals = function() {
+BoxItem.prototype._repaintDomAdditionals = function () {
   this._repaintOnItemUpdateTimeTooltip(this.dom.box);
   this._repaintDragCenter();
   this._repaintDeleteButton(this.dom.box);
-}
+};
 
 /**
  * Repaint the item
  * @param {boolean} [returnQueue=false]  return the queue
  * @return {boolean} the redraw queue if returnQueue=true
  */
-BoxItem.prototype.redraw = function(returnQueue) {
-  var sizes
+BoxItem.prototype.redraw = function (returnQueue) {
+  var sizes;
   var queue = [
     // create item DOM
     this._createDomElement.bind(this),
@@ -197,20 +211,20 @@ BoxItem.prototype.redraw = function(returnQueue) {
     // update dirty DOM
     this._updateDirtyDomComponents.bind(this),
 
-    (function() {
+    function () {
       if (this.dirty) {
         sizes = this._getDomComponentsSizes();
       }
-    }).bind(this),
+    }.bind(this),
 
-    (function() {
+    function () {
       if (this.dirty) {
         this._updateDomComponentsSizes.bind(this)(sizes);
       }
-    }).bind(this),
+    }.bind(this),
 
     // repaint DOM additionals
-    this._repaintDomAdditionals.bind(this)
+    this._repaintDomAdditionals.bind(this),
   ];
 
   if (returnQueue) {
@@ -228,7 +242,7 @@ BoxItem.prototype.redraw = function(returnQueue) {
  * Show the item in the DOM (when not already displayed). The items DOM will
  * be created when needed.
  */
-BoxItem.prototype.show = function() {
+BoxItem.prototype.show = function () {
   if (!this.displayed) {
     this.redraw();
   }
@@ -237,13 +251,13 @@ BoxItem.prototype.show = function() {
 /**
  * Hide the item from the DOM (when visible)
  */
-BoxItem.prototype.hide = function() {
+BoxItem.prototype.hide = function () {
   if (this.displayed) {
     var dom = this.dom;
 
-    if (dom.box.parentNode)   dom.box.parentNode.removeChild(dom.box);
-    if (dom.line.parentNode)  dom.line.parentNode.removeChild(dom.line);
-    if (dom.dot.parentNode)   dom.dot.parentNode.removeChild(dom.dot);
+    if (dom.box.parentNode) dom.box.parentNode.removeChild(dom.box);
+    if (dom.line.parentNode) dom.line.parentNode.removeChild(dom.line);
+    if (dom.dot.parentNode) dom.dot.parentNode.removeChild(dom.dot);
 
     this.displayed = false;
   }
@@ -253,7 +267,7 @@ BoxItem.prototype.hide = function() {
  * Reposition the item horizontally
  * @Override
  */
-BoxItem.prototype.repositionX = function() {
+BoxItem.prototype.repositionX = function () {
   var start = this.conversion.toScreen(this.data.start);
   var align = this.options.align;
 
@@ -264,50 +278,52 @@ BoxItem.prototype.repositionX = function() {
 
       // reposition box, line, and dot
       this.dom.box.style.right = this.right + 'px';
-      this.dom.line.style.right = (start - this.props.line.width) + 'px';
-      this.dom.dot.style.right = (start - this.props.line.width / 2 - this.props.dot.width / 2) + 'px';
+      this.dom.line.style.right = start - this.props.line.width + 'px';
+      this.dom.dot.style.right =
+        start - this.props.line.width / 2 - this.props.dot.width / 2 + 'px';
     } else {
       this.left = start - this.width;
 
       // reposition box, line, and dot
       this.dom.box.style.left = this.left + 'px';
-      this.dom.line.style.left = (start - this.props.line.width) + 'px';
-      this.dom.dot.style.left = (start - this.props.line.width / 2 - this.props.dot.width / 2) + 'px';
+      this.dom.line.style.left = start - this.props.line.width + 'px';
+      this.dom.dot.style.left =
+        start - this.props.line.width / 2 - this.props.dot.width / 2 + 'px';
     }
-  }
-  else if (align == 'left') {
+  } else if (align == 'left') {
     if (this.options.rtl) {
       this.right = start;
 
       // reposition box, line, and dot
       this.dom.box.style.right = this.right + 'px';
       this.dom.line.style.right = start + 'px';
-      this.dom.dot.style.right = (start + this.props.line.width / 2 - this.props.dot.width / 2) + 'px';
+      this.dom.dot.style.right =
+        start + this.props.line.width / 2 - this.props.dot.width / 2 + 'px';
     } else {
       this.left = start;
 
       // reposition box, line, and dot
       this.dom.box.style.left = this.left + 'px';
       this.dom.line.style.left = start + 'px';
-      this.dom.dot.style.left = (start + this.props.line.width / 2 - this.props.dot.width / 2) + 'px';
+      this.dom.dot.style.left =
+        start + this.props.line.width / 2 - this.props.dot.width / 2 + 'px';
     }
-  }
-  else {
+  } else {
     // default or 'center'
     if (this.options.rtl) {
       this.right = start - this.width / 2;
 
       // reposition box, line, and dot
       this.dom.box.style.right = this.right + 'px';
-      this.dom.line.style.right = (start - this.props.line.width) + 'px';
-      this.dom.dot.style.right = (start - this.props.dot.width / 2) + 'px';
+      this.dom.line.style.right = start - this.props.line.width + 'px';
+      this.dom.dot.style.right = start - this.props.dot.width / 2 + 'px';
     } else {
       this.left = start - this.width / 2;
 
       // reposition box, line, and dot
       this.dom.box.style.left = this.left + 'px';
-      this.dom.line.style.left = (start - this.props.line.width / 2) + 'px';
-      this.dom.dot.style.left = (start - this.props.dot.width / 2) + 'px';
+      this.dom.line.style.left = start - this.props.line.width / 2 + 'px';
+      this.dom.dot.style.left = start - this.props.dot.width / 2 + 'px';
     }
   }
 };
@@ -316,29 +332,30 @@ BoxItem.prototype.repositionX = function() {
  * Reposition the item vertically
  * @Override
  */
-BoxItem.prototype.repositionY = function() {
+BoxItem.prototype.repositionY = function () {
   var orientation = this.options.orientation.item;
   var box = this.dom.box;
   var line = this.dom.line;
   var dot = this.dom.dot;
 
   if (orientation == 'top') {
-    box.style.top     = (this.top || 0) + 'px';
+    box.style.top = (this.top || 0) + 'px';
 
-    line.style.top    = '0';
-    line.style.height = (this.parent.top + this.top + 1) + 'px';
+    line.style.top = '0';
+    line.style.height = this.parent.top + this.top + 1 + 'px';
     line.style.bottom = '';
-  }
-  else { // orientation 'bottom'
+  } else {
+    // orientation 'bottom'
     var itemSetHeight = this.parent.itemSet.props.height; // TODO: this is nasty
-    var lineHeight = itemSetHeight - this.parent.top - this.parent.height + this.top;
+    var lineHeight =
+      itemSetHeight - this.parent.top - this.parent.height + this.top;
 
-    box.style.top     = (this.parent.height - this.top - this.height || 0) + 'px';
-    line.style.top    = (itemSetHeight - lineHeight) + 'px';
+    box.style.top = (this.parent.height - this.top - this.height || 0) + 'px';
+    line.style.top = itemSetHeight - lineHeight + 'px';
     line.style.bottom = '0';
   }
 
-  dot.style.top = (-this.props.dot.height / 2) + 'px';
+  dot.style.top = -this.props.dot.height / 2 + 'px';
 };
 
 /**

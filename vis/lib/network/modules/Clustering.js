@@ -90,11 +90,11 @@ member:
 
 
    =========================================================================== */
-let util = require("../../util");
+let util = require('../../util');
 var NetworkUtil = require('../NetworkUtil').default;
 var Cluster = require('./components/nodes/Cluster').default;
-var Edge = require('./components/Edge').default;  // Only needed for check on type!
-var Node = require('./components/Node').default;  // Only needed for check on type!
+var Edge = require('./components/Edge').default; // Only needed for check on type!
+var Node = require('./components/Node').default; // Only needed for check on type!
 
 /**
  * The clustering engine
@@ -105,26 +105,28 @@ class ClusterEngine {
    */
   constructor(body) {
     this.body = body;
-    this.clusteredNodes = {};  // key: node id, value: { clusterId: <id of cluster>, node: <node instance>}
-    this.clusteredEdges = {};  // key: edge id, value: restore information for given edge
+    this.clusteredNodes = {}; // key: node id, value: { clusterId: <id of cluster>, node: <node instance>}
+    this.clusteredEdges = {}; // key: edge id, value: restore information for given edge
 
     this.options = {};
     this.defaultOptions = {};
     util.extend(this.options, this.defaultOptions);
 
-    this.body.emitter.on('_resetData', () => {this.clusteredNodes = {}; this.clusteredEdges = {};})
+    this.body.emitter.on('_resetData', () => {
+      this.clusteredNodes = {};
+      this.clusteredEdges = {};
+    });
   }
 
   /**
-  *
-  * @param {number} hubsize
-  * @param {Object} options
-  */
+   *
+   * @param {number} hubsize
+   * @param {Object} options
+   */
   clusterByHubsize(hubsize, options) {
     if (hubsize === undefined) {
       hubsize = this._getHubSize();
-    }
-    else if (typeof(hubsize) === "object") {
+    } else if (typeof hubsize === 'object') {
       options = this._checkOptions(hubsize);
       hubsize = this._getHubSize();
     }
@@ -138,12 +140,11 @@ class ClusterEngine {
     }
 
     for (let i = 0; i < nodesToCluster.length; i++) {
-      this.clusterByConnection(nodesToCluster[i],options,true);
+      this.clusterByConnection(nodesToCluster[i], options, true);
     }
 
     this.body.emitter.emit('_dataChanged');
   }
-
 
   /**
    * loop over all nodes, check if they adhere to the condition and cluster if needed.
@@ -151,7 +152,11 @@ class ClusterEngine {
    * @param {boolean} [refreshData=true]
    */
   cluster(options = {}, refreshData = true) {
-    if (options.joinCondition === undefined) {throw new Error("Cannot call clusterByNodeData without a joinCondition function in the options.");}
+    if (options.joinCondition === undefined) {
+      throw new Error(
+        'Cannot call clusterByNodeData without a joinCondition function in the options.'
+      );
+    }
 
     // check if the options object is fine, append if needed
     options = this._checkOptions(options);
@@ -176,7 +181,6 @@ class ClusterEngine {
 
     this._cluster(childNodesObj, childEdgesObj, options, refreshData);
   }
-
 
   /**
    * Cluster all nodes in the network that have only X edges
@@ -212,14 +216,17 @@ class ClusterEngine {
 
         // this node qualifies, we collect its neighbours to start the clustering process.
         if (relevantEdgeCount === edgeCount) {
-          var checkJoinCondition = function(node) {
-            if (options.joinCondition === undefined || options.joinCondition === null) {
+          var checkJoinCondition = function (node) {
+            if (
+              options.joinCondition === undefined ||
+              options.joinCondition === null
+            ) {
               return true;
             }
 
             let clonedOptions = NetworkUtil.cloneOptions(node);
             return options.joinCondition(clonedOptions);
-          }
+          };
 
           let gatheringSuccessful = true;
           for (let j = 0; j < edges.length; j++) {
@@ -239,12 +246,16 @@ class ClusterEngine {
           }
 
           // add to the cluster queue
-          if (Object.keys(childNodesObj).length > 0 && Object.keys(childEdgesObj).length > 0 && gatheringSuccessful === true) {
+          if (
+            Object.keys(childNodesObj).length > 0 &&
+            Object.keys(childEdgesObj).length > 0 &&
+            gatheringSuccessful === true
+          ) {
             /**
              * Search for cluster data that contains any of the node id's
              * @returns {Boolean} true if no joinCondition, otherwise return value of joinCondition
              */
-            var findClusterData = function() {
+            var findClusterData = function () {
               for (let n = 0; n < clusters.length; ++n) {
                 // Search for a cluster containing any of the node id's
                 for (var m in childNodesObj) {
@@ -256,7 +267,6 @@ class ClusterEngine {
 
               return undefined;
             };
-
 
             // If any of the found nodes is part of a cluster found in this method,
             // add the current values to that cluster
@@ -277,7 +287,7 @@ class ClusterEngine {
               }
             } else {
               // Create a new cluster group
-              clusters.push({nodes: childNodesObj, edges: childEdgesObj})
+              clusters.push({ nodes: childNodesObj, edges: childEdgesObj });
             }
           }
         }
@@ -285,7 +295,7 @@ class ClusterEngine {
     }
 
     for (let i = 0; i < clusters.length; i++) {
-      this._cluster(clusters[i].nodes, clusters[i].edges, options, false)
+      this._cluster(clusters[i].nodes, clusters[i].edges, options, false);
     }
 
     if (refreshData === true) {
@@ -299,7 +309,7 @@ class ClusterEngine {
    * @param {boolean} [refreshData=true]
    */
   clusterOutliers(options, refreshData = true) {
-    this.clusterByEdgeCount(1,options,refreshData);
+    this.clusterByEdgeCount(1, options, refreshData);
   }
 
   /**
@@ -308,32 +318,39 @@ class ClusterEngine {
    * @param {boolean} [refreshData=true]
    */
   clusterBridges(options, refreshData = true) {
-    this.clusterByEdgeCount(2,options,refreshData);
+    this.clusterByEdgeCount(2, options, refreshData);
   }
 
-
-
   /**
-  * suck all connected nodes of a node into the node.
-  * @param {Node.id} nodeId
-  * @param {Object} options
-  * @param {boolean} [refreshData=true]
-  */
+   * suck all connected nodes of a node into the node.
+   * @param {Node.id} nodeId
+   * @param {Object} options
+   * @param {boolean} [refreshData=true]
+   */
   clusterByConnection(nodeId, options, refreshData = true) {
     // kill conditions
-    if (nodeId === undefined)             {throw new Error("No nodeId supplied to clusterByConnection!");}
-    if (this.body.nodes[nodeId] === undefined) {throw new Error("The nodeId given to clusterByConnection does not exist!");}
+    if (nodeId === undefined) {
+      throw new Error('No nodeId supplied to clusterByConnection!');
+    }
+    if (this.body.nodes[nodeId] === undefined) {
+      throw new Error(
+        'The nodeId given to clusterByConnection does not exist!'
+      );
+    }
 
     let node = this.body.nodes[nodeId];
     options = this._checkOptions(options, node);
-    if (options.clusterNodeProperties.x === undefined) {options.clusterNodeProperties.x = node.x;}
-    if (options.clusterNodeProperties.y === undefined) {options.clusterNodeProperties.y = node.y;}
+    if (options.clusterNodeProperties.x === undefined) {
+      options.clusterNodeProperties.x = node.x;
+    }
+    if (options.clusterNodeProperties.y === undefined) {
+      options.clusterNodeProperties.y = node.y;
+    }
     if (options.clusterNodeProperties.fixed === undefined) {
       options.clusterNodeProperties.fixed = {};
       options.clusterNodeProperties.fixed.x = node.options.fixed.x;
       options.clusterNodeProperties.fixed.y = node.options.fixed.y;
     }
-
 
     let childNodesObj = {};
     let childEdgesObj = {};
@@ -353,34 +370,42 @@ class ClusterEngine {
             if (options.joinCondition === undefined) {
               childEdgesObj[edge.id] = edge;
               childNodesObj[childNodeId] = this.body.nodes[childNodeId];
-            }
-            else {
+            } else {
               // clone the options and insert some additional parameters that could be interesting.
-              let childClonedOptions = NetworkUtil.cloneOptions(this.body.nodes[childNodeId]);
-              if (options.joinCondition(parentClonedOptions, childClonedOptions) === true) {
+              let childClonedOptions = NetworkUtil.cloneOptions(
+                this.body.nodes[childNodeId]
+              );
+              if (
+                options.joinCondition(
+                  parentClonedOptions,
+                  childClonedOptions
+                ) === true
+              ) {
                 childEdgesObj[edge.id] = edge;
                 childNodesObj[childNodeId] = this.body.nodes[childNodeId];
               }
             }
-          }
-          else {
+          } else {
             // swallow the edge if it is self-referencing.
             childEdgesObj[edge.id] = edge;
           }
         }
       }
     }
-    var childNodeIDs = Object.keys(childNodesObj).map(function(childNode){
+    var childNodeIDs = Object.keys(childNodesObj).map(function (childNode) {
       return childNodesObj[childNode].id;
-    })
+    });
 
     for (childNode in childNodesObj) {
       if (!childNodesObj.hasOwnProperty(childNode)) continue;
 
       var childNode = childNodesObj[childNode];
-      for (var y=0; y < childNode.edges.length; y++){
+      for (var y = 0; y < childNode.edges.length; y++) {
         var childEdge = childNode.edges[y];
-        if (childNodeIDs.indexOf(this._getConnectedId(childEdge,childNode.id)) > -1){
+        if (
+          childNodeIDs.indexOf(this._getConnectedId(childEdge, childNode.id)) >
+          -1
+        ) {
           childEdgesObj[childEdge.id] = childEdge;
         }
       }
@@ -388,18 +413,22 @@ class ClusterEngine {
     this._cluster(childNodesObj, childEdgesObj, options, refreshData);
   }
 
-
   /**
-  * This function creates the edges that will be attached to the cluster
-  * It looks for edges that are connected to the nodes from the "outside' of the cluster.
-  *
-  * @param {{Node.id: vis.Node}} childNodesObj
-  * @param {{vis.Edge.id: vis.Edge}} childEdgesObj
-  * @param {Object} clusterNodeProperties
-  * @param {Object} clusterEdgeProperties
-  * @private
-  */
-  _createClusterEdges (childNodesObj, childEdgesObj, clusterNodeProperties, clusterEdgeProperties) {
+   * This function creates the edges that will be attached to the cluster
+   * It looks for edges that are connected to the nodes from the "outside' of the cluster.
+   *
+   * @param {{Node.id: vis.Node}} childNodesObj
+   * @param {{vis.Edge.id: vis.Edge}} childEdgesObj
+   * @param {Object} clusterNodeProperties
+   * @param {Object} clusterEdgeProperties
+   * @private
+   */
+  _createClusterEdges(
+    childNodesObj,
+    childEdgesObj,
+    clusterNodeProperties,
+    clusterEdgeProperties
+  ) {
     let edge, childNodeId, childNode, toId, fromId, otherNodeId;
 
     // loop over all child nodes and their edges to find edges going out of the cluster
@@ -418,15 +447,14 @@ class ClusterEngine {
           // self-referencing edges will be added to the "hidden" list
           if (edge.toId == edge.fromId) {
             childEdgesObj[edge.id] = edge;
-          }
-          else {
+          } else {
             // set up the from and to.
-            if (edge.toId == childNodeId) { // this is a double equals because ints and strings can be interchanged here.
+            if (edge.toId == childNodeId) {
+              // this is a double equals because ints and strings can be interchanged here.
               toId = clusterNodeProperties.id;
               fromId = edge.fromId;
               otherNodeId = fromId;
-            }
-            else {
+            } else {
               toId = edge.toId;
               fromId = clusterNodeProperties.id;
               otherNodeId = toId;
@@ -435,12 +463,11 @@ class ClusterEngine {
 
           // Only edges from the cluster outwards are being replaced.
           if (childNodesObj[otherNodeId] === undefined) {
-            createEdges.push({edge: edge, fromId: fromId, toId: toId});
+            createEdges.push({ edge: edge, fromId: fromId, toId: toId });
           }
         }
       }
     }
-
 
     //
     // Here we actually create the replacement edges.
@@ -457,15 +484,19 @@ class ClusterEngine {
      * @param {vis.Edge} createdEdge
      * @returns {vis.Edge}
      */
-    var getNewEdge = function(createdEdge) {
+    var getNewEdge = function (createdEdge) {
       for (let j = 0; j < newEdges.length; j++) {
         let newEdge = newEdges[j];
 
         // We replace both to and from edges with a single cluster edge
-        let matchToDirection   = (createdEdge.fromId === newEdge.fromId && createdEdge.toId === newEdge.toId);
-        let matchFromDirection = (createdEdge.fromId === newEdge.toId && createdEdge.toId === newEdge.fromId);
+        let matchToDirection =
+          createdEdge.fromId === newEdge.fromId &&
+          createdEdge.toId === newEdge.toId;
+        let matchFromDirection =
+          createdEdge.fromId === newEdge.toId &&
+          createdEdge.toId === newEdge.fromId;
 
-        if (matchToDirection || matchFromDirection ) {
+        if (matchToDirection || matchFromDirection) {
           return newEdge;
         }
       }
@@ -473,11 +504,10 @@ class ClusterEngine {
       return null;
     };
 
-
     for (let j = 0; j < createEdges.length; j++) {
       let createdEdge = createEdges[j];
-      let edge        = createdEdge.edge;
-      let newEdge     = getNewEdge(createdEdge);
+      let edge = createdEdge.edge;
+      let newEdge = getNewEdge(createdEdge);
 
       if (newEdge === null) {
         // Create a clustered edge for this connection
@@ -485,7 +515,8 @@ class ClusterEngine {
           createdEdge.fromId,
           createdEdge.toId,
           edge,
-          clusterEdgeProperties);
+          clusterEdgeProperties
+        );
 
         newEdges.push(newEdge);
       } else {
@@ -497,35 +528,39 @@ class ClusterEngine {
 
       // hide the replaced edge
       this._backupEdgeOptions(edge);
-      edge.setOptions({physics:false});
+      edge.setOptions({ physics: false });
     }
   }
 
   /**
-  * This function checks the options that can be supplied to the different cluster functions
-  * for certain fields and inserts defaults if needed
-  * @param {Object} options
-  * @returns {*}
-  * @private
-  */
+   * This function checks the options that can be supplied to the different cluster functions
+   * for certain fields and inserts defaults if needed
+   * @param {Object} options
+   * @returns {*}
+   * @private
+   */
   _checkOptions(options = {}) {
-    if (options.clusterEdgeProperties === undefined)    {options.clusterEdgeProperties = {};}
-    if (options.clusterNodeProperties === undefined)    {options.clusterNodeProperties = {};}
+    if (options.clusterEdgeProperties === undefined) {
+      options.clusterEdgeProperties = {};
+    }
+    if (options.clusterNodeProperties === undefined) {
+      options.clusterNodeProperties = {};
+    }
 
     return options;
   }
 
   /**
-  *
-  * @param {Object}    childNodesObj         | object with node objects, id as keys, same as childNodes except it also contains a source node
-  * @param {Object}    childEdgesObj         | object with edge objects, id as keys
-  * @param {Array}     options               | object with {clusterNodeProperties, clusterEdgeProperties, processProperties}
-  * @param {boolean}   refreshData | when true, do not wrap up
-  * @private
-  */
+   *
+   * @param {Object}    childNodesObj         | object with node objects, id as keys, same as childNodes except it also contains a source node
+   * @param {Object}    childEdgesObj         | object with edge objects, id as keys
+   * @param {Array}     options               | object with {clusterNodeProperties, clusterEdgeProperties, processProperties}
+   * @param {boolean}   refreshData | when true, do not wrap up
+   * @private
+   */
   _cluster(childNodesObj, childEdgesObj, options, refreshData = true) {
     // Remove nodes which are already clustered
-    var tmpNodesToRemove = []
+    var tmpNodesToRemove = [];
     for (let nodeId in childNodesObj) {
       if (childNodesObj.hasOwnProperty(nodeId)) {
         if (this.clusteredNodes[nodeId] !== undefined) {
@@ -539,12 +574,22 @@ class ClusterEngine {
     }
 
     // kill condition: no nodes don't bother
-    if (Object.keys(childNodesObj).length == 0) {return;}
+    if (Object.keys(childNodesObj).length == 0) {
+      return;
+    }
 
     // allow clusters of 1 if options allow
-    if (Object.keys(childNodesObj).length == 1 && options.clusterNodeProperties.allowSingleNodeCluster != true) {return;}
+    if (
+      Object.keys(childNodesObj).length == 1 &&
+      options.clusterNodeProperties.allowSingleNodeCluster != true
+    ) {
+      return;
+    }
 
-    let clusterNodeProperties = util.deepExtend({},options.clusterNodeProperties);
+    let clusterNodeProperties = util.deepExtend(
+      {},
+      options.clusterNodeProperties
+    );
 
     // construct the clusterNodeProperties
     if (options.processProperties !== undefined) {
@@ -562,27 +607,37 @@ class ClusterEngine {
       for (let edgeId in childEdgesObj) {
         if (childEdgesObj.hasOwnProperty(edgeId)) {
           // these cluster edges will be removed on creation of the cluster.
-          if (edgeId.substr(0, 12) !== "clusterEdge:") {
-            let clonedOptions = NetworkUtil.cloneOptions(childEdgesObj[edgeId], 'edge');
+          if (edgeId.substr(0, 12) !== 'clusterEdge:') {
+            let clonedOptions = NetworkUtil.cloneOptions(
+              childEdgesObj[edgeId],
+              'edge'
+            );
             childEdgesOptions.push(clonedOptions);
           }
         }
       }
 
-      clusterNodeProperties = options.processProperties(clusterNodeProperties, childNodesOptions, childEdgesOptions);
+      clusterNodeProperties = options.processProperties(
+        clusterNodeProperties,
+        childNodesOptions,
+        childEdgesOptions
+      );
       if (!clusterNodeProperties) {
-        throw new Error("The processProperties function does not return properties!");
+        throw new Error(
+          'The processProperties function does not return properties!'
+        );
       }
     }
 
     // check if we have an unique id;
-    if (clusterNodeProperties.id === undefined) {clusterNodeProperties.id = 'cluster:' + util.randomUUID();}
+    if (clusterNodeProperties.id === undefined) {
+      clusterNodeProperties.id = 'cluster:' + util.randomUUID();
+    }
     let clusterId = clusterNodeProperties.id;
 
     if (clusterNodeProperties.label === undefined) {
       clusterNodeProperties.label = 'cluster';
     }
-
 
     // give the clusterNode a position if it does not have one.
     let pos = undefined;
@@ -591,7 +646,9 @@ class ClusterEngine {
       clusterNodeProperties.x = pos.x;
     }
     if (clusterNodeProperties.y === undefined) {
-      if (pos === undefined) {pos = this._getClusterPosition(childNodesObj);}
+      if (pos === undefined) {
+        pos = this._getClusterPosition(childNodesObj);
+      }
       clusterNodeProperties.y = pos.y;
     }
 
@@ -600,7 +657,10 @@ class ClusterEngine {
 
     // create the cluster Node
     // Note that allowSingleNodeCluster, if present, is stored in the options as well
-    let clusterNode = this.body.functions.createNode(clusterNodeProperties, Cluster);
+    let clusterNode = this.body.functions.createNode(
+      clusterNodeProperties,
+      Cluster
+    );
     clusterNode.containedNodes = childNodesObj;
     clusterNode.containedEdges = childEdgesObj;
     // cache a copy from the cluster edge properties if we have to reconnect others later on
@@ -609,7 +669,12 @@ class ClusterEngine {
     // finally put the cluster node into global
     this.body.nodes[clusterNodeProperties.id] = clusterNode;
 
-    this._clusterEdges(childNodesObj, childEdgesObj, clusterNodeProperties, options.clusterEdgeProperties);
+    this._clusterEdges(
+      childNodesObj,
+      childEdgesObj,
+      clusterNodeProperties,
+      options.clusterEdgeProperties
+    );
 
     // set ID to undefined so no duplicates arise
     clusterNodeProperties.id = undefined;
@@ -627,7 +692,7 @@ class ClusterEngine {
    */
   _backupEdgeOptions(edge) {
     if (this.clusteredEdges[edge.id] === undefined) {
-      this.clusteredEdges[edge.id] = {physics: edge.options.physics};
+      this.clusteredEdges[edge.id] = { physics: edge.options.physics };
     }
   }
 
@@ -639,33 +704,31 @@ class ClusterEngine {
   _restoreEdge(edge) {
     let originalOptions = this.clusteredEdges[edge.id];
     if (originalOptions !== undefined) {
-      edge.setOptions({physics: originalOptions.physics});
+      edge.setOptions({ physics: originalOptions.physics });
       delete this.clusteredEdges[edge.id];
     }
   }
 
-
   /**
-  * Check if a node is a cluster.
-  * @param {Node.id} nodeId
-  * @returns {*}
-  */
+   * Check if a node is a cluster.
+   * @param {Node.id} nodeId
+   * @returns {*}
+   */
   isCluster(nodeId) {
     if (this.body.nodes[nodeId] !== undefined) {
       return this.body.nodes[nodeId].isCluster === true;
-    }
-    else {
-      console.log("Node does not exist.");
+    } else {
+      console.log('Node does not exist.');
       return false;
     }
   }
 
   /**
-  * get the position of the cluster node based on what's inside
-  * @param {object} childNodesObj    | object with node objects, id as keys
-  * @returns {{x: number, y: number}}
-  * @private
-  */
+   * get the position of the cluster node based on what's inside
+   * @param {object} childNodesObj    | object with node objects, id as keys
+   * @returns {{x: number, y: number}}
+   * @private
+   */
   _getClusterPosition(childNodesObj) {
     let childKeys = Object.keys(childNodesObj);
     let minX = childNodesObj[childKeys[0]].x;
@@ -681,11 +744,8 @@ class ClusterEngine {
       maxY = node.y > maxY ? node.y : maxY;
     }
 
-
-    return {x: 0.5*(minX + maxX), y: 0.5*(minY + maxY)};
+    return { x: 0.5 * (minX + maxX), y: 0.5 * (minY + maxY) };
   }
-
-
 
   /**
    * Open a cluster by calling this function.
@@ -696,18 +756,22 @@ class ClusterEngine {
   openCluster(clusterNodeId, options, refreshData = true) {
     // kill conditions
     if (clusterNodeId === undefined) {
-      throw new Error("No clusterNodeId supplied to openCluster.");
+      throw new Error('No clusterNodeId supplied to openCluster.');
     }
 
     let clusterNode = this.body.nodes[clusterNodeId];
 
     if (clusterNode === undefined) {
-      throw new Error("The clusterNodeId supplied to openCluster does not exist.");
+      throw new Error(
+        'The clusterNodeId supplied to openCluster does not exist.'
+      );
     }
-    if (clusterNode.isCluster !== true
-     || clusterNode.containedNodes === undefined
-     || clusterNode.containedEdges === undefined) {
-      throw new Error("The node:" + clusterNodeId + " is not a valid cluster.");
+    if (
+      clusterNode.isCluster !== true ||
+      clusterNode.containedNodes === undefined ||
+      clusterNode.containedEdges === undefined
+    ) {
+      throw new Error('The node:' + clusterNodeId + ' is not a valid cluster.');
     }
 
     // Check if current cluster is clustered itself
@@ -716,7 +780,7 @@ class ClusterEngine {
     if (parentIndex >= 0) {
       // Current cluster is clustered; transfer contained nodes and edges to parent
       let parentClusterNodeId = stack[parentIndex];
-      let parentClusterNode   = this.body.nodes[parentClusterNodeId];
+      let parentClusterNode = this.body.nodes[parentClusterNodeId];
 
       // clustering.clusteredNodes and clustering.clusteredEdges remain unchanged
       parentClusterNode._openChildCluster(clusterNodeId);
@@ -730,18 +794,22 @@ class ClusterEngine {
       return;
     }
 
-    // main body 
+    // main body
     let containedNodes = clusterNode.containedNodes;
     let containedEdges = clusterNode.containedEdges;
 
     // allow the user to position the nodes after release.
-    if (options !== undefined && options.releaseFunction !== undefined && typeof options.releaseFunction === 'function') {
+    if (
+      options !== undefined &&
+      options.releaseFunction !== undefined &&
+      typeof options.releaseFunction === 'function'
+    ) {
       let positions = {};
-      let clusterPosition = {x:clusterNode.x, y:clusterNode.y};
+      let clusterPosition = { x: clusterNode.x, y: clusterNode.y };
       for (let nodeId in containedNodes) {
         if (containedNodes.hasOwnProperty(nodeId)) {
           let containedNode = this.body.nodes[nodeId];
-          positions[nodeId] = {x: containedNode.x, y: containedNode.y};
+          positions[nodeId] = { x: containedNode.x, y: containedNode.y };
         }
       }
       let newPositions = options.releaseFunction(clusterPosition, positions);
@@ -750,18 +818,27 @@ class ClusterEngine {
         if (containedNodes.hasOwnProperty(nodeId)) {
           let containedNode = this.body.nodes[nodeId];
           if (newPositions[nodeId] !== undefined) {
-            containedNode.x = (newPositions[nodeId].x === undefined ? clusterNode.x : newPositions[nodeId].x);
-            containedNode.y = (newPositions[nodeId].y === undefined ? clusterNode.y : newPositions[nodeId].y);
+            containedNode.x =
+              newPositions[nodeId].x === undefined
+                ? clusterNode.x
+                : newPositions[nodeId].x;
+            containedNode.y =
+              newPositions[nodeId].y === undefined
+                ? clusterNode.y
+                : newPositions[nodeId].y;
           }
         }
       }
-    }
-    else {
+    } else {
       // copy the position from the cluster
-      util.forEach(containedNodes, function(containedNode) {
+      util.forEach(containedNodes, function (containedNode) {
         // inherit position
-        if (containedNode.options.fixed.x === false) {containedNode.x = clusterNode.x;}
-        if (containedNode.options.fixed.y === false) {containedNode.y = clusterNode.y;}
+        if (containedNode.options.fixed.x === false) {
+          containedNode.x = clusterNode.x;
+        }
+        if (containedNode.options.fixed.y === false) {
+          containedNode.y = clusterNode.y;
+        }
       });
     }
 
@@ -774,7 +851,7 @@ class ClusterEngine {
         containedNode.vx = clusterNode.vx;
         containedNode.vy = clusterNode.vy;
 
-        containedNode.setOptions({physics:true});
+        containedNode.setOptions({ physics: true });
 
         delete this.clusteredNodes[nodeId];
       }
@@ -788,14 +865,14 @@ class ClusterEngine {
 
     // actually handling the deleting.
     for (let i = 0; i < edgesToBeDeleted.length; i++) {
-      let edge         = edgesToBeDeleted[i];
-      let otherNodeId  = this._getConnectedId(edge, clusterNodeId);
-      let otherNode    = this.clusteredNodes[otherNodeId];
+      let edge = edgesToBeDeleted[i];
+      let otherNodeId = this._getConnectedId(edge, clusterNodeId);
+      let otherNode = this.clusteredNodes[otherNodeId];
 
       for (let j = 0; j < edge.clusteringEdgeReplacingIds.length; j++) {
         let transferId = edge.clusteringEdgeReplacingIds[j];
         let transferEdge = this.body.edges[transferId];
-        if (transferEdge === undefined) continue; 
+        if (transferEdge === undefined) continue;
 
         // if the other node is in another cluster, we transfer ownership of this edge to the other cluster
         if (otherNode !== undefined) {
@@ -811,8 +888,7 @@ class ClusterEngine {
           let toId = transferEdge.toId;
           if (transferEdge.toId == otherNodeId) {
             toId = otherNode.clusterId;
-          }
-          else {
+          } else {
             fromId = otherNode.clusterId;
           }
 
@@ -822,8 +898,8 @@ class ClusterEngine {
             toId,
             transferEdge,
             otherCluster.clusterEdgeProperties,
-            {hidden: false, physics: true});
-
+            { hidden: false, physics: true }
+          );
         } else {
           this._restoreEdge(transferEdge);
         }
@@ -858,7 +934,7 @@ class ClusterEngine {
       let containedNodes = this.body.nodes[clusterId].containedNodes;
       for (let nodeId in containedNodes) {
         if (containedNodes.hasOwnProperty(nodeId)) {
-          nodesArray.push(this.body.nodes[nodeId].id)
+          nodesArray.push(this.body.nodes[nodeId].id);
         }
       }
     }
@@ -867,13 +943,13 @@ class ClusterEngine {
   }
 
   /**
-  * Get the stack clusterId's that a certain node resides in. cluster A -> cluster B -> cluster C -> node
-  *
-  * If a node can't be found in the chain, return an empty array.
-  *
-  * @param {string|number} nodeId
-  * @returns {Array}
-  */
+   * Get the stack clusterId's that a certain node resides in. cluster A -> cluster B -> cluster C -> node
+   *
+   * If a node can't be found in the chain, return an empty array.
+   *
+   * @param {string|number} nodeId
+   * @returns {Array}
+   */
   findNode(nodeId) {
     let stack = [];
     let max = 100;
@@ -881,7 +957,7 @@ class ClusterEngine {
     let node;
 
     while (this.clusteredNodes[nodeId] !== undefined && counter < max) {
-      node = this.body.nodes[nodeId]
+      node = this.body.nodes[nodeId];
       if (node === undefined) return [];
       stack.push(node.id);
 
@@ -889,7 +965,7 @@ class ClusterEngine {
       counter++;
     }
 
-    node = this.body.nodes[nodeId]
+    node = this.body.nodes[nodeId];
     if (node === undefined) return [];
     stack.push(node.id);
 
@@ -898,28 +974,42 @@ class ClusterEngine {
   }
 
   /**
-  * Using a clustered nodeId, update with the new options
-  * @param {vis.Edge.id} clusteredNodeId
-  * @param {object} newOptions
-  */
+   * Using a clustered nodeId, update with the new options
+   * @param {vis.Edge.id} clusteredNodeId
+   * @param {object} newOptions
+   */
   updateClusteredNode(clusteredNodeId, newOptions) {
-    if (clusteredNodeId === undefined) {throw new Error("No clusteredNodeId supplied to updateClusteredNode.");}
-    if (newOptions === undefined) {throw new Error("No newOptions supplied to updateClusteredNode.");}
-    if (this.body.nodes[clusteredNodeId] === undefined)   {throw new Error("The clusteredNodeId supplied to updateClusteredNode does not exist.");}
+    if (clusteredNodeId === undefined) {
+      throw new Error('No clusteredNodeId supplied to updateClusteredNode.');
+    }
+    if (newOptions === undefined) {
+      throw new Error('No newOptions supplied to updateClusteredNode.');
+    }
+    if (this.body.nodes[clusteredNodeId] === undefined) {
+      throw new Error(
+        'The clusteredNodeId supplied to updateClusteredNode does not exist.'
+      );
+    }
 
     this.body.nodes[clusteredNodeId].setOptions(newOptions);
     this.body.emitter.emit('_dataChanged');
   }
 
   /**
-  * Using a base edgeId, update all related clustered edges with the new options
-  * @param {vis.Edge.id} startEdgeId
-  * @param {object} newOptions
-  */
+   * Using a base edgeId, update all related clustered edges with the new options
+   * @param {vis.Edge.id} startEdgeId
+   * @param {object} newOptions
+   */
   updateEdge(startEdgeId, newOptions) {
-    if (startEdgeId === undefined) {throw new Error("No startEdgeId supplied to updateEdge.");}
-    if (newOptions === undefined) {throw new Error("No newOptions supplied to updateEdge.");}
-    if (this.body.edges[startEdgeId] === undefined)   {throw new Error("The startEdgeId supplied to updateEdge does not exist.");}
+    if (startEdgeId === undefined) {
+      throw new Error('No startEdgeId supplied to updateEdge.');
+    }
+    if (newOptions === undefined) {
+      throw new Error('No newOptions supplied to updateEdge.');
+    }
+    if (this.body.edges[startEdgeId] === undefined) {
+      throw new Error('The startEdgeId supplied to updateEdge does not exist.');
+    }
 
     let allEdgeIds = this.getClusteredEdges(startEdgeId);
     for (let i = 0; i < allEdgeIds.length; i++) {
@@ -930,16 +1020,20 @@ class ClusterEngine {
   }
 
   /**
-  * Get a stack of clusterEdgeId's (+base edgeid) that a base edge is the same as. cluster edge C -> cluster edge B -> cluster edge A -> base edge(edgeId)
-  * @param {vis.Edge.id} edgeId
-  * @returns {Array.<vis.Edge.id>}
-  */
+   * Get a stack of clusterEdgeId's (+base edgeid) that a base edge is the same as. cluster edge C -> cluster edge B -> cluster edge A -> base edge(edgeId)
+   * @param {vis.Edge.id} edgeId
+   * @returns {Array.<vis.Edge.id>}
+   */
   getClusteredEdges(edgeId) {
     let stack = [];
     let max = 100;
     let counter = 0;
 
-    while (edgeId !== undefined && this.body.edges[edgeId] !== undefined && counter < max) {
+    while (
+      edgeId !== undefined &&
+      this.body.edges[edgeId] !== undefined &&
+      counter < max
+    ) {
       stack.push(this.body.edges[edgeId].id);
       edgeId = this.body.edges[edgeId].edgeReplacedById;
       counter++;
@@ -949,17 +1043,16 @@ class ClusterEngine {
   }
 
   /**
-  * Get the base edge id of clusterEdgeId. cluster edge (clusteredEdgeId) -> cluster edge B -> cluster edge C -> base edge
-  * @param {vis.Edge.id} clusteredEdgeId
-  * @returns {vis.Edge.id} baseEdgeId
-  *
-  * TODO: deprecate in 5.0.0. Method getBaseEdges() is the correct one to use.
-  */
+   * Get the base edge id of clusterEdgeId. cluster edge (clusteredEdgeId) -> cluster edge B -> cluster edge C -> base edge
+   * @param {vis.Edge.id} clusteredEdgeId
+   * @returns {vis.Edge.id} baseEdgeId
+   *
+   * TODO: deprecate in 5.0.0. Method getBaseEdges() is the correct one to use.
+   */
   getBaseEdge(clusteredEdgeId) {
     // Just kludge this by returning the first base edge id found
     return this.getBaseEdges(clusteredEdgeId)[0];
   }
-
 
   /**
    * Get all regular edges for this clustered edge id.
@@ -969,14 +1062,14 @@ class ClusterEngine {
    */
   getBaseEdges(clusteredEdgeId) {
     let IdsToHandle = [clusteredEdgeId];
-    let doneIds     = [];
-    let foundIds    = [];
-    let max     = 100;
+    let doneIds = [];
+    let foundIds = [];
+    let max = 100;
     let counter = 0;
 
     while (IdsToHandle.length > 0 && counter < max) {
       let nextId = IdsToHandle.pop();
-      if (nextId === undefined) continue;     // Paranoia here and onwards
+      if (nextId === undefined) continue; // Paranoia here and onwards
       let nextEdge = this.body.edges[nextId];
       if (nextEdge === undefined) continue;
       counter++;
@@ -992,7 +1085,10 @@ class ClusterEngine {
 
           // Don't add if already handled
           // TODO: never triggers; find a test-case which does
-          if (IdsToHandle.indexOf(replacingIds) !== -1 || doneIds.indexOf(replacingIds) !== -1) {
+          if (
+            IdsToHandle.indexOf(replacingIds) !== -1 ||
+            doneIds.indexOf(replacingIds) !== -1
+          ) {
             continue;
           }
 
@@ -1006,33 +1102,30 @@ class ClusterEngine {
     return foundIds;
   }
 
-
   /**
-  * Get the Id the node is connected to
-  * @param {vis.Edge} edge
-  * @param {Node.id} nodeId
-  * @returns {*}
-  * @private
-  */
+   * Get the Id the node is connected to
+   * @param {vis.Edge} edge
+   * @param {Node.id} nodeId
+   * @returns {*}
+   * @private
+   */
   _getConnectedId(edge, nodeId) {
     if (edge.toId != nodeId) {
       return edge.toId;
-    }
-    else if (edge.fromId != nodeId) {
+    } else if (edge.fromId != nodeId) {
       return edge.fromId;
-    }
-    else {
+    } else {
       return edge.fromId;
     }
   }
 
   /**
-  * We determine how many connections denote an important hub.
-  * We take the mean + 2*std as the important hub size. (Assuming a normal distribution of data, ~2.2%)
-  *
-  * @returns {number}
-  * @private
-  */
+   * We determine how many connections denote an important hub.
+   * We take the mean + 2*std as the important hub size. (Assuming a normal distribution of data, ~2.2%)
+   *
+   * @returns {number}
+   * @private
+   */
   _getHubSize() {
     let average = 0;
     let averageSquared = 0;
@@ -1045,16 +1138,16 @@ class ClusterEngine {
         largestHub = node.edges.length;
       }
       average += node.edges.length;
-      averageSquared += Math.pow(node.edges.length,2);
+      averageSquared += Math.pow(node.edges.length, 2);
       hubCounter += 1;
     }
     average = average / hubCounter;
     averageSquared = averageSquared / hubCounter;
 
-    let variance = averageSquared - Math.pow(average,2);
+    let variance = averageSquared - Math.pow(average, 2);
     let standardDeviation = Math.sqrt(variance);
 
-    let hubThreshold = Math.floor(average + 2*standardDeviation);
+    let hubThreshold = Math.floor(average + 2 * standardDeviation);
 
     // always have at least one to cluster
     if (hubThreshold > largestHub) {
@@ -1063,7 +1156,6 @@ class ClusterEngine {
 
     return hubThreshold;
   }
-
 
   /**
    * Create an edge for the cluster representation.
@@ -1076,7 +1168,13 @@ class ClusterEngine {
    * @returns {Edge} newly created clustered edge
    * @private
    */
-  _createClusteredEdge(fromId, toId, baseEdge, clusterEdgeProperties, extraOptions) {
+  _createClusteredEdge(
+    fromId,
+    toId,
+    baseEdge,
+    clusterEdgeProperties,
+    extraOptions
+  ) {
     // copy the options of the edge we will replace
     let clonedOptions = NetworkUtil.cloneOptions(baseEdge, 'edge');
     // make sure the properties of clusterEdges are superimposed on it
@@ -1084,8 +1182,8 @@ class ClusterEngine {
 
     // set up the edge
     clonedOptions.from = fromId;
-    clonedOptions.to   = toId;
-    clonedOptions.id   = 'clusterEdge:' + util.randomUUID();
+    clonedOptions.to = toId;
+    clonedOptions.id = 'clusterEdge:' + util.randomUUID();
 
     // apply the edge specific options to it if specified
     if (extraOptions !== undefined) {
@@ -1101,7 +1199,6 @@ class ClusterEngine {
 
     return newEdge;
   }
-
 
   /**
    * Add the passed child nodes and edges to the given cluster node.
@@ -1128,7 +1225,7 @@ class ClusterEngine {
     }
 
     if (clusterNode === undefined || clusterNode === null) {
-      throw new Error("_clusterEdges: parameter clusterNode required");
+      throw new Error('_clusterEdges: parameter clusterNode required');
     }
 
     if (clusterEdgeProperties === undefined) {
@@ -1138,7 +1235,12 @@ class ClusterEngine {
 
     // create the new edges that will connect to the cluster.
     // All self-referencing edges will be added to childEdges here.
-    this._createClusterEdges(childNodes, childEdges, clusterNode, clusterEdgeProperties);
+    this._createClusterEdges(
+      childNodes,
+      childEdges,
+      clusterNode,
+      clusterEdgeProperties
+    );
 
     // disable the childEdges
     for (let edgeId in childEdges) {
@@ -1148,7 +1250,7 @@ class ClusterEngine {
           // cache the options before changing
           this._backupEdgeOptions(edge);
           // disable physics and hide the edge
-          edge.setOptions({physics:false});
+          edge.setOptions({ physics: false });
         }
       }
     }
@@ -1156,12 +1258,14 @@ class ClusterEngine {
     // disable the childNodes
     for (let nodeId in childNodes) {
       if (childNodes.hasOwnProperty(nodeId)) {
-        this.clusteredNodes[nodeId] = {clusterId:clusterNode.id, node: this.body.nodes[nodeId]};
-        this.body.nodes[nodeId].setOptions({physics:false});
+        this.clusteredNodes[nodeId] = {
+          clusterId: clusterNode.id,
+          node: this.body.nodes[nodeId],
+        };
+        this.body.nodes[nodeId].setOptions({ physics: false });
       }
     }
   }
-
 
   /**
    * Determine in which cluster given nodeId resides.
@@ -1186,7 +1290,6 @@ class ClusterEngine {
     return this.body.nodes[clusterId];
   }
 
-
   /**
    * Internal helper function for conditionally removing items in array
    *
@@ -1208,7 +1311,6 @@ class ClusterEngine {
 
     return ret;
   }
-
 
   /**
    * Scan all edges for changes in clustering and adjust this if necessary.
@@ -1237,7 +1339,6 @@ class ClusterEngine {
       });
     };
 
-
     //
     // Remove deleted regular nodes from clustering
     //
@@ -1253,7 +1354,7 @@ class ClusterEngine {
     }
 
     // Remove nodes from cluster nodes
-    eachClusterNode(function(clusterNode) {
+    eachClusterNode(function (clusterNode) {
       for (let n = 0; n < deletedNodeIds.length; n++) {
         delete clusterNode.containedNodes[deletedNodeIds[n]];
       }
@@ -1263,7 +1364,6 @@ class ClusterEngine {
     for (let n = 0; n < deletedNodeIds.length; n++) {
       delete this.clusteredNodes[deletedNodeIds[n]];
     }
-
 
     //
     // Remove deleted edges from clustering
@@ -1277,10 +1377,10 @@ class ClusterEngine {
       }
     });
 
-    // Cluster nodes can also contain edges which are not clustered, 
+    // Cluster nodes can also contain edges which are not clustered,
     // i.e. nodes 1-2 within cluster with an edge in between.
     // So the cluster nodes also need to be scanned for invalid edges
-    eachClusterNode(function(clusterNode) {
+    eachClusterNode(function (clusterNode) {
       util.forEach(clusterNode.containedEdges, (edge, edgeId) => {
         if (!edge.endPointsValid() && deletedEdgeIds.indexOf(edgeId) === -1) {
           deletedEdgeIds.push(edgeId);
@@ -1298,14 +1398,14 @@ class ClusterEngine {
         let numValid = 0;
 
         util.forEach(replacedIds, (containedEdgeId) => {
-          let containedEdge   = this.body.edges[containedEdgeId];
+          let containedEdge = this.body.edges[containedEdgeId];
 
           if (containedEdge !== undefined && containedEdge.endPointsValid()) {
             numValid += 1;
           }
         });
 
-        isValid = (numValid > 0);
+        isValid = numValid > 0;
       }
 
       if (!edge.endPointsValid() || !isValid) {
@@ -1320,20 +1420,24 @@ class ClusterEngine {
 
         util.forEach(clusterNode.edges, (edge, m) => {
           if (edge.id === deletedEdgeId) {
-            clusterNode.edges[m] = null;  // Don't want to directly delete here, because in the loop
+            clusterNode.edges[m] = null; // Don't want to directly delete here, because in the loop
             return;
           }
 
-          edge.clusteringEdgeReplacingIds = this._filter(edge.clusteringEdgeReplacingIds, function(id) {
-            return deletedEdgeIds.indexOf(id) === -1;
-          });
+          edge.clusteringEdgeReplacingIds = this._filter(
+            edge.clusteringEdgeReplacingIds,
+            function (id) {
+              return deletedEdgeIds.indexOf(id) === -1;
+            }
+          );
         });
 
         // Clean up the nulls
-        clusterNode.edges = this._filter(clusterNode.edges, function(item) {return item !== null});
+        clusterNode.edges = this._filter(clusterNode.edges, function (item) {
+          return item !== null;
+        });
       });
     });
-
 
     // Remove from cluster list
     util.forEach(deletedEdgeIds, (edgeId) => {
@@ -1347,7 +1451,6 @@ class ClusterEngine {
       delete this.body.edges[edgeId];
     });
 
-
     //
     // Check changed cluster state of edges
     //
@@ -1357,9 +1460,10 @@ class ClusterEngine {
     util.forEach(ids, (edgeId) => {
       let edge = this.body.edges[edgeId];
 
-      let shouldBeClustered = this._isClusteredNode(edge.fromId) || this._isClusteredNode(edge.toId);
+      let shouldBeClustered =
+        this._isClusteredNode(edge.fromId) || this._isClusteredNode(edge.toId);
       if (shouldBeClustered === this._isClusteredEdge(edge.id)) {
-        return;  // all is well
+        return; // all is well
       }
 
       if (shouldBeClustered) {
@@ -1374,18 +1478,17 @@ class ClusterEngine {
           this._clusterEdges(this.body.nodes[edge.toId], edge, clusterTo);
         }
 
-				// TODO: check that it works for both edges clustered
+        // TODO: check that it works for both edges clustered
         //       (This might be paranoia)
       } else {
         // This should not be happening, the state should
         // be properly updated at this point.
-        // 
+        //
         // If it *is* reached during normal operation, then we have to implement
         // undo clustering for this edge here.
         throw new Error('remove edge from clustering not implemented!');
       }
     });
-
 
     // Clusters may be nested to any level. Keep on opening until nothing to open
     var changed = false;
@@ -1394,9 +1497,9 @@ class ClusterEngine {
       let clustersToOpen = [];
 
       // Determine the id's of clusters that need opening
-      eachClusterNode(function(clusterNode) {
+      eachClusterNode(function (clusterNode) {
         let numNodes = Object.keys(clusterNode.containedNodes).length;
-        let allowSingle = (clusterNode.options.allowSingleNodeCluster === true);
+        let allowSingle = clusterNode.options.allowSingleNodeCluster === true;
         if ((allowSingle && numNodes < 1) || (!allowSingle && numNodes < 2)) {
           clustersToOpen.push(clusterNode.id);
         }
@@ -1404,44 +1507,45 @@ class ClusterEngine {
 
       // Open them
       for (let n = 0; n < clustersToOpen.length; ++n) {
-        this.openCluster(clustersToOpen[n], {}, false /* Don't refresh, we're in an refresh/update already */);
+        this.openCluster(
+          clustersToOpen[n],
+          {},
+          false /* Don't refresh, we're in an refresh/update already */
+        );
       }
 
-      continueLoop = (clustersToOpen.length > 0);
+      continueLoop = clustersToOpen.length > 0;
       changed = changed || continueLoop;
     }
 
     if (changed) {
-      this._updateState() // Redo this method (recursion possible! should be safe)
+      this._updateState(); // Redo this method (recursion possible! should be safe)
     }
   }
 
-
- /**
-  * Determine if node with given id is part of a cluster.
-  *
-  * @param {Node.id} nodeId
-  * @return {boolean} true if part of a cluster.
-  */
+  /**
+   * Determine if node with given id is part of a cluster.
+   *
+   * @param {Node.id} nodeId
+   * @return {boolean} true if part of a cluster.
+   */
   _isClusteredNode(nodeId) {
     return this.clusteredNodes[nodeId] !== undefined;
   }
 
-
- /**
-  * Determine if edge with given id is not visible due to clustering.
-  *
-  * An edge is considered clustered if:
-  * - it is directly replaced by a clustering edge
-  * - any of its connecting nodes is in a cluster
-  *
-  * @param {vis.Edge.id} edgeId
-  * @return {boolean} true if part of a cluster.
-  */
+  /**
+   * Determine if edge with given id is not visible due to clustering.
+   *
+   * An edge is considered clustered if:
+   * - it is directly replaced by a clustering edge
+   * - any of its connecting nodes is in a cluster
+   *
+   * @param {vis.Edge.id} edgeId
+   * @return {boolean} true if part of a cluster.
+   */
   _isClusteredEdge(edgeId) {
     return this.clusteredEdges[edgeId] !== undefined;
   }
 }
-
 
 export default ClusterEngine;

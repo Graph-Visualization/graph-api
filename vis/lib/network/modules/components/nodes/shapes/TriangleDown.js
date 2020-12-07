@@ -1,6 +1,6 @@
 'use strict';
 
-import ShapeBase from '../util/ShapeBase'
+import ShapeBase from '../util/ShapeBase';
 
 /**
  * A downward facing Triangle Node/Cluster shape.
@@ -14,7 +14,7 @@ class TriangleDown extends ShapeBase {
    * @param {Label} labelModule
    */
   constructor(options, body, labelModule) {
-    super(options, body, labelModule)
+    super(options, body, labelModule);
   }
 
   /**
@@ -37,7 +37,7 @@ class TriangleDown extends ShapeBase {
    * @returns {number}
    */
   distanceToBorder(ctx, angle) {
-    return this._distanceToBorder(ctx,angle);
+    return this._distanceToBorder(ctx, angle);
   }
 }
 

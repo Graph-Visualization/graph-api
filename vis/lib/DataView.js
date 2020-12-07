@@ -11,7 +11,7 @@ var DataSet = require('./DataSet');
  *
  * @constructor DataView
  */
-function DataView (data, options) {
+function DataView(data, options) {
   this._data = null;
   this._ids = {}; // ids of the items currently in memory (just contains a boolean true)
   this.length = 0; // number of items in the DataView
@@ -44,7 +44,7 @@ DataView.prototype.setData = function (data) {
     }
 
     // trigger a remove of all items in memory
-    ids = this._data.getIds({filter: this._options && this._options.filter});
+    ids = this._data.getIds({ filter: this._options && this._options.filter });
     items = [];
 
     for (i = 0, len = ids.length; i < len; i++) {
@@ -53,25 +53,26 @@ DataView.prototype.setData = function (data) {
 
     this._ids = {};
     this.length = 0;
-    this._trigger('remove', {items: ids, oldData: items});
+    this._trigger('remove', { items: ids, oldData: items });
   }
 
   this._data = data;
 
   if (this._data) {
     // update fieldId
-    this._fieldId = this._options.fieldId ||
-        (this._data && this._data.options && this._data.options.fieldId) ||
-        'id';
+    this._fieldId =
+      this._options.fieldId ||
+      (this._data && this._data.options && this._data.options.fieldId) ||
+      'id';
 
     // trigger an add of all added items
-    ids = this._data.getIds({filter: this._options && this._options.filter});
+    ids = this._data.getIds({ filter: this._options && this._options.filter });
     for (i = 0, len = ids.length; i < len; i++) {
       id = ids[i];
       this._ids[id] = true;
     }
     this.length = ids.length;
-    this._trigger('add', {items: ids});
+    this._trigger('add', { items: ids });
 
     // subscribe to new dataset
     if (this._data.on) {
@@ -86,12 +87,14 @@ DataView.prototype.setData = function (data) {
  */
 DataView.prototype.refresh = function () {
   var id, i, len;
-  var ids = this._data.getIds({filter: this._options && this._options.filter}),
-      oldIds = Object.keys(this._ids),
-      newIds = {},
-      addedIds = [],
-      removedIds = [],
-      removedItems = [];
+  var ids = this._data.getIds({
+      filter: this._options && this._options.filter,
+    }),
+    oldIds = Object.keys(this._ids),
+    newIds = {},
+    addedIds = [],
+    removedIds = [],
+    removedItems = [];
 
   // check for additions
   for (i = 0, len = ids.length; i < len; i++) {
@@ -117,10 +120,10 @@ DataView.prototype.refresh = function () {
 
   // trigger events
   if (addedIds.length) {
-    this._trigger('add', {items: addedIds});
+    this._trigger('add', { items: addedIds });
   }
   if (removedIds.length) {
-    this._trigger('remove', {items: removedIds, oldData: removedItems});
+    this._trigger('remove', { items: removedIds, oldData: removedItems });
   }
 };
 
@@ -159,7 +162,8 @@ DataView.prototype.refresh = function () {
  * @param {Array} args
  * @return {DataSet|DataView}
  */
-DataView.prototype.get = function (args) {  // eslint-disable-line no-unused-vars
+DataView.prototype.get = function (args) {
+  // eslint-disable-line no-unused-vars
   var me = this;
 
   // parse the arguments
@@ -167,11 +171,10 @@ DataView.prototype.get = function (args) {  // eslint-disable-line no-unused-var
   var firstType = util.getType(arguments[0]);
   if (firstType == 'String' || firstType == 'Number' || firstType == 'Array') {
     // get(id(s) [, options] [, data])
-    ids = arguments[0];  // can be a single id or an array with ids
+    ids = arguments[0]; // can be a single id or an array with ids
     options = arguments[1];
     data = arguments[2];
-  }
-  else {
+  } else {
     // get([, options] [, data])
     options = arguments[0];
     data = arguments[1];
@@ -184,7 +187,7 @@ DataView.prototype.get = function (args) {  // eslint-disable-line no-unused-var
   if (this._options.filter && options && options.filter) {
     viewOptions.filter = function (item) {
       return me._options.filter(item) && options.filter(item);
-    }
+    };
   }
 
   // build up the call to the linked data set
@@ -217,22 +220,19 @@ DataView.prototype.getIds = function (options) {
       if (defaultFilter) {
         filter = function (item) {
           return defaultFilter(item) && options.filter(item);
-        }
-      }
-      else {
+        };
+      } else {
         filter = options.filter;
       }
-    }
-    else {
+    } else {
       filter = defaultFilter;
     }
 
     ids = this._data.getIds({
       filter: filter,
-      order: options && options.order
+      order: options && options.order,
     });
-  }
-  else {
+  } else {
     ids = [];
   }
 
@@ -250,7 +250,7 @@ DataView.prototype.getIds = function (options) {
  *                                  a field name or custom sort function.
  * @return {Object[]} mappedItems
  */
-DataView.prototype.map = function (callback,options) {
+DataView.prototype.map = function (callback, options) {
   var mappedItems = [];
   if (this._data) {
     var defaultFilter = this._options.filter;
@@ -260,22 +260,19 @@ DataView.prototype.map = function (callback,options) {
       if (defaultFilter) {
         filter = function (item) {
           return defaultFilter(item) && options.filter(item);
-        }
-      }
-      else {
+        };
+      } else {
         filter = options.filter;
       }
-    }
-    else {
+    } else {
       filter = defaultFilter;
     }
 
-    mappedItems = this._data.map(callback,{
+    mappedItems = this._data.map(callback, {
       filter: filter,
-      order: options && options.order
+      order: options && options.order,
     });
-  }
-  else {
+  } else {
     mappedItems = [];
   }
 
@@ -308,11 +305,11 @@ DataView.prototype._onEvent = function (event, params, senderId) {
   var i, len, id, item;
   var ids = params && params.items;
   var addedIds = [],
-      updatedIds = [],
-      removedIds = [],
-      oldItems = [],
-      updatedItems = [],
-      removedItems = [];
+    updatedIds = [],
+    removedIds = [],
+    oldItems = [],
+    updatedItems = [],
+    removedItems = [];
 
   if (ids && this._data) {
     switch (event) {
@@ -341,19 +338,16 @@ DataView.prototype._onEvent = function (event, params, senderId) {
               updatedIds.push(id);
               updatedItems.push(params.data[i]);
               oldItems.push(params.oldData[i]);
-            }
-            else {
+            } else {
               this._ids[id] = true;
               addedIds.push(id);
             }
-          }
-          else {
+          } else {
             if (this._ids[id]) {
               delete this._ids[id];
               removedIds.push(id);
               removedItems.push(params.oldData[i]);
-            }
-            else {
+            } else {
               // nothing interesting for me :-(
             }
           }
@@ -378,13 +372,21 @@ DataView.prototype._onEvent = function (event, params, senderId) {
     this.length += addedIds.length - removedIds.length;
 
     if (addedIds.length) {
-      this._trigger('add', {items: addedIds}, senderId);
+      this._trigger('add', { items: addedIds }, senderId);
     }
     if (updatedIds.length) {
-      this._trigger('update', {items: updatedIds, oldData: oldItems, data: updatedItems}, senderId);
+      this._trigger(
+        'update',
+        { items: updatedIds, oldData: oldItems, data: updatedItems },
+        senderId
+      );
     }
     if (removedIds.length) {
-      this._trigger('remove', {items: removedIds, oldData: removedItems}, senderId);
+      this._trigger(
+        'remove',
+        { items: removedIds, oldData: removedItems },
+        senderId
+      );
     }
   }
 };

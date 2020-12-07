@@ -11,7 +11,7 @@ var locales = require('../locales');
  * @constructor CurrentTime
  * @extends Component
  */
-function CurrentTime (body, options) {
+function CurrentTime(body, options) {
   this.body = body;
 
   // default options
@@ -21,7 +21,7 @@ function CurrentTime (body, options) {
 
     moment: moment,
     locales: locales,
-    locale: 'en'
+    locale: 'en',
   };
   this.options = util.extend({}, this.defaultOptions);
   this.offset = 0;
@@ -37,7 +37,7 @@ CurrentTime.prototype = new Component();
  * Create the HTML DOM for the current time bar
  * @private
  */
-CurrentTime.prototype._create = function() {
+CurrentTime.prototype._create = function () {
   var bar = document.createElement('div');
   bar.className = 'vis-current-time';
   bar.style.position = 'absolute';
@@ -62,10 +62,14 @@ CurrentTime.prototype.destroy = function () {
  * @param {Object} options  Available parameters:
  *                          {boolean} [showCurrentTime]
  */
-CurrentTime.prototype.setOptions = function(options) {
+CurrentTime.prototype.setOptions = function (options) {
   if (options) {
     // copy all options that we know
-    util.selectiveExtend(['rtl', 'showCurrentTime', 'moment', 'locale', 'locales'], this.options, options);
+    util.selectiveExtend(
+      ['rtl', 'showCurrentTime', 'moment', 'locale', 'locales'],
+      this.options,
+      options
+    );
   }
 };
 
@@ -73,7 +77,7 @@ CurrentTime.prototype.setOptions = function(options) {
  * Repaint the component
  * @return {boolean} Returns true if the component is resized
  */
-CurrentTime.prototype.redraw = function() {
+CurrentTime.prototype.redraw = function () {
   if (this.options.showCurrentTime) {
     var parent = this.body.dom.backgroundVertical;
     if (this.bar.parentNode != parent) {
@@ -92,12 +96,21 @@ CurrentTime.prototype.redraw = function() {
     var locale = this.options.locales[this.options.locale];
     if (!locale) {
       if (!this.warned) {
-        console.log('WARNING: options.locales[\'' + this.options.locale + '\'] not found. See http://visjs.org/docs/timeline/#Localization');
+        console.log(
+          "WARNING: options.locales['" +
+            this.options.locale +
+            "'] not found. See http://visjs.org/docs/timeline/#Localization"
+        );
         this.warned = true;
       }
       locale = this.options.locales['en']; // fall back on english when not available
     }
-    var title = locale.current + ' ' + locale.time + ': ' + now.format('dddd, MMMM Do YYYY, H:mm:ss');
+    var title =
+      locale.current +
+      ' ' +
+      locale.time +
+      ': ' +
+      now.format('dddd, MMMM Do YYYY, H:mm:ss');
     title = title.charAt(0).toUpperCase() + title.substring(1);
 
     if (this.options.rtl) {
@@ -106,8 +119,7 @@ CurrentTime.prototype.redraw = function() {
       this.bar.style.left = x + 'px';
     }
     this.bar.title = title;
-  }
-  else {
+  } else {
     // remove the line from the DOM
     if (this.bar.parentNode) {
       this.bar.parentNode.removeChild(this.bar);
@@ -121,19 +133,19 @@ CurrentTime.prototype.redraw = function() {
 /**
  * Start auto refreshing the current time bar
  */
-CurrentTime.prototype.start = function() {
+CurrentTime.prototype.start = function () {
   var me = this;
 
-    /**
-     *  Updates the current time.
-     */
-    function update () {
+  /**
+   *  Updates the current time.
+   */
+  function update() {
     me.stop();
 
     // determine interval to refresh
     var scale = me.body.range.conversion(me.body.domProps.center.width).scale;
     var interval = 1 / scale / 10;
-    if (interval < 30)   interval = 30;
+    if (interval < 30) interval = 30;
     if (interval > 1000) interval = 1000;
 
     me.redraw();
@@ -149,7 +161,7 @@ CurrentTime.prototype.start = function() {
 /**
  * Stop auto refreshing the current time bar
  */
-CurrentTime.prototype.stop = function() {
+CurrentTime.prototype.stop = function () {
   if (this.currentTimeTimer !== undefined) {
     clearTimeout(this.currentTimeTimer);
     delete this.currentTimeTimer;
@@ -162,7 +174,7 @@ CurrentTime.prototype.stop = function() {
  * @param {Date | string | number} time     A Date, unix timestamp, or
  *                                          ISO date string.
  */
-CurrentTime.prototype.setCurrentTime = function(time) {
+CurrentTime.prototype.setCurrentTime = function (time) {
   var t = util.convert(time, 'Date').valueOf();
   var now = new Date().valueOf();
   this.offset = t - now;
@@ -173,7 +185,7 @@ CurrentTime.prototype.setCurrentTime = function(time) {
  * Get the current time.
  * @return {Date} Returns the current time.
  */
-CurrentTime.prototype.getCurrentTime = function() {
+CurrentTime.prototype.getCurrentTime = function () {
   return new Date(new Date().valueOf() + this.offset);
 };
 

@@ -52,16 +52,16 @@ class HierarchicalRepulsionSolver {
 
           var steepness = 0.05;
           if (distance < nodeDistance) {
-            repulsingForce = -Math.pow(steepness * distance, 2) + Math.pow(steepness * nodeDistance, 2);
-          }
-          else {
+            repulsingForce =
+              -Math.pow(steepness * distance, 2) +
+              Math.pow(steepness * nodeDistance, 2);
+          } else {
             repulsingForce = 0;
           }
           // normalize force with
           if (distance === 0) {
             distance = 0.01;
-          }
-          else {
+          } else {
             repulsingForce = repulsingForce / distance;
           }
           fx = dx * repulsingForce;
@@ -76,6 +76,5 @@ class HierarchicalRepulsionSolver {
     }
   }
 }
-
 
 export default HierarchicalRepulsionSolver;

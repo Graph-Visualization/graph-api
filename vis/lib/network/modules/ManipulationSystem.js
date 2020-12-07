@@ -1,4 +1,3 @@
-
 let util = require('../../util');
 let Hammer = require('../../module/hammer');
 let hammerUtil = require('../../hammerUtil');
@@ -21,15 +20,15 @@ class ManipulationSystem {
 
     this.editMode = false;
     this.manipulationDiv = undefined;
-    this.editModeDiv     = undefined;
-    this.closeDiv        = undefined;
+    this.editModeDiv = undefined;
+    this.closeDiv = undefined;
 
     this.manipulationHammers = [];
     this.temporaryUIFunctions = {};
     this.temporaryEventFunctions = [];
 
     this.touchTime = 0;
-    this.temporaryIds = {nodes: [], edges:[]};
+    this.temporaryIds = { nodes: [], edges: [] };
     this.guiEnabled = false;
     this.inMode = false;
     this.selectedControlNode = undefined;
@@ -44,21 +43,26 @@ class ManipulationSystem {
       editEdge: true,
       deleteNode: true,
       deleteEdge: true,
-      controlNodeStyle:{
-        shape:'dot',
-        size:6,
-        color: {background: '#ff0000', border: '#3c3c3c', highlight: {background: '#07f968', border: '#3c3c3c'}},
+      controlNodeStyle: {
+        shape: 'dot',
+        size: 6,
+        color: {
+          background: '#ff0000',
+          border: '#3c3c3c',
+          highlight: { background: '#07f968', border: '#3c3c3c' },
+        },
         borderWidth: 2,
-        borderWidthSelected: 2
-      }
+        borderWidthSelected: 2,
+      },
     };
     util.extend(this.options, this.defaultOptions);
 
-    this.body.emitter.on('destroy',     () => {this._clean();});
-    this.body.emitter.on('_dataChanged',this._restore.bind(this));
-    this.body.emitter.on('_resetData',  this._restore.bind(this));
+    this.body.emitter.on('destroy', () => {
+      this._clean();
+    });
+    this.body.emitter.on('_dataChanged', this._restore.bind(this));
+    this.body.emitter.on('_resetData', this._restore.bind(this));
   }
-
 
   /**
    * If something changes in the data during editing, switch back to the initial datamanipulation state and close all edit modes.
@@ -68,8 +72,7 @@ class ManipulationSystem {
     if (this.inMode !== false) {
       if (this.options.initiallyActive === true) {
         this.enableEditMode();
-      }
-      else {
+      } else {
         this.disableEditMode();
       }
     }
@@ -84,15 +87,22 @@ class ManipulationSystem {
    */
   setOptions(options, allOptions, globalOptions) {
     if (allOptions !== undefined) {
-      if (allOptions.locale !== undefined)  {this.options.locale = allOptions.locale}   else {this.options.locale = globalOptions.locale;}
-      if (allOptions.locales !== undefined) {this.options.locales = allOptions.locales} else {this.options.locales = globalOptions.locales;}
+      if (allOptions.locale !== undefined) {
+        this.options.locale = allOptions.locale;
+      } else {
+        this.options.locale = globalOptions.locale;
+      }
+      if (allOptions.locales !== undefined) {
+        this.options.locales = allOptions.locales;
+      } else {
+        this.options.locales = globalOptions.locales;
+      }
     }
 
     if (options !== undefined) {
       if (typeof options === 'boolean') {
         this.options.enabled = options;
-      }
-      else {
+      } else {
         this.options.enabled = true;
         util.deepExtend(this.options, options);
       }
@@ -103,7 +113,6 @@ class ManipulationSystem {
     }
   }
 
-
   /**
    * Enable or disable edit-mode. Draws the DOM required and cleans up after itself.
    *
@@ -112,12 +121,10 @@ class ManipulationSystem {
   toggleEditMode() {
     if (this.editMode === true) {
       this.disableEditMode();
-    }
-    else {
+    } else {
       this.enableEditMode();
     }
   }
-
 
   /**
    * Enables Edit Mode
@@ -168,12 +175,11 @@ class ManipulationSystem {
       this.manipulationDiv.style.display = 'block';
       this.closeDiv.style.display = 'block';
 
-      let selectedNodeCount  = this.selectionHandler._getSelectedNodeCount();
-      let selectedEdgeCount  = this.selectionHandler._getSelectedEdgeCount();
+      let selectedNodeCount = this.selectionHandler._getSelectedNodeCount();
+      let selectedEdgeCount = this.selectionHandler._getSelectedEdgeCount();
       let selectedTotalCount = selectedNodeCount + selectedEdgeCount;
       let locale = this.options.locales[this.options.locale];
       let needSeperator = false;
-
 
       if (this.options.addNode !== false) {
         this._createAddNodeButton(locale);
@@ -188,15 +194,21 @@ class ManipulationSystem {
         this._createAddEdgeButton(locale);
       }
 
-      if (selectedNodeCount === 1 && typeof this.options.editNode === 'function') {
+      if (
+        selectedNodeCount === 1 &&
+        typeof this.options.editNode === 'function'
+      ) {
         if (needSeperator === true) {
           this._createSeperator(2);
         } else {
           needSeperator = true;
         }
         this._createEditNodeButton(locale);
-      }
-      else if (selectedEdgeCount === 1 && selectedNodeCount === 0 && this.options.editEdge !== false) {
+      } else if (
+        selectedEdgeCount === 1 &&
+        selectedNodeCount === 0 &&
+        this.options.editEdge !== false
+      ) {
         if (needSeperator === true) {
           this._createSeperator(3);
         } else {
@@ -212,8 +224,10 @@ class ManipulationSystem {
             this._createSeperator(4);
           }
           this._createDeleteButton(locale);
-        }
-        else if (selectedNodeCount === 0 && this.options.deleteEdge !== false) {
+        } else if (
+          selectedNodeCount === 0 &&
+          this.options.deleteEdge !== false
+        ) {
           if (needSeperator === true) {
             this._createSeperator(4);
           }
@@ -225,14 +239,15 @@ class ManipulationSystem {
       this._bindHammerToDiv(this.closeDiv, this.toggleEditMode.bind(this));
 
       // refresh this bar based on what has been selected
-      this._temporaryBindEvent('select', this.showManipulatorToolbar.bind(this));
+      this._temporaryBindEvent(
+        'select',
+        this.showManipulatorToolbar.bind(this)
+      );
     }
 
     // redraw to show any possible changes
     this.body.emitter.emit('_redraw');
-
   }
-
 
   /**
    * Create the toolbar for adding Nodes
@@ -252,7 +267,9 @@ class ManipulationSystem {
       this.manipulationDOM = {};
       this._createBackButton(locale);
       this._createSeperator();
-      this._createDescription(locale['addDescription'] || this.options.locales['en']['addDescription']);
+      this._createDescription(
+        locale['addDescription'] || this.options.locales['en']['addDescription']
+      );
 
       // bind the close button
       this._bindHammerToDiv(this.closeDiv, this.toggleEditMode.bind(this));
@@ -283,29 +300,36 @@ class ManipulationSystem {
 
           if (this.options.editNode.length === 2) {
             this.options.editNode(data, (finalizedData) => {
-              if (finalizedData !== null && finalizedData !== undefined && this.inMode === 'editNode') { // if for whatever reason the mode has changes (due to dataset change) disregard the callback) {
+              if (
+                finalizedData !== null &&
+                finalizedData !== undefined &&
+                this.inMode === 'editNode'
+              ) {
+                // if for whatever reason the mode has changes (due to dataset change) disregard the callback) {
                 this.body.data.nodes.getDataSet().update(finalizedData);
               }
               this.showManipulatorToolbar();
             });
+          } else {
+            throw new Error(
+              'The function for edit does not support two arguments (data, callback)'
+            );
           }
-          else {
-            throw new Error('The function for edit does not support two arguments (data, callback)');
-          }
+        } else {
+          alert(
+            this.options.locales[this.options.locale]['editClusterError'] ||
+              this.options.locales['en']['editClusterError']
+          );
         }
-        else {
-          alert(this.options.locales[this.options.locale]['editClusterError'] || this.options.locales['en']['editClusterError']);
-        }
+      } else {
+        throw new Error(
+          'No function has been configured to handle the editing of nodes.'
+        );
       }
-      else {
-        throw new Error('No function has been configured to handle the editing of nodes.');
-      }
-    }
-    else {
+    } else {
       this.showManipulatorToolbar();
     }
   }
-
 
   /**
    * create the toolbar to connect nodes
@@ -325,18 +349,21 @@ class ManipulationSystem {
       this.manipulationDOM = {};
       this._createBackButton(locale);
       this._createSeperator();
-      this._createDescription(locale['edgeDescription'] || this.options.locales['en']['edgeDescription']);
+      this._createDescription(
+        locale['edgeDescription'] ||
+          this.options.locales['en']['edgeDescription']
+      );
 
       // bind the close button
       this._bindHammerToDiv(this.closeDiv, this.toggleEditMode.bind(this));
     }
 
     // temporarily overload functions
-    this._temporaryBindUI('onTouch',    this._handleConnect.bind(this));
-    this._temporaryBindUI('onDragEnd',  this._finishConnect.bind(this));
-    this._temporaryBindUI('onDrag',     this._dragControlNode.bind(this));
-    this._temporaryBindUI('onRelease',  this._finishConnect.bind(this));
-    this._temporaryBindUI('onDragStart',this._dragStartEdge.bind(this));
+    this._temporaryBindUI('onTouch', this._handleConnect.bind(this));
+    this._temporaryBindUI('onDragEnd', this._finishConnect.bind(this));
+    this._temporaryBindUI('onDrag', this._dragControlNode.bind(this));
+    this._temporaryBindUI('onRelease', this._finishConnect.bind(this));
+    this._temporaryBindUI('onDragStart', this._dragStartEdge.bind(this));
     this._temporaryBindUI('onHold', () => {});
   }
 
@@ -353,7 +380,10 @@ class ManipulationSystem {
     this._clean();
 
     this.inMode = 'editEdge';
-    if (typeof this.options.editEdge === 'object' && typeof this.options.editEdge.editWithoutDrag === "function") {
+    if (
+      typeof this.options.editEdge === 'object' &&
+      typeof this.options.editEdge.editWithoutDrag === 'function'
+    ) {
       this.edgeBeingEditedId = this.selectionHandler.getSelectedEdges()[0];
       if (this.edgeBeingEditedId !== undefined) {
         var edge = this.body.edges[this.edgeBeingEditedId];
@@ -366,7 +396,10 @@ class ManipulationSystem {
       this.manipulationDOM = {};
       this._createBackButton(locale);
       this._createSeperator();
-      this._createDescription(locale['editEdgeDescription'] || this.options.locales['en']['editEdgeDescription']);
+      this._createDescription(
+        locale['editEdgeDescription'] ||
+          this.options.locales['en']['editEdgeDescription']
+      );
 
       // bind the close button
       this._bindHammerToDiv(this.closeDiv, this.toggleEditMode.bind(this));
@@ -389,13 +422,16 @@ class ManipulationSystem {
       this.body.nodeIndices.push(controlNodeTo.id);
 
       // temporarily overload UI functions, cleaned up automatically because of _temporaryBindUI
-      this._temporaryBindUI('onTouch', this._controlNodeTouch.bind(this));    // used to get the position
-      this._temporaryBindUI('onTap', () => {});                             // disabled
-      this._temporaryBindUI('onHold', () => {});                             // disabled
-      this._temporaryBindUI('onDragStart', this._controlNodeDragStart.bind(this));// used to select control node
-      this._temporaryBindUI('onDrag', this._controlNodeDrag.bind(this));     // used to drag control node
-      this._temporaryBindUI('onDragEnd', this._controlNodeDragEnd.bind(this));  // used to connect or revert control nodes
-      this._temporaryBindUI('onMouseMove', () => {});                             // disabled
+      this._temporaryBindUI('onTouch', this._controlNodeTouch.bind(this)); // used to get the position
+      this._temporaryBindUI('onTap', () => {}); // disabled
+      this._temporaryBindUI('onHold', () => {}); // disabled
+      this._temporaryBindUI(
+        'onDragStart',
+        this._controlNodeDragStart.bind(this)
+      ); // used to select control node
+      this._temporaryBindUI('onDrag', this._controlNodeDrag.bind(this)); // used to drag control node
+      this._temporaryBindUI('onDragEnd', this._controlNodeDragEnd.bind(this)); // used to connect or revert control nodes
+      this._temporaryBindUI('onMouseMove', () => {}); // disabled
 
       // create function to position control nodes correctly on movement
       // automatically cleaned up because we use the temporary bind
@@ -412,8 +448,7 @@ class ManipulationSystem {
       });
 
       this.body.emitter.emit('_redraw');
-    }
-    else {
+    } else {
       this.showManipulatorToolbar();
     }
   }
@@ -437,7 +472,10 @@ class ManipulationSystem {
     if (selectedNodes.length > 0) {
       for (let i = 0; i < selectedNodes.length; i++) {
         if (this.body.nodes[selectedNodes[i]].isCluster === true) {
-          alert(this.options.locales[this.options.locale]['deleteClusterError'] || this.options.locales['en']['deleteClusterError']);
+          alert(
+            this.options.locales[this.options.locale]['deleteClusterError'] ||
+              this.options.locales['en']['deleteClusterError']
+          );
           return;
         }
       }
@@ -445,43 +483,43 @@ class ManipulationSystem {
       if (typeof this.options.deleteNode === 'function') {
         deleteFunction = this.options.deleteNode;
       }
-    }
-    else if (selectedEdges.length > 0) {
+    } else if (selectedEdges.length > 0) {
       if (typeof this.options.deleteEdge === 'function') {
         deleteFunction = this.options.deleteEdge;
       }
     }
 
     if (typeof deleteFunction === 'function') {
-      let data = {nodes: selectedNodes, edges: selectedEdges};
+      let data = { nodes: selectedNodes, edges: selectedEdges };
       if (deleteFunction.length === 2) {
         deleteFunction(data, (finalizedData) => {
-          if (finalizedData !== null && finalizedData !== undefined && this.inMode === 'delete') { // if for whatever reason the mode has changes (due to dataset change) disregard the callback) {
+          if (
+            finalizedData !== null &&
+            finalizedData !== undefined &&
+            this.inMode === 'delete'
+          ) {
+            // if for whatever reason the mode has changes (due to dataset change) disregard the callback) {
             this.body.data.edges.getDataSet().remove(finalizedData.edges);
             this.body.data.nodes.getDataSet().remove(finalizedData.nodes);
             this.body.emitter.emit('startSimulation');
             this.showManipulatorToolbar();
-          }
-          else {
+          } else {
             this.body.emitter.emit('startSimulation');
             this.showManipulatorToolbar();
           }
         });
+      } else {
+        throw new Error(
+          'The function for delete does not support two arguments (data, callback)'
+        );
       }
-      else {
-        throw new Error('The function for delete does not support two arguments (data, callback)')
-      }
-    }
-    else {
+    } else {
       this.body.data.edges.getDataSet().remove(selectedEdges);
       this.body.data.nodes.getDataSet().remove(selectedNodes);
       this.body.emitter.emit('startSimulation');
       this.showManipulatorToolbar();
     }
   }
-
-
-
 
   //********************************************** PRIVATE ***************************************//
 
@@ -497,19 +535,16 @@ class ManipulationSystem {
       this._createWrappers();
       if (this.editMode === false) {
         this._createEditButton();
-      }
-      else {
+      } else {
         this.showManipulatorToolbar();
       }
-    }
-    else {
+    } else {
       this._removeManipulationDOM();
 
       // disable the gui
       this.guiEnabled = false;
     }
   }
-
 
   /**
    * create the div overlays that contain the DOM
@@ -522,8 +557,7 @@ class ManipulationSystem {
       this.manipulationDiv.className = 'vis-manipulation';
       if (this.editMode === true) {
         this.manipulationDiv.style.display = 'block';
-      }
-      else {
+      } else {
         this.manipulationDiv.style.display = 'none';
       }
       this.canvas.frame.appendChild(this.manipulationDiv);
@@ -535,13 +569,11 @@ class ManipulationSystem {
       this.editModeDiv.className = 'vis-edit-mode';
       if (this.editMode === true) {
         this.editModeDiv.style.display = 'none';
-      }
-      else {
+      } else {
         this.editModeDiv.style.display = 'block';
       }
       this.canvas.frame.appendChild(this.editModeDiv);
     }
-
 
     // container for the close div button
     if (this.closeDiv === undefined) {
@@ -552,7 +584,6 @@ class ManipulationSystem {
     }
   }
 
-
   /**
    * generate a new target node. Used for creating new edges and editing edges
    *
@@ -561,7 +592,7 @@ class ManipulationSystem {
    * @returns {Node}
    * @private
    */
-  _getNewTargetNode(x,y) {
+  _getNewTargetNode(x, y) {
     let controlNodeStyle = util.deepExtend({}, this.options.controlNodeStyle);
 
     controlNodeStyle.id = 'targetNode' + util.randomUUID();
@@ -572,11 +603,10 @@ class ManipulationSystem {
 
     // we have to define the bounding box in order for the nodes to be drawn immediately
     let node = this.body.functions.createNode(controlNodeStyle);
-    node.shape.boundingBox = {left: x, right:x, top:y, bottom:y};
+    node.shape.boundingBox = { left: x, right: x, top: y, bottom: y };
 
     return node;
   }
-
 
   /**
    * Create the edit button
@@ -591,16 +621,18 @@ class ManipulationSystem {
     // empty the editModeDiv
     util.recursiveDOMDelete(this.editModeDiv);
 
-
     // create the contents for the editMode button
     let locale = this.options.locales[this.options.locale];
-    let button = this._createButton('editMode', 'vis-button vis-edit vis-edit-mode', locale['edit'] || this.options.locales['en']['edit']);
+    let button = this._createButton(
+      'editMode',
+      'vis-button vis-edit vis-edit-mode',
+      locale['edit'] || this.options.locales['en']['edit']
+    );
     this.editModeDiv.appendChild(button);
 
     // bind a hammer listener to the button, calling the function toggleEditMode.
     this._bindHammerToDiv(button, this.toggleEditMode.bind(this));
   }
-
 
   /**
    * this function cleans up after everything this module does. Temporary elements, functions and events are removed, physics restored, hammers removed.
@@ -632,7 +664,6 @@ class ManipulationSystem {
     this.body.emitter.emit('restorePhysics');
   }
 
-
   /**
    * Each dom element has it's own hammer. They are stored in this.manipulationHammers. This cleans them up.
    * @private
@@ -646,7 +677,6 @@ class ManipulationSystem {
       this.manipulationHammers = [];
     }
   }
-
 
   /**
    * Remove all DOM elements created by this module.
@@ -662,9 +692,15 @@ class ManipulationSystem {
     util.recursiveDOMDelete(this.closeDiv);
 
     // remove the manipulation divs
-    if (this.manipulationDiv) {this.canvas.frame.removeChild(this.manipulationDiv);}
-    if (this.editModeDiv)     {this.canvas.frame.removeChild(this.editModeDiv);}
-    if (this.closeDiv)        {this.canvas.frame.removeChild(this.closeDiv);}
+    if (this.manipulationDiv) {
+      this.canvas.frame.removeChild(this.manipulationDiv);
+    }
+    if (this.editModeDiv) {
+      this.canvas.frame.removeChild(this.editModeDiv);
+    }
+    if (this.closeDiv) {
+      this.canvas.frame.removeChild(this.closeDiv);
+    }
 
     // set the references to undefined
     this.manipulationDiv = undefined;
@@ -672,16 +708,20 @@ class ManipulationSystem {
     this.closeDiv = undefined;
   }
 
-
   /**
    * create a seperator line. the index is to differentiate in the manipulation dom
    * @param {number} [index=1]
    * @private
    */
   _createSeperator(index = 1) {
-    this.manipulationDOM['seperatorLineDiv' + index] = document.createElement('div');
-    this.manipulationDOM['seperatorLineDiv' + index].className = 'vis-separator-line';
-    this.manipulationDiv.appendChild(this.manipulationDOM['seperatorLineDiv' + index]);
+    this.manipulationDOM['seperatorLineDiv' + index] = document.createElement(
+      'div'
+    );
+    this.manipulationDOM['seperatorLineDiv' + index].className =
+      'vis-separator-line';
+    this.manipulationDiv.appendChild(
+      this.manipulationDOM['seperatorLineDiv' + index]
+    );
   }
 
   // ----------------------    DOM functions for buttons    --------------------------//
@@ -692,7 +732,11 @@ class ManipulationSystem {
    * @private
    */
   _createAddNodeButton(locale) {
-    let button = this._createButton('addNode', 'vis-button vis-add', locale['addNode'] || this.options.locales['en']['addNode']);
+    let button = this._createButton(
+      'addNode',
+      'vis-button vis-add',
+      locale['addNode'] || this.options.locales['en']['addNode']
+    );
     this.manipulationDiv.appendChild(button);
     this._bindHammerToDiv(button, this.addNodeMode.bind(this));
   }
@@ -703,7 +747,11 @@ class ManipulationSystem {
    * @private
    */
   _createAddEdgeButton(locale) {
-    let button = this._createButton('addEdge', 'vis-button vis-connect',  locale['addEdge'] || this.options.locales['en']['addEdge']);
+    let button = this._createButton(
+      'addEdge',
+      'vis-button vis-connect',
+      locale['addEdge'] || this.options.locales['en']['addEdge']
+    );
     this.manipulationDiv.appendChild(button);
     this._bindHammerToDiv(button, this.addEdgeMode.bind(this));
   }
@@ -714,7 +762,11 @@ class ManipulationSystem {
    * @private
    */
   _createEditNodeButton(locale) {
-    let button = this._createButton('editNode', 'vis-button vis-edit', locale['editNode'] || this.options.locales['en']['editNode']);
+    let button = this._createButton(
+      'editNode',
+      'vis-button vis-edit',
+      locale['editNode'] || this.options.locales['en']['editNode']
+    );
     this.manipulationDiv.appendChild(button);
     this._bindHammerToDiv(button, this.editNode.bind(this));
   }
@@ -725,7 +777,11 @@ class ManipulationSystem {
    * @private
    */
   _createEditEdgeButton(locale) {
-    let button = this._createButton('editEdge', 'vis-button vis-edit',  locale['editEdge'] || this.options.locales['en']['editEdge']);
+    let button = this._createButton(
+      'editEdge',
+      'vis-button vis-edit',
+      locale['editEdge'] || this.options.locales['en']['editEdge']
+    );
     this.manipulationDiv.appendChild(button);
     this._bindHammerToDiv(button, this.editEdgeMode.bind(this));
   }
@@ -742,7 +798,11 @@ class ManipulationSystem {
     } else {
       deleteBtnClass = 'vis-button vis-delete';
     }
-    let button = this._createButton('delete', deleteBtnClass, locale['del'] || this.options.locales['en']['del']);
+    let button = this._createButton(
+      'delete',
+      deleteBtnClass,
+      locale['del'] || this.options.locales['en']['del']
+    );
     this.manipulationDiv.appendChild(button);
     this._bindHammerToDiv(button, this.deleteSelected.bind(this));
   }
@@ -753,7 +813,11 @@ class ManipulationSystem {
    * @private
    */
   _createBackButton(locale) {
-    let button = this._createButton('back', 'vis-button vis-back', locale['back'] || this.options.locales['en']['back']);
+    let button = this._createButton(
+      'back',
+      'vis-button vis-back',
+      locale['back'] || this.options.locales['en']['back']
+    );
     this.manipulationDiv.appendChild(button);
     this._bindHammerToDiv(button, this.showManipulatorToolbar.bind(this));
   }
@@ -768,14 +832,15 @@ class ManipulationSystem {
    * @private
    */
   _createButton(id, className, label, labelClassName = 'vis-label') {
-
-    this.manipulationDOM[id+'Div'] = document.createElement('div');
-    this.manipulationDOM[id+'Div'].className = className;
-    this.manipulationDOM[id+'Label'] = document.createElement('div');
-    this.manipulationDOM[id+'Label'].className = labelClassName;
-    this.manipulationDOM[id+'Label'].innerHTML = label;
-    this.manipulationDOM[id+'Div'].appendChild(this.manipulationDOM[id+'Label']);
-    return this.manipulationDOM[id+'Div'];
+    this.manipulationDOM[id + 'Div'] = document.createElement('div');
+    this.manipulationDOM[id + 'Div'].className = className;
+    this.manipulationDOM[id + 'Label'] = document.createElement('div');
+    this.manipulationDOM[id + 'Label'].className = labelClassName;
+    this.manipulationDOM[id + 'Label'].innerHTML = label;
+    this.manipulationDOM[id + 'Div'].appendChild(
+      this.manipulationDOM[id + 'Label']
+    );
+    return this.manipulationDOM[id + 'Div'];
   }
 
   /**
@@ -798,7 +863,10 @@ class ManipulationSystem {
    * @private
    */
   _temporaryBindEvent(event, newFunction) {
-    this.temporaryEventFunctions.push({event:event, boundFunction:newFunction});
+    this.temporaryEventFunctions.push({
+      event: event,
+      boundFunction: newFunction,
+    });
     this.body.emitter.on(event, newFunction);
   }
 
@@ -810,11 +878,17 @@ class ManipulationSystem {
    */
   _temporaryBindUI(UIfunctionName, newFunction) {
     if (this.body.eventListeners[UIfunctionName] !== undefined) {
-      this.temporaryUIFunctions[UIfunctionName] = this.body.eventListeners[UIfunctionName];
+      this.temporaryUIFunctions[UIfunctionName] = this.body.eventListeners[
+        UIfunctionName
+      ];
       this.body.eventListeners[UIfunctionName] = newFunction;
-    }
-    else {
-      throw new Error('This UI function does not exist. Typo? You tried: ' + UIfunctionName + ' possible are: ' + JSON.stringify(Object.keys(this.body.eventListeners)));
+    } else {
+      throw new Error(
+        'This UI function does not exist. Typo? You tried: ' +
+          UIfunctionName +
+          ' possible are: ' +
+          JSON.stringify(Object.keys(this.body.eventListeners))
+      );
     }
   }
 
@@ -826,7 +900,9 @@ class ManipulationSystem {
   _unbindTemporaryUIs() {
     for (let functionName in this.temporaryUIFunctions) {
       if (this.temporaryUIFunctions.hasOwnProperty(functionName)) {
-        this.body.eventListeners[functionName] = this.temporaryUIFunctions[functionName];
+        this.body.eventListeners[functionName] = this.temporaryUIFunctions[
+          functionName
+        ];
         delete this.temporaryUIFunctions[functionName];
       }
     }
@@ -858,7 +934,6 @@ class ManipulationSystem {
     this.manipulationHammers.push(hammer);
   }
 
-
   /**
    * Neatly clean up temporary edges and nodes
    * @private
@@ -868,18 +943,26 @@ class ManipulationSystem {
     for (let i = 0; i < this.temporaryIds.edges.length; i++) {
       this.body.edges[this.temporaryIds.edges[i]].disconnect();
       delete this.body.edges[this.temporaryIds.edges[i]];
-      let indexTempEdge = this.body.edgeIndices.indexOf(this.temporaryIds.edges[i]);
-      if (indexTempEdge !== -1) {this.body.edgeIndices.splice(indexTempEdge,1);}
+      let indexTempEdge = this.body.edgeIndices.indexOf(
+        this.temporaryIds.edges[i]
+      );
+      if (indexTempEdge !== -1) {
+        this.body.edgeIndices.splice(indexTempEdge, 1);
+      }
     }
 
     // _clean temporary nodes
     for (let i = 0; i < this.temporaryIds.nodes.length; i++) {
       delete this.body.nodes[this.temporaryIds.nodes[i]];
-      let indexTempNode = this.body.nodeIndices.indexOf(this.temporaryIds.nodes[i]);
-      if (indexTempNode !== -1) {this.body.nodeIndices.splice(indexTempNode,1);}
+      let indexTempNode = this.body.nodeIndices.indexOf(
+        this.temporaryIds.nodes[i]
+      );
+      if (indexTempNode !== -1) {
+        this.body.nodeIndices.splice(indexTempNode, 1);
+      }
     }
 
-    this.temporaryIds = {nodes: [], edges: []};
+    this.temporaryIds = { nodes: [], edges: [] };
   }
 
   // ------------------------------------------ EDIT EDGE FUNCTIONS -----------------------------------------//
@@ -892,20 +975,20 @@ class ManipulationSystem {
   _controlNodeTouch(event) {
     this.selectionHandler.unselectAll();
     this.lastTouch = this.body.functions.getPointer(event.center);
-    this.lastTouch.translation = util.extend({},this.body.view.translation); // copy the object
+    this.lastTouch.translation = util.extend({}, this.body.view.translation); // copy the object
   }
-
 
   /**
    * the drag start is used to mark one of the control nodes as selected.
    * @param {Event}  event   The event
    * @private
    */
-  _controlNodeDragStart(event) {  // eslint-disable-line no-unused-vars
+  _controlNodeDragStart(event) {
+    // eslint-disable-line no-unused-vars
     let pointer = this.lastTouch;
     let pointerObj = this.selectionHandler._pointerToPositionObject(pointer);
     let from = this.body.nodes[this.temporaryIds.nodes[0]];
-    let to   = this.body.nodes[this.temporaryIds.nodes[1]];
+    let to = this.body.nodes[this.temporaryIds.nodes[1]];
     let edge = this.body.edges[this.edgeBeingEditedId];
     this.selectedControlNode = undefined;
 
@@ -915,15 +998,14 @@ class ManipulationSystem {
     if (fromSelect === true) {
       this.selectedControlNode = from;
       edge.edgeType.from = from;
-    }
-    else if (toSelect === true) {
+    } else if (toSelect === true) {
       this.selectedControlNode = to;
       edge.edgeType.to = to;
     }
 
     // we use the selection to find the node that is being dragged. We explicitly select it here.
     if (this.selectedControlNode !== undefined) {
-      this.selectionHandler.selectObject(this.selectedControlNode)
+      this.selectionHandler.selectObject(this.selectedControlNode);
     }
 
     this.body.emitter.emit('_redraw');
@@ -941,16 +1023,17 @@ class ManipulationSystem {
     if (this.selectedControlNode !== undefined) {
       this.selectedControlNode.x = pos.x;
       this.selectedControlNode.y = pos.y;
-    }
-    else {
+    } else {
       // if the drag was not started properly because the click started outside the network div, start it now.
       let diffX = pointer.x - this.lastTouch.x;
       let diffY = pointer.y - this.lastTouch.y;
-      this.body.view.translation = {x:this.lastTouch.translation.x + diffX, y:this.lastTouch.translation.y + diffY};
+      this.body.view.translation = {
+        x: this.lastTouch.translation.x + diffX,
+        y: this.lastTouch.translation.y + diffY,
+      };
     }
     this.body.emitter.emit('_redraw');
   }
-
 
   /**
    * connecting or restoring the control nodes.
@@ -968,9 +1051,11 @@ class ManipulationSystem {
 
     // we use the selection to find the node that is being dragged. We explicitly DEselect the control node here.
     this.selectionHandler.unselectAll();
-    let overlappingNodeIds = this.selectionHandler._getAllNodesOverlappingWith(pointerObj);
+    let overlappingNodeIds = this.selectionHandler._getAllNodesOverlappingWith(
+      pointerObj
+    );
     let node = undefined;
-    for (let i = overlappingNodeIds.length-1; i >= 0; i--) {
+    for (let i = overlappingNodeIds.length - 1; i >= 0; i--) {
       if (overlappingNodeIds[i] !== this.selectedControlNode.id) {
         node = this.body.nodes[overlappingNodeIds[i]];
         break;
@@ -979,19 +1064,19 @@ class ManipulationSystem {
     // perform the connection
     if (node !== undefined && this.selectedControlNode !== undefined) {
       if (node.isCluster === true) {
-        alert(this.options.locales[this.options.locale]['createEdgeError'] || this.options.locales['en']['createEdgeError'])
-      }
-      else {
+        alert(
+          this.options.locales[this.options.locale]['createEdgeError'] ||
+            this.options.locales['en']['createEdgeError']
+        );
+      } else {
         let from = this.body.nodes[this.temporaryIds.nodes[0]];
         if (this.selectedControlNode.id === from.id) {
           this._performEditEdge(node.id, edge.to.id);
-        }
-        else {
+        } else {
           this._performEditEdge(edge.from.id, node.id);
         }
       }
-    }
-    else {
+    } else {
       edge.updateEdgeType();
       this.body.emitter.emit('restorePhysics');
     }
@@ -1000,8 +1085,6 @@ class ManipulationSystem {
   }
 
   // ------------------------------------ END OF EDIT EDGE FUNCTIONS -----------------------------------------//
-
-
 
   // ------------------------------------------- ADD EDGE FUNCTIONS -----------------------------------------//
   /**
@@ -1015,18 +1098,20 @@ class ManipulationSystem {
     // check to avoid double fireing of this function.
     if (new Date().valueOf() - this.touchTime > 100) {
       this.lastTouch = this.body.functions.getPointer(event.center);
-      this.lastTouch.translation = util.extend({},this.body.view.translation); // copy the object
+      this.lastTouch.translation = util.extend({}, this.body.view.translation); // copy the object
 
       let pointer = this.lastTouch;
       let node = this.selectionHandler.getNodeAt(pointer);
 
       if (node !== undefined) {
         if (node.isCluster === true) {
-          alert(this.options.locales[this.options.locale]['createEdgeError'] || this.options.locales['en']['createEdgeError'])
-        }
-        else {
+          alert(
+            this.options.locales[this.options.locale]['createEdgeError'] ||
+              this.options.locales['en']['createEdgeError']
+          );
+        } else {
           // create a node the temporary line can look at
-          let targetNode = this._getNewTargetNode(node.x,node.y);
+          let targetNode = this._getNewTargetNode(node.x, node.y);
           this.body.nodes[targetNode.id] = targetNode;
           this.body.nodeIndices.push(targetNode.id);
 
@@ -1039,8 +1124,8 @@ class ManipulationSystem {
             smooth: {
               enabled: true,
               type: 'continuous',
-              roundness: 0.5
-            }
+              roundness: 0.5,
+            },
           });
           this.body.edges[connectionEdge.id] = connectionEdge;
           this.body.edgeIndices.push(connectionEdge.id);
@@ -1065,15 +1150,15 @@ class ManipulationSystem {
       targetNode.x = this.canvas._XconvertDOMtoCanvas(pointer.x);
       targetNode.y = this.canvas._YconvertDOMtoCanvas(pointer.y);
       this.body.emitter.emit('_redraw');
-    }
-    else {
+    } else {
       let diffX = pointer.x - this.lastTouch.x;
       let diffY = pointer.y - this.lastTouch.y;
-      this.body.view.translation = {x:this.lastTouch.translation.x + diffX, y:this.lastTouch.translation.y + diffY};
+      this.body.view.translation = {
+        x: this.lastTouch.translation.x + diffX,
+        y: this.lastTouch.translation.y + diffY,
+      };
     }
-
   }
-
 
   /**
    * Connect the new edge to the target if one exists, otherwise remove temp line
@@ -1091,9 +1176,11 @@ class ManipulationSystem {
     }
 
     // get the overlapping node but NOT the temporary node;
-    let overlappingNodeIds = this.selectionHandler._getAllNodesOverlappingWith(pointerObj);
+    let overlappingNodeIds = this.selectionHandler._getAllNodesOverlappingWith(
+      pointerObj
+    );
     let node = undefined;
-    for (let i = overlappingNodeIds.length-1; i >= 0; i--) {
+    for (let i = overlappingNodeIds.length - 1; i >= 0; i--) {
       // if the node id is NOT a temporary node, accept the node.
       if (this.temporaryIds.nodes.indexOf(overlappingNodeIds[i]) === -1) {
         node = this.body.nodes[overlappingNodeIds[i]];
@@ -1107,20 +1194,23 @@ class ManipulationSystem {
     // perform the connection
     if (node !== undefined) {
       if (node.isCluster === true) {
-        alert(this.options.locales[this.options.locale]['createEdgeError'] || this.options.locales['en']['createEdgeError']);
-      }
-      else {
-        if (this.body.nodes[connectFromId] !== undefined && this.body.nodes[node.id] !== undefined) {
+        alert(
+          this.options.locales[this.options.locale]['createEdgeError'] ||
+            this.options.locales['en']['createEdgeError']
+        );
+      } else {
+        if (
+          this.body.nodes[connectFromId] !== undefined &&
+          this.body.nodes[node.id] !== undefined
+        ) {
           this._performAddEdge(connectFromId, node.id);
         }
       }
     }
 
-
     // No need to do _generateclickevent('dragEnd') here, the regular dragEnd event fires.
     this.body.emitter.emit('_redraw');
   }
-
 
   /**
    *
@@ -1129,11 +1219,16 @@ class ManipulationSystem {
    */
   _dragStartEdge(event) {
     let pointer = this.lastTouch;
-    this.selectionHandler._generateClickEvent('dragStart', event, pointer, undefined, true);
+    this.selectionHandler._generateClickEvent(
+      'dragStart',
+      event,
+      pointer,
+      undefined,
+      true
+    );
   }
 
   // --------------------------------------- END OF ADD EDGE FUNCTIONS -------------------------------------//
-
 
   // ------------------------------ Performing all the actual data manipulation ------------------------//
 
@@ -1148,29 +1243,33 @@ class ManipulationSystem {
       id: util.randomUUID(),
       x: clickData.pointer.canvas.x,
       y: clickData.pointer.canvas.y,
-      label: 'new'
+      label: 'new',
     };
 
     if (typeof this.options.addNode === 'function') {
       if (this.options.addNode.length === 2) {
         this.options.addNode(defaultData, (finalizedData) => {
-          if (finalizedData !== null && finalizedData !== undefined && this.inMode === 'addNode') { // if for whatever reason the mode has changes (due to dataset change) disregard the callback
+          if (
+            finalizedData !== null &&
+            finalizedData !== undefined &&
+            this.inMode === 'addNode'
+          ) {
+            // if for whatever reason the mode has changes (due to dataset change) disregard the callback
             this.body.data.nodes.getDataSet().add(finalizedData);
             this.showManipulatorToolbar();
           }
         });
-      }
-      else {
+      } else {
         this.showManipulatorToolbar();
-        throw new Error('The function for add does not support two arguments (data,callback)');
+        throw new Error(
+          'The function for add does not support two arguments (data,callback)'
+        );
       }
-    }
-    else {
+    } else {
       this.body.data.nodes.getDataSet().add(defaultData);
       this.showManipulatorToolbar();
     }
   }
-
 
   /**
    * connect two nodes with a new edge.
@@ -1180,22 +1279,27 @@ class ManipulationSystem {
    * @private
    */
   _performAddEdge(sourceNodeId, targetNodeId) {
-    let defaultData = {from: sourceNodeId, to: targetNodeId};
+    let defaultData = { from: sourceNodeId, to: targetNodeId };
     if (typeof this.options.addEdge === 'function') {
       if (this.options.addEdge.length === 2) {
         this.options.addEdge(defaultData, (finalizedData) => {
-          if (finalizedData !== null && finalizedData !== undefined && this.inMode === 'addEdge') { // if for whatever reason the mode has changes (due to dataset change) disregard the callback
+          if (
+            finalizedData !== null &&
+            finalizedData !== undefined &&
+            this.inMode === 'addEdge'
+          ) {
+            // if for whatever reason the mode has changes (due to dataset change) disregard the callback
             this.body.data.edges.getDataSet().add(finalizedData);
             this.selectionHandler.unselectAll();
             this.showManipulatorToolbar();
           }
         });
+      } else {
+        throw new Error(
+          'The function for connect does not support two arguments (data,callback)'
+        );
       }
-      else {
-        throw new Error('The function for connect does not support two arguments (data,callback)');
-      }
-    }
-    else {
+    } else {
       this.body.data.edges.getDataSet().add(defaultData);
       this.selectionHandler.unselectAll();
       this.showManipulatorToolbar();
@@ -1210,7 +1314,12 @@ class ManipulationSystem {
    * @private
    */
   _performEditEdge(sourceNodeId, targetNodeId) {
-    let defaultData = {id: this.edgeBeingEditedId, from: sourceNodeId, to: targetNodeId, label: this.body.data.edges._data[this.edgeBeingEditedId].label };
+    let defaultData = {
+      id: this.edgeBeingEditedId,
+      from: sourceNodeId,
+      to: targetNodeId,
+      label: this.body.data.edges._data[this.edgeBeingEditedId].label,
+    };
     let eeFunct = this.options.editEdge;
     if (typeof eeFunct === 'object') {
       eeFunct = eeFunct.editWithoutDrag;
@@ -1218,30 +1327,32 @@ class ManipulationSystem {
     if (typeof eeFunct === 'function') {
       if (eeFunct.length === 2) {
         eeFunct(defaultData, (finalizedData) => {
-          if (finalizedData === null || finalizedData === undefined || this.inMode !== 'editEdge') { // if for whatever reason the mode has changes (due to dataset change) disregard the callback) {
+          if (
+            finalizedData === null ||
+            finalizedData === undefined ||
+            this.inMode !== 'editEdge'
+          ) {
+            // if for whatever reason the mode has changes (due to dataset change) disregard the callback) {
             this.body.edges[defaultData.id].updateEdgeType();
             this.body.emitter.emit('_redraw');
             this.showManipulatorToolbar();
-          }
-          else {
+          } else {
             this.body.data.edges.getDataSet().update(finalizedData);
             this.selectionHandler.unselectAll();
             this.showManipulatorToolbar();
           }
         });
+      } else {
+        throw new Error(
+          'The function for edit does not support two arguments (data, callback)'
+        );
       }
-      else {
-        throw new Error('The function for edit does not support two arguments (data, callback)');
-      }
-    }
-    else {
+    } else {
       this.body.data.edges.getDataSet().update(defaultData);
       this.selectionHandler.unselectAll();
       this.showManipulatorToolbar();
     }
   }
-
-
 }
 
 export default ManipulationSystem;

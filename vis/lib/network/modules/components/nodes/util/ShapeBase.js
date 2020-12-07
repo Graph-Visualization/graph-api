@@ -1,4 +1,4 @@
-import NodeBase from '../util/NodeBase'
+import NodeBase from '../util/NodeBase';
 
 /**
  * Base class for constructing Node/Cluster Shapes.
@@ -12,7 +12,7 @@ class ShapeBase extends NodeBase {
    * @param {Label} labelModule
    */
   constructor(options, body, labelModule) {
-    super(options, body, labelModule)
+    super(options, body, labelModule);
   }
 
   /**
@@ -22,13 +22,18 @@ class ShapeBase extends NodeBase {
    * @param {boolean} [hover]
    * @param {Object} [values={size: this.options.size}]
    */
-  resize(ctx, selected = this.selected, hover = this.hover, values = { size: this.options.size }) {
+  resize(
+    ctx,
+    selected = this.selected,
+    hover = this.hover,
+    values = { size: this.options.size }
+  ) {
     if (this.needsRefresh(selected, hover)) {
       this.labelModule.getTextSize(ctx, selected, hover);
       var size = 2 * values.size;
       this.width = size;
       this.height = size;
-      this.radius = 0.5*this.width;
+      this.radius = 0.5 * this.width;
     }
   }
 
@@ -55,12 +60,19 @@ class ShapeBase extends NodeBase {
 
     if (this.options.label !== undefined) {
       // Need to call following here in order to ensure value for `this.labelModule.size.height`
-      this.labelModule.calculateLabelSize(ctx, selected, hover, x, y, 'hanging')
+      this.labelModule.calculateLabelSize(
+        ctx,
+        selected,
+        hover,
+        x,
+        y,
+        'hanging'
+      );
       let yLabel = y + 0.5 * this.height + 0.5 * this.labelModule.size.height;
       this.labelModule.draw(ctx, x, yLabel, selected, hover, 'hanging');
     }
 
-    this.updateBoundingBox(x,y);
+    this.updateBoundingBox(x, y);
   }
 
   /**
@@ -75,9 +87,18 @@ class ShapeBase extends NodeBase {
     this.boundingBox.bottom = y + this.options.size;
 
     if (this.options.label !== undefined && this.labelModule.size.width > 0) {
-      this.boundingBox.left = Math.min(this.boundingBox.left, this.labelModule.size.left);
-      this.boundingBox.right = Math.max(this.boundingBox.right, this.labelModule.size.left + this.labelModule.size.width);
-      this.boundingBox.bottom = Math.max(this.boundingBox.bottom, this.boundingBox.bottom + this.labelModule.size.height);
+      this.boundingBox.left = Math.min(
+        this.boundingBox.left,
+        this.labelModule.size.left
+      );
+      this.boundingBox.right = Math.max(
+        this.boundingBox.right,
+        this.labelModule.size.left + this.labelModule.size.width
+      );
+      this.boundingBox.bottom = Math.max(
+        this.boundingBox.bottom,
+        this.boundingBox.bottom + this.labelModule.size.height
+      );
     }
   }
 }

@@ -41,12 +41,11 @@ class CircleImageBase extends NodeBase {
     }
   }
 
-
   /**
    * Set the images for this node.
    *
    * The images can be updated after the initial setting of options;
-   * therefore, this method needs to be reentrant. 
+   * therefore, this method needs to be reentrant.
    *
    * For correct working in error cases, it is necessary to properly set
    * field 'nodes.brokenImage' in the options.
@@ -56,10 +55,10 @@ class CircleImageBase extends NodeBase {
    */
   setImages(imageObj, imageObjAlt) {
     if (imageObjAlt && this.selected) {
-      this.imageObj    = imageObjAlt;
+      this.imageObj = imageObjAlt;
       this.imageObjAlt = imageObj;
     } else {
-      this.imageObj    = imageObj;
+      this.imageObj = imageObj;
       this.imageObjAlt = imageObjAlt;
     }
   }
@@ -72,8 +71,9 @@ class CircleImageBase extends NodeBase {
    * @param {boolean} selected value of new selected state for current node
    */
   switchImages(selected) {
-    var selection_changed = ((selected && !this.selected) || (!selected && this.selected));
-    this.selected = selected;    // Remember new selection
+    var selection_changed =
+      (selected && !this.selected) || (!selected && this.selected);
+    this.selected = selected; // Remember new selection
 
     if (this.imageObjAlt !== undefined && selection_changed) {
       let imageTmp = this.imageObj;
@@ -92,25 +92,23 @@ class CircleImageBase extends NodeBase {
 
     if (this.options.shapeProperties.useImageSize === false) {
       // Use the size property
-      var ratio_width  = 1;
+      var ratio_width = 1;
       var ratio_height = 1;
 
       // Only calculate the proper ratio if both width and height not zero
       if (this.imageObj.width && this.imageObj.height) {
         if (this.imageObj.width > this.imageObj.height) {
           ratio_width = this.imageObj.width / this.imageObj.height;
-        }
-        else {
+        } else {
           ratio_height = this.imageObj.height / this.imageObj.width;
         }
       }
 
-      width  = this.options.size * 2 * ratio_width;
+      width = this.options.size * 2 * ratio_width;
       height = this.options.size * 2 * ratio_height;
-    }
-    else {
+    } else {
       // Use the image size
-      width  = this.imageObj.width;
+      width = this.imageObj.width;
       height = this.imageObj.height;
     }
 
@@ -149,10 +147,17 @@ class CircleImageBase extends NodeBase {
 
       let factor = 1;
       if (this.options.shapeProperties.interpolation === true) {
-        factor = (this.imageObj.width / this.width) / this.body.view.scale;
+        factor = this.imageObj.width / this.width / this.body.view.scale;
       }
 
-      this.imageObj.drawImageAtPosition(ctx, factor, this.left, this.top, this.width, this.height);
+      this.imageObj.drawImageAtPosition(
+        ctx,
+        factor,
+        this.left,
+        this.top,
+        this.width,
+        this.height
+      );
 
       // disable shadows for other elements.
       this.disableShadow(ctx, values);

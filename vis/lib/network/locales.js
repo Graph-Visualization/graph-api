@@ -8,11 +8,13 @@ exports['en'] = {
   editNode: 'Edit Node',
   editEdge: 'Edit Edge',
   addDescription: 'Click in an empty space to place a new node.',
-  edgeDescription: 'Click on a node and drag the edge to another node to connect them.',
-  editEdgeDescription: 'Click on the control points and drag them to a node to connect to it.',
+  edgeDescription:
+    'Click on a node and drag the edge to another node to connect them.',
+  editEdgeDescription:
+    'Click on the control points and drag them to a node to connect to it.',
   createEdgeError: 'Cannot link edges to a cluster.',
   deleteClusterError: 'Clusters cannot be deleted.',
-  editClusterError: 'Clusters cannot be edited.'
+  editClusterError: 'Clusters cannot be edited.',
 };
 exports['en_EN'] = exports['en'];
 exports['en_US'] = exports['en'];
@@ -26,12 +28,16 @@ exports['de'] = {
   addEdge: 'Kante hinzuf\u00fcgen',
   editNode: 'Knoten editieren',
   editEdge: 'Kante editieren',
-  addDescription: 'Klicke auf eine freie Stelle, um einen neuen Knoten zu plazieren.',
-  edgeDescription: 'Klicke auf einen Knoten und ziehe die Kante zu einem anderen Knoten, um diese zu verbinden.',
-  editEdgeDescription: 'Klicke auf die Verbindungspunkte und ziehe diese auf einen Knoten, um sie zu verbinden.',
-  createEdgeError: 'Es ist nicht m\u00f6glich, Kanten mit Clustern zu verbinden.',
+  addDescription:
+    'Klicke auf eine freie Stelle, um einen neuen Knoten zu plazieren.',
+  edgeDescription:
+    'Klicke auf einen Knoten und ziehe die Kante zu einem anderen Knoten, um diese zu verbinden.',
+  editEdgeDescription:
+    'Klicke auf die Verbindungspunkte und ziehe diese auf einen Knoten, um sie zu verbinden.',
+  createEdgeError:
+    'Es ist nicht m\u00f6glich, Kanten mit Clustern zu verbinden.',
   deleteClusterError: 'Cluster k\u00f6nnen nicht gel\u00f6scht werden.',
-  editClusterError: 'Cluster k\u00f6nnen nicht editiert werden.'
+  editClusterError: 'Cluster k\u00f6nnen nicht editiert werden.',
 };
 exports['de_DE'] = exports['de'];
 
@@ -44,12 +50,15 @@ exports['es'] = {
   addEdge: 'A\u00f1adir arista',
   editNode: 'Editar nodo',
   editEdge: 'Editar arista',
-  addDescription: 'Haga clic en un lugar vac\u00edo para colocar un nuevo nodo.',
-  edgeDescription: 'Haga clic en un nodo y arrastre la arista hacia otro nodo para conectarlos.',
-  editEdgeDescription: 'Haga clic en un punto de control y arrastrelo a un nodo para conectarlo.',
+  addDescription:
+    'Haga clic en un lugar vac\u00edo para colocar un nuevo nodo.',
+  edgeDescription:
+    'Haga clic en un nodo y arrastre la arista hacia otro nodo para conectarlos.',
+  editEdgeDescription:
+    'Haga clic en un punto de control y arrastrelo a un nodo para conectarlo.',
   createEdgeError: 'No se puede conectar una arista a un grupo.',
   deleteClusterError: 'No es posible eliminar grupos.',
-  editClusterError: 'No es posible editar grupos.'
+  editClusterError: 'No es posible editar grupos.',
 };
 exports['es_ES'] = exports['es'];
 
@@ -63,11 +72,13 @@ exports['it'] = {
   editNode: 'Modifica il nodo',
   editEdge: 'Modifica il vertice',
   addDescription: 'Clicca per aggiungere un nuovo nodo',
-  edgeDescription: 'Clicca su un nodo e trascinalo ad un altro nodo per connetterli.',
-  editEdgeDescription: 'Clicca sui Punti di controllo e trascinali ad un nodo per connetterli.',
+  edgeDescription:
+    'Clicca su un nodo e trascinalo ad un altro nodo per connetterli.',
+  editEdgeDescription:
+    'Clicca sui Punti di controllo e trascinali ad un nodo per connetterli.',
   createEdgeError: 'Non si possono collegare vertici ad un cluster',
   deleteClusterError: 'I cluster non possono essere cancellati',
-  editClusterError: 'I clusters non possono essere modificati.'
+  editClusterError: 'I clusters non possono essere modificati.',
 };
 exports['it_IT'] = exports['it'];
 
@@ -81,11 +92,13 @@ exports['nl'] = {
   editNode: 'Node wijzigen',
   editEdge: 'Link wijzigen',
   addDescription: 'Klik op een leeg gebied om een nieuwe node te maken.',
-  edgeDescription: 'Klik op een node en sleep de link naar een andere node om ze te verbinden.',
-  editEdgeDescription: 'Klik op de verbindingspunten en sleep ze naar een node om daarmee te verbinden.',
+  edgeDescription:
+    'Klik op een node en sleep de link naar een andere node om ze te verbinden.',
+  editEdgeDescription:
+    'Klik op de verbindingspunten en sleep ze naar een node om daarmee te verbinden.',
   createEdgeError: 'Kan geen link maken naar een cluster.',
   deleteClusterError: 'Clusters kunnen niet worden verwijderd.',
-  editClusterError: 'Clusters kunnen niet worden aangepast.'
+  editClusterError: 'Clusters kunnen niet worden aangepast.',
 };
 exports['nl_NL'] = exports['nl'];
 exports['nl_BE'] = exports['nl'];
@@ -100,11 +113,13 @@ exports['pt-br'] = {
   editNode: 'Editar nó',
   editEdge: 'Editar aresta',
   addDescription: 'Clique em um espaço em branco para adicionar um novo nó',
-  edgeDescription: 'Clique em um nó e arraste a aresta até outro nó para conectá-los',
-  editEdgeDescription: 'Clique nos pontos de controle e os arraste para um nó para conectá-los',
+  edgeDescription:
+    'Clique em um nó e arraste a aresta até outro nó para conectá-los',
+  editEdgeDescription:
+    'Clique nos pontos de controle e os arraste para um nó para conectá-los',
   createEdgeError: 'Não foi possível linkar arestas a um cluster.',
   deleteClusterError: 'Clusters não puderam ser removidos.',
-  editClusterError: 'Clusters não puderam ser editados.'
+  editClusterError: 'Clusters não puderam ser editados.',
 };
 exports['pt-BR'] = exports['pt-br'];
 exports['pt_BR'] = exports['pt-br'];
@@ -120,11 +135,13 @@ exports['ru'] = {
   editNode: 'Редактировать узел',
   editEdge: 'Редактировать ребро',
   addDescription: 'Кликните в свободное место, чтобы добавить новый узел.',
-  edgeDescription: 'Кликните на узел и протяните ребро к другому узлу, чтобы соединить их.',
-  editEdgeDescription: 'Кликните на контрольные точки и перетащите их в узел, чтобы подключиться к нему.',
+  edgeDescription:
+    'Кликните на узел и протяните ребро к другому узлу, чтобы соединить их.',
+  editEdgeDescription:
+    'Кликните на контрольные точки и перетащите их в узел, чтобы подключиться к нему.',
   createEdgeError: 'Невозможно соединить ребра в кластер.',
   deleteClusterError: 'Кластеры не могут быть удалены',
-  editClusterError: 'Кластеры недоступны для редактирования.'
+  editClusterError: 'Кластеры недоступны для редактирования.',
 };
 exports['ru_RU'] = exports['ru'];
 
@@ -142,6 +159,6 @@ exports['cn'] = {
   editEdgeDescription: '单击控制节点并将它们拖到节点上连接。',
   createEdgeError: '无法将连接线连接到群集。',
   deleteClusterError: '无法删除群集。',
-  editClusterError: '无法编辑群集。'
+  editClusterError: '无法编辑群集。',
 };
 exports['zh_CN'] = exports['cn'];

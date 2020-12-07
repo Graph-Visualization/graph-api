@@ -8,8 +8,7 @@ function loadJSON(path, success, error) {
     if (xhr.readyState === 4) {
       if (xhr.status === 200) {
         success(JSON.parse(xhr.responseText));
-      }
-      else {
+      } else {
         error(xhr);
       }
     }
@@ -17,7 +16,6 @@ function loadJSON(path, success, error) {
   xhr.open('GET', path, true);
   xhr.send();
 }
-
 
 function getScaleFreeNetwork(nodeCount) {
   var nodes = [];
@@ -28,7 +26,7 @@ function getScaleFreeNetwork(nodeCount) {
   for (var i = 0; i < nodeCount; i++) {
     nodes.push({
       id: i,
-      label: String(i)
+      label: String(i),
     });
 
     connectionCount[i] = 0;
@@ -39,12 +37,11 @@ function getScaleFreeNetwork(nodeCount) {
       var to = 0;
       edges.push({
         from: from,
-        to: to
+        to: to,
       });
       connectionCount[from]++;
       connectionCount[to]++;
-    }
-    else if (i > 1) {
+    } else if (i > 1) {
       var conn = edges.length * 2;
       var rand = Math.floor(Math.random() * conn);
       var cum = 0;
@@ -54,19 +51,18 @@ function getScaleFreeNetwork(nodeCount) {
         j++;
       }
 
-
       var from = i;
       var to = j;
       edges.push({
         from: from,
-        to: to
+        to: to,
       });
       connectionCount[from]++;
       connectionCount[to]++;
     }
   }
 
-  return {nodes:nodes, edges:edges};
+  return { nodes: nodes, edges: edges };
 }
 
 var randomSeed = 764; // Math.round(Math.random()*1000);
@@ -84,12 +80,11 @@ function getScaleFreeNetworkSeeded(nodeCount, seed) {
   var connectionCount = [];
   var edgesId = 0;
 
-
   // randomly create some nodes and edges
   for (var i = 0; i < nodeCount; i++) {
     nodes.push({
       id: i,
-      label: String(i)
+      label: String(i),
     });
 
     connectionCount[i] = 0;
@@ -101,12 +96,11 @@ function getScaleFreeNetworkSeeded(nodeCount, seed) {
       edges.push({
         id: edgesId++,
         from: from,
-        to: to
+        to: to,
       });
       connectionCount[from]++;
       connectionCount[to]++;
-    }
-    else if (i > 1) {
+    } else if (i > 1) {
       var conn = edges.length * 2;
       var rand = Math.floor(seededRandom() * conn);
       var cum = 0;
@@ -116,18 +110,17 @@ function getScaleFreeNetworkSeeded(nodeCount, seed) {
         j++;
       }
 
-
       var from = i;
       var to = j;
       edges.push({
         id: edgesId++,
         from: from,
-        to: to
+        to: to,
       });
       connectionCount[from]++;
       connectionCount[to]++;
     }
   }
 
-  return {nodes:nodes, edges:edges};
+  return { nodes: nodes, edges: edges };
 }

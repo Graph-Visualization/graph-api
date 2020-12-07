@@ -19,23 +19,38 @@ let endPoints = ['arrow', 'circle', 'bar'];
 let allOptions = {
   configure: {
     enabled: { boolean: bool },
-    filter: { boolean: bool, string, array, 'function': 'function' },
+    filter: { boolean: bool, string, array, function: 'function' },
     container: { dom },
     showButton: { boolean: bool },
-    __type__: { object, boolean: bool, string, array, 'function': 'function' }
+    __type__: { object, boolean: bool, string, array, function: 'function' },
   },
   edges: {
     arrows: {
-      to: { enabled: { boolean: bool }, scaleFactor: { number }, type: { string: endPoints }, __type__: { object, boolean: bool } },
-      middle: { enabled: { boolean: bool }, scaleFactor: { number }, type: { string: endPoints }, __type__: { object, boolean: bool } },
-      from: { enabled: { boolean: bool }, scaleFactor: { number }, type: { string: endPoints }, __type__: { object, boolean: bool } },
-      __type__: { string: ['from', 'to', 'middle'], object }
+      to: {
+        enabled: { boolean: bool },
+        scaleFactor: { number },
+        type: { string: endPoints },
+        __type__: { object, boolean: bool },
+      },
+      middle: {
+        enabled: { boolean: bool },
+        scaleFactor: { number },
+        type: { string: endPoints },
+        __type__: { object, boolean: bool },
+      },
+      from: {
+        enabled: { boolean: bool },
+        scaleFactor: { number },
+        type: { string: endPoints },
+        __type__: { object, boolean: bool },
+      },
+      __type__: { string: ['from', 'to', 'middle'], object },
     },
     arrowStrikethrough: { boolean: bool },
     chosen: {
-      label: { boolean: bool, 'function': 'function' },
-      edge: { boolean: bool, 'function': 'function' },
-      __type__: { object, boolean: bool }
+      label: { boolean: bool, function: 'function' },
+      edge: { boolean: bool, function: 'function' },
+      __type__: { object, boolean: bool },
     },
     color: {
       color: { string },
@@ -43,7 +58,7 @@ let allOptions = {
       hover: { string },
       inherit: { string: ['from', 'to', 'both'], boolean: bool },
       opacity: { number },
-      __type__: { object, string }
+      __type__: { object, string },
     },
     dashes: { boolean: bool, array },
     font: {
@@ -62,7 +77,7 @@ let allOptions = {
         face: { string },
         mod: { string },
         vadjust: { number },
-        __type__: { object, string }
+        __type__: { object, string },
       },
       boldital: {
         color: { string },
@@ -70,7 +85,7 @@ let allOptions = {
         face: { string },
         mod: { string },
         vadjust: { number },
-        __type__: { object, string }
+        __type__: { object, string },
       },
       ital: {
         color: { string },
@@ -78,7 +93,7 @@ let allOptions = {
         face: { string },
         mod: { string },
         vadjust: { number },
-        __type__: { object, string }
+        __type__: { object, string },
       },
       mono: {
         color: { string },
@@ -86,15 +101,15 @@ let allOptions = {
         face: { string },
         mod: { string },
         vadjust: { number },
-        __type__: { object, string }
+        __type__: { object, string },
       },
-      __type__: { object, string }
+      __type__: { object, string },
     },
     hidden: { boolean: bool },
-    hoverWidth: { 'function': 'function', number },
-    label: { string, 'undefined': 'undefined' },
+    hoverWidth: { function: 'function', number },
+    label: { string, undefined: 'undefined' },
     labelHighlightBold: { boolean: bool },
-    length: { number, 'undefined': 'undefined' },
+    length: { number, undefined: 'undefined' },
     physics: { boolean: bool },
     scaling: {
       min: { number },
@@ -105,12 +120,12 @@ let allOptions = {
         max: { number },
         maxVisible: { number },
         drawThreshold: { number },
-        __type__: { object, boolean: bool }
+        __type__: { object, boolean: bool },
       },
-      customScalingFunction: { 'function': 'function' },
-      __type__: { object }
+      customScalingFunction: { function: 'function' },
+      __type__: { object },
     },
-    selectionWidth: { 'function': 'function', number },
+    selectionWidth: { function: 'function', number },
     selfReferenceSize: { number },
     shadow: {
       enabled: { boolean: bool },
@@ -118,28 +133,44 @@ let allOptions = {
       size: { number },
       x: { number },
       y: { number },
-      __type__: { object, boolean: bool }
+      __type__: { object, boolean: bool },
     },
     smooth: {
       enabled: { boolean: bool },
-      type: { string: ['dynamic', 'continuous', 'discrete', 'diagonalCross', 'straightCross', 'horizontal', 'vertical', 'curvedCW', 'curvedCCW', 'cubicBezier'] },
+      type: {
+        string: [
+          'dynamic',
+          'continuous',
+          'discrete',
+          'diagonalCross',
+          'straightCross',
+          'horizontal',
+          'vertical',
+          'curvedCW',
+          'curvedCCW',
+          'cubicBezier',
+        ],
+      },
       roundness: { number },
-      forceDirection: { string: ['horizontal', 'vertical', 'none'], boolean: bool },
-      __type__: { object, boolean: bool }
+      forceDirection: {
+        string: ['horizontal', 'vertical', 'none'],
+        boolean: bool,
+      },
+      __type__: { object, boolean: bool },
     },
-    title: { string, 'undefined': 'undefined' },
+    title: { string, undefined: 'undefined' },
     width: { number },
     widthConstraint: {
       maximum: { number },
-      __type__: { object, boolean: bool, number }
+      __type__: { object, boolean: bool, number },
     },
-    value: { number, 'undefined': 'undefined' },
-    __type__: { object }
+    value: { number, undefined: 'undefined' },
+    __type__: { object },
   },
   groups: {
     useDefaultGroups: { boolean: bool },
     __any__: 'get from nodes, will be overwritten below',
-    __type__: { object }
+    __type__: { object },
   },
   interaction: {
     dragNodes: { boolean: bool },
@@ -149,9 +180,14 @@ let allOptions = {
     hover: { boolean: bool },
     keyboard: {
       enabled: { boolean: bool },
-      speed: { x: { number }, y: { number }, zoom: { number }, __type__: { object } },
+      speed: {
+        x: { number },
+        y: { number },
+        zoom: { number },
+        __type__: { object },
+      },
       bindToWindow: { boolean: bool },
-      __type__: { object, boolean: bool }
+      __type__: { object, boolean: bool },
     },
     multiselect: { boolean: bool },
     navigationButtons: { boolean: bool },
@@ -160,10 +196,10 @@ let allOptions = {
     hoverConnectedEdges: { boolean: bool },
     tooltipDelay: { number },
     zoomView: { boolean: bool },
-    __type__: { object }
+    __type__: { object },
   },
   layout: {
-    randomSeed: { 'undefined': 'undefined', number },
+    randomSeed: { undefined: 'undefined', number },
     improvedLayout: { boolean: bool },
     hierarchical: {
       enabled: { boolean: bool },
@@ -173,35 +209,35 @@ let allOptions = {
       blockShifting: { boolean: bool },
       edgeMinimization: { boolean: bool },
       parentCentralization: { boolean: bool },
-      direction: { string: ['UD', 'DU', 'LR', 'RL'] },   // UD, DU, LR, RL
+      direction: { string: ['UD', 'DU', 'LR', 'RL'] }, // UD, DU, LR, RL
       sortMethod: { string: ['hubsize', 'directed'] }, // hubsize, directed
-      __type__: { object, boolean: bool }
+      __type__: { object, boolean: bool },
     },
-    __type__: { object }
+    __type__: { object },
   },
   manipulation: {
     enabled: { boolean: bool },
     initiallyActive: { boolean: bool },
-    addNode: { boolean: bool, 'function': 'function' },
-    addEdge: { boolean: bool, 'function': 'function' },
-    editNode: { 'function': 'function' },
+    addNode: { boolean: bool, function: 'function' },
+    addEdge: { boolean: bool, function: 'function' },
+    editNode: { function: 'function' },
     editEdge: {
-      editWithoutDrag: { 'function' : 'function' },
-      __type__: {object, boolean: bool, 'function': 'function' }
+      editWithoutDrag: { function: 'function' },
+      __type__: { object, boolean: bool, function: 'function' },
     },
-    deleteNode: { boolean: bool, 'function': 'function' },
-    deleteEdge: { boolean: bool, 'function': 'function' },
+    deleteNode: { boolean: bool, function: 'function' },
+    deleteEdge: { boolean: bool, function: 'function' },
     controlNodeStyle: 'get from nodes, will be overwritten below',
-    __type__: { object, boolean: bool }
+    __type__: { object, boolean: bool },
   },
   nodes: {
     borderWidth: { number },
-    borderWidthSelected: { number, 'undefined': 'undefined' },
-    brokenImage: { string, 'undefined': 'undefined' },
+    borderWidthSelected: { number, undefined: 'undefined' },
+    brokenImage: { string, undefined: 'undefined' },
     chosen: {
-      label: { boolean: bool, 'function': 'function' },
-      node: { boolean: bool, 'function': 'function' },
-      __type__: { object, boolean: bool }
+      label: { boolean: bool, function: 'function' },
+      node: { boolean: bool, function: 'function' },
+      __type__: { object, boolean: bool },
     },
     color: {
       border: { string },
@@ -209,19 +245,19 @@ let allOptions = {
       highlight: {
         border: { string },
         background: { string },
-        __type__: { object, string }
+        __type__: { object, string },
       },
       hover: {
         border: { string },
         background: { string },
-        __type__: { object, string }
+        __type__: { object, string },
       },
-      __type__: { object, string }
+      __type__: { object, string },
     },
     fixed: {
       x: { boolean: bool },
       y: { boolean: bool },
-      __type__: { object, boolean: bool }
+      __type__: { object, boolean: bool },
     },
     font: {
       align: { string },
@@ -239,7 +275,7 @@ let allOptions = {
         face: { string },
         mod: { string },
         vadjust: { number },
-        __type__: { object, string }
+        __type__: { object, string },
       },
       boldital: {
         color: { string },
@@ -247,7 +283,7 @@ let allOptions = {
         face: { string },
         mod: { string },
         vadjust: { number },
-        __type__: { object, string }
+        __type__: { object, string },
       },
       ital: {
         color: { string },
@@ -255,7 +291,7 @@ let allOptions = {
         face: { string },
         mod: { string },
         vadjust: { number },
-        __type__: { object, string }
+        __type__: { object, string },
       },
       mono: {
         color: { string },
@@ -263,39 +299,39 @@ let allOptions = {
         face: { string },
         mod: { string },
         vadjust: { number },
-        __type__: { object, string }
+        __type__: { object, string },
       },
-      __type__: { object, string }
+      __type__: { object, string },
     },
-    group: { string, number, 'undefined': 'undefined' },
+    group: { string, number, undefined: 'undefined' },
     heightConstraint: {
       minimum: { number },
       valign: { string },
-      __type__: { object, boolean: bool, number }
+      __type__: { object, boolean: bool, number },
     },
     hidden: { boolean: bool },
     icon: {
       face: { string },
-      code: { string },  //'\uf007',
-      size: { number },  //50,
+      code: { string }, //'\uf007',
+      size: { number }, //50,
       color: { string },
-      __type__: { object }
+      __type__: { object },
     },
     id: { string, number },
     image: {
-      selected: { string, 'undefined': 'undefined' }, // --> URL
-      unselected: { string, 'undefined': 'undefined' }, // --> URL
-      __type__: { object, string }
+      selected: { string, undefined: 'undefined' }, // --> URL
+      unselected: { string, undefined: 'undefined' }, // --> URL
+      __type__: { object, string },
     },
-    label: { string, 'undefined': 'undefined' },
+    label: { string, undefined: 'undefined' },
     labelHighlightBold: { boolean: bool },
-    level: { number, 'undefined': 'undefined' },
+    level: { number, undefined: 'undefined' },
     margin: {
       top: { number },
       right: { number },
       bottom: { number },
       left: { number },
-      __type__: { object, number }
+      __type__: { object, number },
     },
     mass: { number },
     physics: { boolean: bool },
@@ -308,10 +344,10 @@ let allOptions = {
         max: { number },
         maxVisible: { number },
         drawThreshold: { number },
-        __type__: { object, boolean: bool }
+        __type__: { object, boolean: bool },
       },
-      customScalingFunction: { 'function': 'function' },
-      __type__: { object }
+      customScalingFunction: { function: 'function' },
+      __type__: { object },
     },
     shadow: {
       enabled: { boolean: bool },
@@ -319,28 +355,46 @@ let allOptions = {
       size: { number },
       x: { number },
       y: { number },
-      __type__: { object, boolean: bool }
+      __type__: { object, boolean: bool },
     },
-    shape: { string: ['ellipse', 'circle', 'database', 'box', 'text', 'image', 'circularImage', 'diamond', 'dot', 'star', 'triangle', 'triangleDown', 'square', 'icon', 'hexagon'] },
+    shape: {
+      string: [
+        'ellipse',
+        'circle',
+        'database',
+        'box',
+        'text',
+        'image',
+        'circularImage',
+        'diamond',
+        'dot',
+        'star',
+        'triangle',
+        'triangleDown',
+        'square',
+        'icon',
+        'hexagon',
+      ],
+    },
     shapeProperties: {
       borderDashes: { boolean: bool, array },
       borderRadius: { number },
       interpolation: { boolean: bool },
       useImageSize: { boolean: bool },
       useBorderWithImage: { boolean: bool },
-      __type__: { object }
+      __type__: { object },
     },
     size: { number },
-    title: { string, dom, 'undefined': 'undefined' },
-    value: { number, 'undefined': 'undefined' },
+    title: { string, dom, undefined: 'undefined' },
+    value: { number, undefined: 'undefined' },
     widthConstraint: {
       minimum: { number },
       maximum: { number },
-      __type__: { object, boolean: bool, number }
+      __type__: { object, boolean: bool, number },
     },
     x: { number },
     y: { number },
-    __type__: { object }
+    __type__: { object },
   },
   physics: {
     enabled: { boolean: bool },
@@ -351,7 +405,7 @@ let allOptions = {
       springConstant: { number },
       damping: { number },
       avoidOverlap: { number },
-      __type__: { object }
+      __type__: { object },
     },
     forceAtlas2Based: {
       gravitationalConstant: { number },
@@ -360,7 +414,7 @@ let allOptions = {
       springConstant: { number },
       damping: { number },
       avoidOverlap: { number },
-      __type__: { object }
+      __type__: { object },
     },
     repulsion: {
       centralGravity: { number },
@@ -368,7 +422,7 @@ let allOptions = {
       springConstant: { number },
       nodeDistance: { number },
       damping: { number },
-      __type__: { object }
+      __type__: { object },
     },
     hierarchicalRepulsion: {
       centralGravity: { number },
@@ -376,22 +430,29 @@ let allOptions = {
       springConstant: { number },
       nodeDistance: { number },
       damping: { number },
-      __type__: { object }
+      __type__: { object },
     },
     maxVelocity: { number },
-    minVelocity: { number },    // px/s
-    solver: { string: ['barnesHut', 'repulsion', 'hierarchicalRepulsion', 'forceAtlas2Based'] },
+    minVelocity: { number }, // px/s
+    solver: {
+      string: [
+        'barnesHut',
+        'repulsion',
+        'hierarchicalRepulsion',
+        'forceAtlas2Based',
+      ],
+    },
     stabilization: {
       enabled: { boolean: bool },
-      iterations: { number },   // maximum number of iteration to stabilize
+      iterations: { number }, // maximum number of iteration to stabilize
       updateInterval: { number },
       onlyDynamicEdges: { boolean: bool },
       fit: { boolean: bool },
-      __type__: { object, boolean: bool }
+      __type__: { object, boolean: bool },
     },
     timestep: { number },
     adaptiveTimestep: { boolean: bool },
-    __type__: { object, boolean: bool }
+    __type__: { object, boolean: bool },
   },
 
   //globals :
@@ -400,16 +461,15 @@ let allOptions = {
   locale: { string },
   locales: {
     __any__: { any },
-    __type__: { object }
+    __type__: { object },
   },
   height: { string },
   width: { string },
-  __type__: { object }
+  __type__: { object },
 };
 
 allOptions.groups.__any__ = allOptions.nodes;
 allOptions.manipulation.controlNodeStyle = allOptions.nodes;
-
 
 let configureOptions = {
   nodes: {
@@ -420,16 +480,16 @@ let configureOptions = {
       background: ['color', '#97C2FC'],
       highlight: {
         border: ['color', '#2B7CE9'],
-        background: ['color', '#D2E5FF']
+        background: ['color', '#D2E5FF'],
       },
       hover: {
         border: ['color', '#2B7CE9'],
-        background: ['color', '#D2E5FF']
-      }
+        background: ['color', '#D2E5FF'],
+      },
     },
     fixed: {
       x: false,
-      y: false
+      y: false,
     },
     font: {
       color: ['color', '#343434'],
@@ -437,7 +497,7 @@ let configureOptions = {
       face: ['arial', 'verdana', 'tahoma'],
       background: ['color', 'none'],
       strokeWidth: [0, 0, 50, 1], // px
-      strokeColor: ['color', '#ffffff']
+      strokeColor: ['color', '#ffffff'],
     },
     //group: 'string',
     hidden: false,
@@ -458,30 +518,43 @@ let configureOptions = {
         min: [14, 0, 200, 1],
         max: [30, 0, 200, 1],
         maxVisible: [30, 0, 200, 1],
-        drawThreshold: [5, 0, 20, 1]
-      }
+        drawThreshold: [5, 0, 20, 1],
+      },
     },
     shadow: {
       enabled: false,
       color: 'rgba(0,0,0,0.5)',
       size: [10, 0, 20, 1],
       x: [5, -30, 30, 1],
-      y: [5, -30, 30, 1]
+      y: [5, -30, 30, 1],
     },
-    shape: ['ellipse', 'box', 'circle', 'database', 'diamond', 'dot', 'square', 'star', 'text', 'triangle', 'triangleDown','hexagon'],
+    shape: [
+      'ellipse',
+      'box',
+      'circle',
+      'database',
+      'diamond',
+      'dot',
+      'square',
+      'star',
+      'text',
+      'triangle',
+      'triangleDown',
+      'hexagon',
+    ],
     shapeProperties: {
       borderDashes: false,
       borderRadius: [6, 0, 20, 1],
       interpolation: true,
-      useImageSize: false
+      useImageSize: false,
     },
-    size: [25, 0, 200, 1]
+    size: [25, 0, 200, 1],
   },
   edges: {
     arrows: {
       to: { enabled: false, scaleFactor: [1, 0, 3, 0.05], type: 'arrow' },
       middle: { enabled: false, scaleFactor: [1, 0, 3, 0.05], type: 'arrow' },
-      from: { enabled: false, scaleFactor: [1, 0, 3, 0.05], type: 'arrow' }
+      from: { enabled: false, scaleFactor: [1, 0, 3, 0.05], type: 'arrow' },
     },
     arrowStrikethrough: true,
     color: {
@@ -489,7 +562,7 @@ let configureOptions = {
       highlight: ['color', '#848484'],
       hover: ['color', '#848484'],
       inherit: ['from', 'to', 'both', true, false],
-      opacity: [1, 0, 1, 0.05]
+      opacity: [1, 0, 1, 0.05],
     },
     dashes: false,
     font: {
@@ -499,7 +572,7 @@ let configureOptions = {
       background: ['color', 'none'],
       strokeWidth: [2, 0, 50, 1], // px
       strokeColor: ['color', '#ffffff'],
-      align: ['horizontal', 'top', 'middle', 'bottom']
+      align: ['horizontal', 'top', 'middle', 'bottom'],
     },
     hidden: false,
     hoverWidth: [1.5, 0, 5, 0.1],
@@ -513,8 +586,8 @@ let configureOptions = {
         min: [14, 0, 200, 1],
         max: [30, 0, 200, 1],
         maxVisible: [30, 0, 200, 1],
-        drawThreshold: [5, 0, 20, 1]
-      }
+        drawThreshold: [5, 0, 20, 1],
+      },
     },
     selectionWidth: [1.5, 0, 5, 0.1],
     selfReferenceSize: [20, 0, 200, 1],
@@ -523,15 +596,26 @@ let configureOptions = {
       color: 'rgba(0,0,0,0.5)',
       size: [10, 0, 20, 1],
       x: [5, -30, 30, 1],
-      y: [5, -30, 30, 1]
+      y: [5, -30, 30, 1],
     },
     smooth: {
       enabled: true,
-      type: ['dynamic', 'continuous', 'discrete', 'diagonalCross', 'straightCross', 'horizontal', 'vertical', 'curvedCW', 'curvedCCW', 'cubicBezier'],
+      type: [
+        'dynamic',
+        'continuous',
+        'discrete',
+        'diagonalCross',
+        'straightCross',
+        'horizontal',
+        'vertical',
+        'curvedCW',
+        'curvedCCW',
+        'cubicBezier',
+      ],
       forceDirection: ['horizontal', 'vertical', 'none'],
-      roundness: [0.5, 0, 1, 0.05]
+      roundness: [0.5, 0, 1, 0.05],
     },
-    width: [1, 0, 30, 1]
+    width: [1, 0, 30, 1],
   },
   layout: {
     //randomSeed: [0, 0, 500, 1],
@@ -544,9 +628,9 @@ let configureOptions = {
       blockShifting: true,
       edgeMinimization: true,
       parentCentralization: true,
-      direction: ['UD', 'DU', 'LR', 'RL'],   // UD, DU, LR, RL
-      sortMethod: ['hubsize', 'directed'] // hubsize, directed
-    }
+      direction: ['UD', 'DU', 'LR', 'RL'], // UD, DU, LR, RL
+      sortMethod: ['hubsize', 'directed'], // hubsize, directed
+    },
   },
   interaction: {
     dragNodes: true,
@@ -556,8 +640,12 @@ let configureOptions = {
     hover: false,
     keyboard: {
       enabled: false,
-      speed: { x: [10, 0, 40, 1], y: [10, 0, 40, 1], zoom: [0.02, 0, 0.1, 0.005] },
-      bindToWindow: true
+      speed: {
+        x: [10, 0, 40, 1],
+        y: [10, 0, 40, 1],
+        zoom: [0.02, 0, 0.1, 0.005],
+      },
+      bindToWindow: true,
     },
     multiselect: false,
     navigationButtons: false,
@@ -565,11 +653,11 @@ let configureOptions = {
     selectConnectedEdges: true,
     hoverConnectedEdges: true,
     tooltipDelay: [300, 0, 1000, 25],
-    zoomView: true
+    zoomView: true,
   },
   manipulation: {
     enabled: false,
-    initiallyActive: false
+    initiallyActive: false,
   },
   physics: {
     enabled: true,
@@ -580,7 +668,7 @@ let configureOptions = {
       springLength: [95, 0, 500, 5],
       springConstant: [0.04, 0, 1.2, 0.005],
       damping: [0.09, 0, 1, 0.01],
-      avoidOverlap: [0, 0, 1, 0.01]
+      avoidOverlap: [0, 0, 1, 0.01],
     },
     forceAtlas2Based: {
       //theta: [0.5, 0.1, 1, 0.05],
@@ -589,28 +677,33 @@ let configureOptions = {
       springLength: [95, 0, 500, 5],
       springConstant: [0.08, 0, 1.2, 0.005],
       damping: [0.4, 0, 1, 0.01],
-      avoidOverlap: [0, 0, 1, 0.01]
+      avoidOverlap: [0, 0, 1, 0.01],
     },
     repulsion: {
       centralGravity: [0.2, 0, 10, 0.05],
       springLength: [200, 0, 500, 5],
       springConstant: [0.05, 0, 1.2, 0.005],
       nodeDistance: [100, 0, 500, 5],
-      damping: [0.09, 0, 1, 0.01]
+      damping: [0.09, 0, 1, 0.01],
     },
     hierarchicalRepulsion: {
       centralGravity: [0.2, 0, 10, 0.05],
       springLength: [100, 0, 500, 5],
       springConstant: [0.01, 0, 1.2, 0.005],
       nodeDistance: [120, 0, 500, 5],
-      damping: [0.09, 0, 1, 0.01]
+      damping: [0.09, 0, 1, 0.01],
     },
     maxVelocity: [50, 0, 150, 1],
     minVelocity: [0.1, 0.01, 0.5, 0.01],
-    solver: ['barnesHut', 'forceAtlas2Based', 'repulsion', 'hierarchicalRepulsion'],
+    solver: [
+      'barnesHut',
+      'forceAtlas2Based',
+      'repulsion',
+      'hierarchicalRepulsion',
+    ],
     timestep: [0.5, 0.01, 1, 0.01],
     //adaptiveTimestep: true
-  }
+  },
 };
 
-export {allOptions, configureOptions};
+export { allOptions, configureOptions };

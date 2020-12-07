@@ -2,7 +2,7 @@
  * Definitions for param's in jsdoc.
  * These are more or less global within Network. Putting them here until I can figure out
  * where to really put them
- * 
+ *
  * @typedef {string|number} Id
  * @typedef {Id} NodeId
  * @typedef {Id} EdgeId
@@ -18,7 +18,7 @@
  * @typedef {{edgeId:EdgeId, labelId:LabelId}} edgeLabelClickItem
  */
 
-let util = require("../../../../util");
+let util = require('../../../../util');
 
 /**
  * Helper functions for components
@@ -44,32 +44,37 @@ class ComponentUtil {
    *
    * @param {string}  subOption  option within object 'chosen' to consider; either 'node', 'edge' or 'label'
    * @param {Object}  pile       array of options objects to consider
-   * 
+   *
    * @return {boolean|function}  value for passed subOption of 'chosen' to use
    */
   static choosify(subOption, pile) {
     // allowed values for subOption
-    let allowed = [ 'node', 'edge', 'label'];
+    let allowed = ['node', 'edge', 'label'];
     let value = true;
 
     let chosen = util.topMost(pile, 'chosen');
     if (typeof chosen === 'boolean') {
       value = chosen;
     } else if (typeof chosen === 'object') {
-      if (allowed.indexOf(subOption) === -1 ) {
-        throw new Error('choosify: subOption \'' + subOption + '\' should be one of '
-          + "'" + allowed.join("', '") +  "'");
+      if (allowed.indexOf(subOption) === -1) {
+        throw new Error(
+          "choosify: subOption '" +
+            subOption +
+            "' should be one of " +
+            "'" +
+            allowed.join("', '") +
+            "'"
+        );
       }
 
       let chosenEdge = util.topMost(pile, ['chosen', subOption]);
-      if ((typeof chosenEdge === 'boolean') || (typeof chosenEdge === 'function')) {
+      if (typeof chosenEdge === 'boolean' || typeof chosenEdge === 'function') {
         value = chosenEdge;
       }
     }
 
     return value;
   }
-
 
   /**
    * Check if the point falls within the given rectangle.
@@ -82,24 +87,24 @@ class ComponentUtil {
    */
   static pointInRect(rect, point, rotationPoint) {
     if (rect.width <= 0 || rect.height <= 0) {
-      return false;  // early out
+      return false; // early out
     }
 
     if (rotationPoint !== undefined) {
       // Rotate the point the same amount as the rectangle
       var tmp = {
         x: point.x - rotationPoint.x,
-        y: point.y - rotationPoint.y
+        y: point.y - rotationPoint.y,
       };
 
       if (rotationPoint.angle !== 0) {
-        // In order to get the coordinates the same, you need to 
+        // In order to get the coordinates the same, you need to
         // rotate in the reverse direction
         var angle = -rotationPoint.angle;
 
         var tmp2 = {
-          x: Math.cos(angle)*tmp.x - Math.sin(angle)*tmp.y,
-          y: Math.sin(angle)*tmp.x + Math.cos(angle)*tmp.y
+          x: Math.cos(angle) * tmp.x - Math.sin(angle) * tmp.y,
+          y: Math.sin(angle) * tmp.x + Math.cos(angle) * tmp.y,
         };
         point = tmp2;
       } else {
@@ -112,17 +117,16 @@ class ComponentUtil {
       // back in this case.
     }
 
-    var right  = rect.x + rect.width;
+    var right = rect.x + rect.width;
     var bottom = rect.y + rect.width;
 
     return (
       rect.left < point.x &&
-      right     > point.x &&
-      rect.top  < point.y &&
-      bottom    > point.y
+      right > point.x &&
+      rect.top < point.y &&
+      bottom > point.y
     );
   }
-
 
   /**
    * Check if given value is acceptable as a label text.
@@ -132,7 +136,7 @@ class ComponentUtil {
    */
   static isValidLabel(text) {
     // Note that this is quite strict: types that *might* be converted to string are disallowed
-    return  (typeof text === 'string' && text !== '');
+    return typeof text === 'string' && text !== '';
   }
 }
 

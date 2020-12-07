@@ -51,11 +51,11 @@ class CentralGravitySolver {
    * @private
    */
   _calculateForces(distance, dx, dy, forces, node) {
-    let gravityForce = (distance === 0) ? 0 : (this.options.centralGravity / distance);
+    let gravityForce =
+      distance === 0 ? 0 : this.options.centralGravity / distance;
     forces[node.id].x = dx * gravityForce;
     forces[node.id].y = dy * gravityForce;
   }
 }
-
 
 export default CentralGravitySolver;

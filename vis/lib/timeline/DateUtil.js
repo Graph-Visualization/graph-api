@@ -1,15 +1,14 @@
-
 /**
  * used in Core to convert the options into a volatile variable
- * 
+ *
  * @param {function} moment
  * @param {Object} body
  * @param {Array | Object} hiddenDates
  * @returns {number}
  */
-exports.convertHiddenOptions = function(moment, body, hiddenDates) {
+exports.convertHiddenOptions = function (moment, body, hiddenDates) {
   if (hiddenDates && !Array.isArray(hiddenDates)) {
-    return exports.convertHiddenOptions(moment, body, [hiddenDates])
+    return exports.convertHiddenOptions(moment, body, [hiddenDates]);
   }
 
   body.hiddenDates = [];
@@ -30,7 +29,6 @@ exports.convertHiddenOptions = function(moment, body, hiddenDates) {
   }
 };
 
-
 /**
  * create new entrees for the repeating hidden dates
  *
@@ -41,7 +39,7 @@ exports.convertHiddenOptions = function(moment, body, hiddenDates) {
  */
 exports.updateHiddenDates = function (moment, body, hiddenDates) {
   if (hiddenDates && !Array.isArray(hiddenDates)) {
-    return exports.updateHiddenDates(moment, body, [hiddenDates])
+    return exports.updateHiddenDates(moment, body, [hiddenDates]);
   }
 
   if (hiddenDates && body.domProps.centerContainer.width !== undefined) {
@@ -50,7 +48,7 @@ exports.updateHiddenDates = function (moment, body, hiddenDates) {
     var start = moment(body.range.start);
     var end = moment(body.range.end);
 
-    var totalRange = (body.range.end - body.range.start);
+    var totalRange = body.range.end - body.range.start;
     var pixelTime = totalRange / body.domProps.centerContainer.width;
 
     for (var i = 0; i < hiddenDates.length; i++) {
@@ -58,35 +56,38 @@ exports.updateHiddenDates = function (moment, body, hiddenDates) {
         var startDate = moment(hiddenDates[i].start);
         var endDate = moment(hiddenDates[i].end);
 
-        if (startDate._d == "Invalid Date") {
-          throw new Error("Supplied start date is not valid: " + hiddenDates[i].start);
+        if (startDate._d == 'Invalid Date') {
+          throw new Error(
+            'Supplied start date is not valid: ' + hiddenDates[i].start
+          );
         }
-        if (endDate._d == "Invalid Date") {
-          throw new Error("Supplied end date is not valid: " + hiddenDates[i].end);
+        if (endDate._d == 'Invalid Date') {
+          throw new Error(
+            'Supplied end date is not valid: ' + hiddenDates[i].end
+          );
         }
 
         var duration = endDate - startDate;
         if (duration >= 4 * pixelTime) {
-
           var offset = 0;
           var runUntil = end.clone();
           switch (hiddenDates[i].repeat) {
-            case "daily": // case of time
+            case 'daily': // case of time
               if (startDate.day() != endDate.day()) {
                 offset = 1;
               }
               startDate.dayOfYear(start.dayOfYear());
               startDate.year(start.year());
-              startDate.subtract(7,'days');
+              startDate.subtract(7, 'days');
 
               endDate.dayOfYear(start.dayOfYear());
               endDate.year(start.year());
-              endDate.subtract(7 - offset,'days');
+              endDate.subtract(7 - offset, 'days');
 
               runUntil.add(1, 'weeks');
               break;
-            case "weekly":
-              var dayOffset = endDate.diff(startDate,'days');
+            case 'weekly':
+              var dayOffset = endDate.diff(startDate, 'days');
               var day = startDate.day();
 
               // set the start date to the range.start
@@ -98,69 +99,81 @@ exports.updateHiddenDates = function (moment, body, hiddenDates) {
               // force
               startDate.day(day);
               endDate.day(day);
-              endDate.add(dayOffset,'days');
+              endDate.add(dayOffset, 'days');
 
-              startDate.subtract(1,'weeks');
-              endDate.subtract(1,'weeks');
+              startDate.subtract(1, 'weeks');
+              endDate.subtract(1, 'weeks');
 
               runUntil.add(1, 'weeks');
               break;
-            case "monthly":
+            case 'monthly':
               if (startDate.month() != endDate.month()) {
                 offset = 1;
               }
               startDate.month(start.month());
               startDate.year(start.year());
-              startDate.subtract(1,'months');
+              startDate.subtract(1, 'months');
 
               endDate.month(start.month());
               endDate.year(start.year());
-              endDate.subtract(1,'months');
-              endDate.add(offset,'months');
+              endDate.subtract(1, 'months');
+              endDate.add(offset, 'months');
 
               runUntil.add(1, 'months');
               break;
-            case "yearly":
+            case 'yearly':
               if (startDate.year() != endDate.year()) {
                 offset = 1;
               }
               startDate.year(start.year());
-              startDate.subtract(1,'years');
+              startDate.subtract(1, 'years');
               endDate.year(start.year());
-              endDate.subtract(1,'years');
-              endDate.add(offset,'years');
+              endDate.subtract(1, 'years');
+              endDate.add(offset, 'years');
 
               runUntil.add(1, 'years');
               break;
             default:
-              console.log("Wrong repeat format, allowed are: daily, weekly, monthly, yearly. Given:", hiddenDates[i].repeat);
+              console.log(
+                'Wrong repeat format, allowed are: daily, weekly, monthly, yearly. Given:',
+                hiddenDates[i].repeat
+              );
               return;
           }
           while (startDate < runUntil) {
-            body.hiddenDates.push({start: startDate.valueOf(), end: endDate.valueOf()});
+            body.hiddenDates.push({
+              start: startDate.valueOf(),
+              end: endDate.valueOf(),
+            });
             switch (hiddenDates[i].repeat) {
-              case "daily":
+              case 'daily':
                 startDate.add(1, 'days');
                 endDate.add(1, 'days');
                 break;
-              case "weekly":
+              case 'weekly':
                 startDate.add(1, 'weeks');
                 endDate.add(1, 'weeks');
                 break;
-              case "monthly":
+              case 'monthly':
                 startDate.add(1, 'months');
                 endDate.add(1, 'months');
                 break;
-              case "yearly":
+              case 'yearly':
                 startDate.add(1, 'y');
                 endDate.add(1, 'y');
                 break;
               default:
-                console.log("Wrong repeat format, allowed are: daily, weekly, monthly, yearly. Given:", hiddenDates[i].repeat);
+                console.log(
+                  'Wrong repeat format, allowed are: daily, weekly, monthly, yearly. Given:',
+                  hiddenDates[i].repeat
+                );
                 return;
             }
           }
-          body.hiddenDates.push({start: startDate.valueOf(), end: endDate.valueOf()});
+          body.hiddenDates.push({
+            start: startDate.valueOf(),
+            end: endDate.valueOf(),
+          });
         }
       }
     }
@@ -168,18 +181,26 @@ exports.updateHiddenDates = function (moment, body, hiddenDates) {
     exports.removeDuplicates(body);
     // ensure the new positions are not on hidden dates
     var startHidden = exports.isHidden(body.range.start, body.hiddenDates);
-    var endHidden = exports.isHidden(body.range.end,body.hiddenDates);
+    var endHidden = exports.isHidden(body.range.end, body.hiddenDates);
     var rangeStart = body.range.start;
     var rangeEnd = body.range.end;
-    if (startHidden.hidden == true) {rangeStart = body.range.startToFront == true ? startHidden.startDate - 1 : startHidden.endDate + 1;}
-    if (endHidden.hidden == true)   {rangeEnd   = body.range.endToFront == true ?   endHidden.startDate - 1   : endHidden.endDate + 1;}
+    if (startHidden.hidden == true) {
+      rangeStart =
+        body.range.startToFront == true
+          ? startHidden.startDate - 1
+          : startHidden.endDate + 1;
+    }
+    if (endHidden.hidden == true) {
+      rangeEnd =
+        body.range.endToFront == true
+          ? endHidden.startDate - 1
+          : endHidden.endDate + 1;
+    }
     if (startHidden.hidden == true || endHidden.hidden == true) {
       body.range._applyRange(rangeStart, rangeEnd);
     }
   }
-
 };
-
 
 /**
  * remove duplicates from the hidden dates list. Duplicates are evil. They mess everything up.
@@ -187,23 +208,36 @@ exports.updateHiddenDates = function (moment, body, hiddenDates) {
  *
  * @param {Object} body
  */
-exports.removeDuplicates = function(body) {
+exports.removeDuplicates = function (body) {
   var hiddenDates = body.hiddenDates;
   var safeDates = [];
   for (var i = 0; i < hiddenDates.length; i++) {
     for (var j = 0; j < hiddenDates.length; j++) {
-      if (i != j && hiddenDates[j].remove != true && hiddenDates[i].remove != true) {
+      if (
+        i != j &&
+        hiddenDates[j].remove != true &&
+        hiddenDates[i].remove != true
+      ) {
         // j inside i
-        if (hiddenDates[j].start >= hiddenDates[i].start && hiddenDates[j].end <= hiddenDates[i].end) {
+        if (
+          hiddenDates[j].start >= hiddenDates[i].start &&
+          hiddenDates[j].end <= hiddenDates[i].end
+        ) {
           hiddenDates[j].remove = true;
         }
         // j start inside i
-        else if (hiddenDates[j].start >= hiddenDates[i].start && hiddenDates[j].start <= hiddenDates[i].end) {
+        else if (
+          hiddenDates[j].start >= hiddenDates[i].start &&
+          hiddenDates[j].start <= hiddenDates[i].end
+        ) {
           hiddenDates[i].end = hiddenDates[j].end;
           hiddenDates[j].remove = true;
         }
         // j end inside i
-        else if (hiddenDates[j].end >= hiddenDates[i].start && hiddenDates[j].end <= hiddenDates[i].end) {
+        else if (
+          hiddenDates[j].end >= hiddenDates[i].start &&
+          hiddenDates[j].end <= hiddenDates[i].end
+        ) {
           hiddenDates[i].start = hiddenDates[j].start;
           hiddenDates[j].remove = true;
         }
@@ -223,9 +257,16 @@ exports.removeDuplicates = function(body) {
   }); // sort by start time
 };
 
-exports.printDates = function(dates) {
-  for (var i =0; i < dates.length; i++) {
-    console.log(i, new Date(dates[i].start),new Date(dates[i].end), dates[i].start, dates[i].end, dates[i].remove);
+exports.printDates = function (dates) {
+  for (var i = 0; i < dates.length; i++) {
+    console.log(
+      i,
+      new Date(dates[i].start),
+      new Date(dates[i].end),
+      dates[i].start,
+      dates[i].end,
+      dates[i].remove
+    );
   }
 };
 
@@ -235,7 +276,7 @@ exports.printDates = function(dates) {
  * @param {TimeStep} timeStep
  * @param {Date} previousTime
  */
-exports.stepOverHiddenDates = function(moment, timeStep, previousTime) {
+exports.stepOverHiddenDates = function (moment, timeStep, previousTime) {
   var stepInHidden = false;
   var currentValue = timeStep.current.valueOf();
   for (var i = 0; i < timeStep.hiddenDates.length; i++) {
@@ -247,18 +288,25 @@ exports.stepOverHiddenDates = function(moment, timeStep, previousTime) {
     }
   }
 
-  if (stepInHidden == true && currentValue < timeStep._end.valueOf() && currentValue != previousTime) {
+  if (
+    stepInHidden == true &&
+    currentValue < timeStep._end.valueOf() &&
+    currentValue != previousTime
+  ) {
     var prevValue = moment(previousTime);
     var newValue = moment(endDate);
     //check if the next step should be major
-    if (prevValue.year() != newValue.year()) {timeStep.switchedYear = true;}
-    else if (prevValue.month() != newValue.month()) {timeStep.switchedMonth = true;}
-    else if (prevValue.dayOfYear() != newValue.dayOfYear()) {timeStep.switchedDay = true;}
+    if (prevValue.year() != newValue.year()) {
+      timeStep.switchedYear = true;
+    } else if (prevValue.month() != newValue.month()) {
+      timeStep.switchedMonth = true;
+    } else if (prevValue.dayOfYear() != newValue.dayOfYear()) {
+      timeStep.switchedDay = true;
+    }
 
     timeStep.current = newValue;
   }
 };
-
 
 ///**
 // * Used in TimeStep to avoid the hidden times.
@@ -294,36 +342,51 @@ exports.stepOverHiddenDates = function(moment, timeStep, previousTime) {
 exports.toScreen = function (Core, time, width) {
   var conversion;
   if (Core.body.hiddenDates.length == 0) {
-      conversion = Core.range.conversion(width);
+    conversion = Core.range.conversion(width);
+    return (time.valueOf() - conversion.offset) * conversion.scale;
+  } else {
+    var hidden = exports.isHidden(time, Core.body.hiddenDates);
+    if (hidden.hidden == true) {
+      time = hidden.startDate;
+    }
+
+    var duration = exports.getHiddenDurationBetween(
+      Core.body.hiddenDates,
+      Core.range.start,
+      Core.range.end
+    );
+    if (time < Core.range.start) {
+      conversion = Core.range.conversion(width, duration);
+      var hiddenBeforeStart = exports.getHiddenDurationBeforeStart(
+        Core.body.hiddenDates,
+        time,
+        conversion.offset
+      );
+      time = Core.options.moment(time).toDate().valueOf();
+      time = time + hiddenBeforeStart;
+      return -(conversion.offset - time.valueOf()) * conversion.scale;
+    } else if (time > Core.range.end) {
+      var rangeAfterEnd = { start: Core.range.start, end: time };
+      time = exports.correctTimeForHidden(
+        Core.options.moment,
+        Core.body.hiddenDates,
+        rangeAfterEnd,
+        time
+      );
+      conversion = Core.range.conversion(width, duration);
       return (time.valueOf() - conversion.offset) * conversion.scale;
     } else {
-      var hidden = exports.isHidden(time, Core.body.hiddenDates);
-      if (hidden.hidden == true) {
-        time = hidden.startDate;
-      }
-
-      var duration = exports.getHiddenDurationBetween(Core.body.hiddenDates, Core.range.start, Core.range.end);
-      if (time < Core.range.start) {
-        conversion = Core.range.conversion(width, duration);
-        var hiddenBeforeStart = exports.getHiddenDurationBeforeStart(Core.body.hiddenDates, time, conversion.offset);
-        time = Core.options.moment(time).toDate().valueOf();
-        time = time + hiddenBeforeStart;
-        return -(conversion.offset - time.valueOf()) * conversion.scale;
-        
-      } else if (time > Core.range.end) {
-        var rangeAfterEnd = {start: Core.range.start, end: time};
-        time = exports.correctTimeForHidden(Core.options.moment, Core.body.hiddenDates, rangeAfterEnd, time);
-        conversion = Core.range.conversion(width, duration);
-        return (time.valueOf() - conversion.offset) * conversion.scale;
-
-      } else {
-        time = exports.correctTimeForHidden(Core.options.moment, Core.body.hiddenDates, Core.range, time);
-        conversion = Core.range.conversion(width, duration);
-        return (time.valueOf() - conversion.offset) * conversion.scale;
-      }
+      time = exports.correctTimeForHidden(
+        Core.options.moment,
+        Core.body.hiddenDates,
+        Core.range,
+        time
+      );
+      conversion = Core.range.conversion(width, duration);
+      return (time.valueOf() - conversion.offset) * conversion.scale;
     }
-  };
-
+  }
+};
 
 /**
  * Replaces the core toTime methods
@@ -333,21 +396,29 @@ exports.toScreen = function (Core, time, width) {
  * @param {number} width
  * @returns {Date}
  */
-exports.toTime = function(Core, x, width) {
+exports.toTime = function (Core, x, width) {
   if (Core.body.hiddenDates.length == 0) {
     var conversion = Core.range.conversion(width);
     return new Date(x / conversion.scale + conversion.offset);
-  }
-  else {
-    var hiddenDuration = exports.getHiddenDurationBetween(Core.body.hiddenDates, Core.range.start, Core.range.end);
+  } else {
+    var hiddenDuration = exports.getHiddenDurationBetween(
+      Core.body.hiddenDates,
+      Core.range.start,
+      Core.range.end
+    );
     var totalDuration = Core.range.end - Core.range.start - hiddenDuration;
-    var partialDuration = totalDuration * x / width;
-    var accumulatedHiddenDuration = exports.getAccumulatedHiddenDuration(Core.body.hiddenDates, Core.range, partialDuration);
+    var partialDuration = (totalDuration * x) / width;
+    var accumulatedHiddenDuration = exports.getAccumulatedHiddenDuration(
+      Core.body.hiddenDates,
+      Core.range,
+      partialDuration
+    );
 
-    return new Date(accumulatedHiddenDuration + partialDuration + Core.range.start);
+    return new Date(
+      accumulatedHiddenDuration + partialDuration + Core.range.start
+    );
   }
 };
-
 
 /**
  * Support function
@@ -357,7 +428,7 @@ exports.toTime = function(Core, x, width) {
  * @param {number} end
  * @returns {number}
  */
-exports.getHiddenDurationBetween = function(hiddenDates, start, end) {
+exports.getHiddenDurationBetween = function (hiddenDates, start, end) {
   var duration = 0;
   for (var i = 0; i < hiddenDates.length; i++) {
     var startDate = hiddenDates[i].start;
@@ -391,7 +462,6 @@ exports.getHiddenDurationBeforeStart = function (hiddenDates, start, end) {
   return duration;
 };
 
-
 /**
  * Support function
  * @param {function} moment
@@ -400,13 +470,13 @@ exports.getHiddenDurationBeforeStart = function (hiddenDates, start, end) {
  * @param {Date} time
  * @returns {number}
  */
-exports.correctTimeForHidden = function(moment, hiddenDates, range, time) {
+exports.correctTimeForHidden = function (moment, hiddenDates, range, time) {
   time = moment(time).toDate().valueOf();
-  time -= exports.getHiddenDurationBefore(moment, hiddenDates,range,time);
+  time -= exports.getHiddenDurationBefore(moment, hiddenDates, range, time);
   return time;
 };
 
-exports.getHiddenDurationBefore = function(moment, hiddenDates, range, time) {
+exports.getHiddenDurationBefore = function (moment, hiddenDates, range, time) {
   var timeOffset = 0;
   time = moment(time).toDate().valueOf();
 
@@ -416,7 +486,7 @@ exports.getHiddenDurationBefore = function(moment, hiddenDates, range, time) {
     // if time after the cutout, and the
     if (startDate >= range.start && endDate < range.end) {
       if (time >= endDate) {
-        timeOffset += (endDate - startDate);
+        timeOffset += endDate - startDate;
       }
     }
   }
@@ -431,7 +501,11 @@ exports.getHiddenDurationBefore = function(moment, hiddenDates, range, time) {
  * @param {number} [requiredDuration=0]
  * @returns {number}
  */
-exports.getAccumulatedHiddenDuration = function(hiddenDates, range, requiredDuration) {
+exports.getAccumulatedHiddenDuration = function (
+  hiddenDates,
+  range,
+  requiredDuration
+) {
   var hiddenDuration = 0;
   var duration = 0;
   var previousPoint = range.start;
@@ -445,8 +519,7 @@ exports.getAccumulatedHiddenDuration = function(hiddenDates, range, requiredDura
       previousPoint = endDate;
       if (duration >= requiredDuration) {
         break;
-      }
-      else {
+      } else {
         hiddenDuration += endDate - startDate;
       }
     }
@@ -454,8 +527,6 @@ exports.getAccumulatedHiddenDuration = function(hiddenDates, range, requiredDura
 
   return hiddenDuration;
 };
-
-
 
 /**
  * used to step over to either side of a hidden block. Correction is disabled on tablets, might be set to true
@@ -465,32 +536,31 @@ exports.getAccumulatedHiddenDuration = function(hiddenDates, range, requiredDura
  * @param {boolean} correctionEnabled
  * @returns {Date|number}
  */
-exports.snapAwayFromHidden = function(hiddenDates, time, direction, correctionEnabled) {
+exports.snapAwayFromHidden = function (
+  hiddenDates,
+  time,
+  direction,
+  correctionEnabled
+) {
   var isHidden = exports.isHidden(time, hiddenDates);
   if (isHidden.hidden == true) {
     if (direction < 0) {
       if (correctionEnabled == true) {
         return isHidden.startDate - (isHidden.endDate - time) - 1;
-      }
-      else {
+      } else {
         return isHidden.startDate - 1;
       }
-    }
-    else {
+    } else {
       if (correctionEnabled == true) {
         return isHidden.endDate + (time - isHidden.startDate) + 1;
-      }
-      else {
+      } else {
         return isHidden.endDate + 1;
       }
     }
-  }
-  else {
+  } else {
     return time;
   }
-
 };
-
 
 /**
  * Check if a time is hidden
@@ -499,14 +569,15 @@ exports.snapAwayFromHidden = function(hiddenDates, time, direction, correctionEn
  * @param {Array.<{start: Window.start, end: *}>} hiddenDates
  * @returns {{hidden: boolean, startDate: Window.start, endDate: *}}
  */
-exports.isHidden = function(time, hiddenDates) {
+exports.isHidden = function (time, hiddenDates) {
   for (var i = 0; i < hiddenDates.length; i++) {
     var startDate = hiddenDates[i].start;
     var endDate = hiddenDates[i].end;
 
-    if (time >= startDate && time < endDate) { // if the start is entering a hidden zone
-      return {hidden: true, startDate: startDate, endDate: endDate};
+    if (time >= startDate && time < endDate) {
+      // if the start is entering a hidden zone
+      return { hidden: true, startDate: startDate, endDate: endDate };
     }
   }
-  return {hidden: false, startDate: startDate, endDate: endDate};
+  return { hidden: false, startDate: startDate, endDate: endDate };
 };

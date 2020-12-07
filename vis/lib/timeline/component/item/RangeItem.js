@@ -10,11 +10,11 @@ var Item = require('./Item');
  * @param {Object} [options]        Configuration options
  *                                  // TODO: describe options
  */
-function RangeItem (data, conversion, options) {
+function RangeItem(data, conversion, options) {
   this.props = {
     content: {
-      width: 0
-    }
+      width: 0,
+    },
   };
   this.overflow = false; // if contents can overflow (css styling), this flag is set to true
   this.options = options;
@@ -31,7 +31,7 @@ function RangeItem (data, conversion, options) {
   Item.call(this, data, conversion, options);
 }
 
-RangeItem.prototype = new Item (null, null, null);
+RangeItem.prototype = new Item(null, null, null);
 
 RangeItem.prototype.baseClassName = 'vis-item vis-range';
 
@@ -41,17 +41,17 @@ RangeItem.prototype.baseClassName = 'vis-item vis-range';
  * @param {vis.Range} range with a timestamp for start and end
  * @returns {boolean} True if visible
  */
-RangeItem.prototype.isVisible = function(range) {
+RangeItem.prototype.isVisible = function (range) {
   // determine visibility
-  return (this.data.start < range.end) && (this.data.end > range.start);
+  return this.data.start < range.end && this.data.end > range.start;
 };
 
-RangeItem.prototype._createDomElement = function() {
+RangeItem.prototype._createDomElement = function () {
   if (!this.dom) {
     // create DOM
     this.dom = {};
 
-      // background box
+    // background box
     this.dom.box = document.createElement('div');
     // className is updated in redraw()
 
@@ -59,7 +59,7 @@ RangeItem.prototype._createDomElement = function() {
     this.dom.frame = document.createElement('div');
     this.dom.frame.className = 'vis-item-overflow';
     this.dom.box.appendChild(this.dom.frame);
-  
+
     // visible frame box (showing the frame that is always visible)
     this.dom.visibleFrame = document.createElement('div');
     this.dom.visibleFrame.className = 'vis-item-visible-frame';
@@ -75,24 +75,25 @@ RangeItem.prototype._createDomElement = function() {
 
     this.dirty = true;
   }
+};
 
-}
-
-RangeItem.prototype._appendDomElement = function() {
+RangeItem.prototype._appendDomElement = function () {
   if (!this.parent) {
     throw new Error('Cannot redraw item: no parent attached');
   }
   if (!this.dom.box.parentNode) {
     var foreground = this.parent.dom.foreground;
     if (!foreground) {
-      throw new Error('Cannot redraw item: parent has no foreground container element');
+      throw new Error(
+        'Cannot redraw item: parent has no foreground container element'
+      );
     }
     foreground.appendChild(this.dom.box);
   }
   this.displayed = true;
-}
+};
 
-RangeItem.prototype._updateDirtyDomComponents = function() {
+RangeItem.prototype._updateDirtyDomComponents = function () {
   // update dirty DOM. An item is marked dirty when:
   // - the item is not yet rendered
   // - the item's data is changed
@@ -102,21 +103,22 @@ RangeItem.prototype._updateDirtyDomComponents = function() {
     this._updateDataAttributes(this.dom.box);
     this._updateStyle(this.dom.box);
 
-    var editable = (this.editable.updateTime || this.editable.updateGroup);
+    var editable = this.editable.updateTime || this.editable.updateGroup;
 
     // update class
-    var className = (this.data.className ? (' ' + this.data.className) : '') +
-        (this.selected ? ' vis-selected' : '') + 
-        (editable ? ' vis-editable' : ' vis-readonly');
+    var className =
+      (this.data.className ? ' ' + this.data.className : '') +
+      (this.selected ? ' vis-selected' : '') +
+      (editable ? ' vis-editable' : ' vis-readonly');
     this.dom.box.className = this.baseClassName + className;
 
     // turn off max-width to be able to calculate the real width
     // this causes an extra browser repaint/reflow, but so be it
     this.dom.content.style.maxWidth = 'none';
   }
-}
+};
 
-RangeItem.prototype._getDomComponentsSizes = function() {
+RangeItem.prototype._getDomComponentsSizes = function () {
   // determine from css whether this box has overflow
   this.overflow = window.getComputedStyle(this.dom.frame).overflow !== 'hidden';
   return {
@@ -124,32 +126,32 @@ RangeItem.prototype._getDomComponentsSizes = function() {
       width: this.dom.content.offsetWidth,
     },
     box: {
-      height: this.dom.box.offsetHeight
-    }
-  }
-}
+      height: this.dom.box.offsetHeight,
+    },
+  };
+};
 
-RangeItem.prototype._updateDomComponentsSizes = function(sizes) {
+RangeItem.prototype._updateDomComponentsSizes = function (sizes) {
   this.props.content.width = sizes.content.width;
   this.height = sizes.box.height;
   this.dom.content.style.maxWidth = '';
   this.dirty = false;
-}
+};
 
-RangeItem.prototype._repaintDomAdditionals = function() {
+RangeItem.prototype._repaintDomAdditionals = function () {
   this._repaintOnItemUpdateTimeTooltip(this.dom.box);
   this._repaintDeleteButton(this.dom.box);
   this._repaintDragCenter();
   this._repaintDragLeft();
   this._repaintDragRight();
-}
+};
 
 /**
  * Repaint the item
  * @param {boolean} [returnQueue=false]  return the queue
  * @return {boolean} the redraw queue if returnQueue=true
  */
-RangeItem.prototype.redraw = function(returnQueue) {
+RangeItem.prototype.redraw = function (returnQueue) {
   var sizes;
   var queue = [
     // create item DOM
@@ -158,23 +160,23 @@ RangeItem.prototype.redraw = function(returnQueue) {
     // append DOM to parent DOM
     this._appendDomElement.bind(this),
 
-    // update dirty DOM 
+    // update dirty DOM
     this._updateDirtyDomComponents.bind(this),
 
-    (function() {
+    function () {
       if (this.dirty) {
         sizes = this._getDomComponentsSizes.bind(this)();
       }
-    }).bind(this),
+    }.bind(this),
 
-    (function() {
+    function () {
       if (this.dirty) {
         this._updateDomComponentsSizes.bind(this)(sizes);
       }
-    }).bind(this),
+    }.bind(this),
 
     // repaint DOM additionals
-    this._repaintDomAdditionals.bind(this)
+    this._repaintDomAdditionals.bind(this),
   ];
 
   if (returnQueue) {
@@ -192,7 +194,7 @@ RangeItem.prototype.redraw = function(returnQueue) {
  * Show the item in the DOM (when not already visible). The items DOM will
  * be created when needed.
  */
-RangeItem.prototype.show = function() {
+RangeItem.prototype.show = function () {
   if (!this.displayed) {
     this.redraw();
   }
@@ -201,7 +203,7 @@ RangeItem.prototype.show = function() {
 /**
  * Hide the item from the DOM (when visible)
  */
-RangeItem.prototype.hide = function() {
+RangeItem.prototype.hide = function () {
   if (this.displayed) {
     var box = this.dom.box;
 
@@ -222,17 +224,21 @@ RangeItem.prototype.hide = function() {
  *                                   not correspond to the ranges start and end
  * @Override
  */
-RangeItem.prototype.repositionX = function(limitSize) {
+RangeItem.prototype.repositionX = function (limitSize) {
   var parentWidth = this.parent.width;
   var start = this.conversion.toScreen(this.data.start);
   var end = this.conversion.toScreen(this.data.end);
-  var align = this.data.align === undefined ? this.options.align : this.data.align;
+  var align =
+    this.data.align === undefined ? this.options.align : this.data.align;
   var contentStartPosition;
   var contentWidth;
 
   // limit the width of the range, as browsers cannot draw very wide divs
   // unless limitSize: false is explicitly set in item data
-  if (this.data.limitSize !== false && (limitSize === undefined || limitSize === true)) {
+  if (
+    this.data.limitSize !== false &&
+    (limitSize === undefined || limitSize === true)
+  ) {
     if (start < -parentWidth) {
       start = -parentWidth;
     }
@@ -256,8 +262,7 @@ RangeItem.prototype.repositionX = function(limitSize) {
     // Note: The calculation of width is an optimistic calculation, giving
     //       a width which will not change when moving the Timeline
     //       So no re-stacking needed, which is nicer for the eye;
-  }
-  else {
+  } else {
     if (this.options.rtl) {
       this.right = start;
     } else {
@@ -270,7 +275,7 @@ RangeItem.prototype.repositionX = function(limitSize) {
   if (this.options.rtl) {
     this.dom.box.style.right = this.right + 'px';
   } else {
-    this.dom.box.style.left = this.left + 'px'; 
+    this.dom.box.style.left = this.left + 'px';
   }
   this.dom.box.style.width = boxWidth + 'px';
 
@@ -285,36 +290,38 @@ RangeItem.prototype.repositionX = function(limitSize) {
 
     case 'right':
       if (this.options.rtl) {
-        this.dom.content.style.right = Math.max((boxWidth - contentWidth), 0) + 'px';
+        this.dom.content.style.right =
+          Math.max(boxWidth - contentWidth, 0) + 'px';
       } else {
-        this.dom.content.style.left = Math.max((boxWidth - contentWidth), 0) + 'px';
+        this.dom.content.style.left =
+          Math.max(boxWidth - contentWidth, 0) + 'px';
       }
       break;
 
     case 'center':
       if (this.options.rtl) {
-        this.dom.content.style.right = Math.max((boxWidth - contentWidth) / 2, 0) + 'px';
+        this.dom.content.style.right =
+          Math.max((boxWidth - contentWidth) / 2, 0) + 'px';
       } else {
-        this.dom.content.style.left = Math.max((boxWidth - contentWidth) / 2, 0) + 'px';
+        this.dom.content.style.left =
+          Math.max((boxWidth - contentWidth) / 2, 0) + 'px';
       }
-      
+
       break;
 
-    default: // 'auto'
+    default:
+      // 'auto'
       // when range exceeds left of the window, position the contents at the left of the visible area
       if (this.overflow) {
         if (end > 0) {
           contentStartPosition = Math.max(-start, 0);
-        }
-        else {
+        } else {
           contentStartPosition = -contentWidth; // ensure it's not visible anymore
         }
-      }
-      else {
+      } else {
         if (start < 0) {
           contentStartPosition = -start;
-        }
-        else {
+        } else {
           contentStartPosition = 0;
         }
       }
@@ -322,7 +329,8 @@ RangeItem.prototype.repositionX = function(limitSize) {
         this.dom.content.style.right = contentStartPosition + 'px';
       } else {
         this.dom.content.style.left = contentStartPosition + 'px';
-        this.dom.content.style.width = 'calc(100% - ' + contentStartPosition + 'px)';
+        this.dom.content.style.width =
+          'calc(100% - ' + contentStartPosition + 'px)';
       }
   }
 };
@@ -331,15 +339,14 @@ RangeItem.prototype.repositionX = function(limitSize) {
  * Reposition the item vertically
  * @Override
  */
-RangeItem.prototype.repositionY = function() {
+RangeItem.prototype.repositionY = function () {
   var orientation = this.options.orientation.item;
   var box = this.dom.box;
 
   if (orientation == 'top') {
     box.style.top = this.top + 'px';
-  }
-  else {
-    box.style.top = (this.parent.height - this.top - this.height) + 'px';
+  } else {
+    box.style.top = this.parent.height - this.top - this.height + 'px';
   }
 };
 
@@ -348,7 +355,11 @@ RangeItem.prototype.repositionY = function() {
  * @protected
  */
 RangeItem.prototype._repaintDragLeft = function () {
-  if ((this.selected || this.options.itemsAlwaysDraggable.range) && this.options.editable.updateTime && !this.dom.dragLeft) {
+  if (
+    (this.selected || this.options.itemsAlwaysDraggable.range) &&
+    this.options.editable.updateTime &&
+    !this.dom.dragLeft
+  ) {
     // create and show drag area
     var dragLeft = document.createElement('div');
     dragLeft.className = 'vis-drag-left';
@@ -356,8 +367,11 @@ RangeItem.prototype._repaintDragLeft = function () {
 
     this.dom.box.appendChild(dragLeft);
     this.dom.dragLeft = dragLeft;
-  }
-  else if (!this.selected && !this.options.itemsAlwaysDraggable.range && this.dom.dragLeft) {
+  } else if (
+    !this.selected &&
+    !this.options.itemsAlwaysDraggable.range &&
+    this.dom.dragLeft
+  ) {
     // delete drag area
     if (this.dom.dragLeft.parentNode) {
       this.dom.dragLeft.parentNode.removeChild(this.dom.dragLeft);
@@ -371,7 +385,11 @@ RangeItem.prototype._repaintDragLeft = function () {
  * @protected
  */
 RangeItem.prototype._repaintDragRight = function () {
-  if ((this.selected || this.options.itemsAlwaysDraggable.range) && this.options.editable.updateTime && !this.dom.dragRight) {
+  if (
+    (this.selected || this.options.itemsAlwaysDraggable.range) &&
+    this.options.editable.updateTime &&
+    !this.dom.dragRight
+  ) {
     // create and show drag area
     var dragRight = document.createElement('div');
     dragRight.className = 'vis-drag-right';
@@ -379,8 +397,11 @@ RangeItem.prototype._repaintDragRight = function () {
 
     this.dom.box.appendChild(dragRight);
     this.dom.dragRight = dragRight;
-  }
-  else if (!this.selected && !this.options.itemsAlwaysDraggable.range && this.dom.dragRight) {
+  } else if (
+    !this.selected &&
+    !this.options.itemsAlwaysDraggable.range &&
+    this.dom.dragRight
+  ) {
     // delete drag area
     if (this.dom.dragRight.parentNode) {
       this.dom.dragRight.parentNode.removeChild(this.dom.dragRight);

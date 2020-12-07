@@ -5,7 +5,7 @@
  * @param {Object} JSONcontainer
  * @private
  */
-exports.prepareElements = function(JSONcontainer) {
+exports.prepareElements = function (JSONcontainer) {
   // cleanup the redundant svgElements;
   for (var elementType in JSONcontainer) {
     if (JSONcontainer.hasOwnProperty(elementType)) {
@@ -22,13 +22,15 @@ exports.prepareElements = function(JSONcontainer) {
  * @param {Object} JSONcontainer
  * @private
  */
-exports.cleanupElements = function(JSONcontainer) {
+exports.cleanupElements = function (JSONcontainer) {
   // cleanup the redundant svgElements;
   for (var elementType in JSONcontainer) {
     if (JSONcontainer.hasOwnProperty(elementType)) {
       if (JSONcontainer[elementType].redundant) {
         for (var i = 0; i < JSONcontainer[elementType].redundant.length; i++) {
-          JSONcontainer[elementType].redundant[i].parentNode.removeChild(JSONcontainer[elementType].redundant[i]);
+          JSONcontainer[elementType].redundant[i].parentNode.removeChild(
+            JSONcontainer[elementType].redundant[i]
+          );
         }
         JSONcontainer[elementType].redundant = [];
       }
@@ -40,7 +42,7 @@ exports.cleanupElements = function(JSONcontainer) {
  * Ensures that all elements are removed first up so they can be recreated cleanly
  * @param {Object} JSONcontainer
  */
-exports.resetElements = function(JSONcontainer) {
+exports.resetElements = function (JSONcontainer) {
   exports.prepareElements(JSONcontainer);
   exports.cleanupElements(JSONcontainer);
   exports.prepareElements(JSONcontainer);
@@ -59,28 +61,32 @@ exports.resetElements = function(JSONcontainer) {
 exports.getSVGElement = function (elementType, JSONcontainer, svgContainer) {
   var element;
   // allocate SVG element, if it doesnt yet exist, create one.
-  if (JSONcontainer.hasOwnProperty(elementType)) { // this element has been created before
+  if (JSONcontainer.hasOwnProperty(elementType)) {
+    // this element has been created before
     // check if there is an redundant element
     if (JSONcontainer[elementType].redundant.length > 0) {
       element = JSONcontainer[elementType].redundant[0];
       JSONcontainer[elementType].redundant.shift();
-    }
-    else {
+    } else {
       // create a new element and add it to the SVG
-      element = document.createElementNS('http://www.w3.org/2000/svg', elementType);
+      element = document.createElementNS(
+        'http://www.w3.org/2000/svg',
+        elementType
+      );
       svgContainer.appendChild(element);
     }
-  }
-  else {
+  } else {
     // create a new element and add it to the SVG, also create a new object in the svgElements to keep track of it.
-    element = document.createElementNS('http://www.w3.org/2000/svg', elementType);
-    JSONcontainer[elementType] = {used: [], redundant: []};
+    element = document.createElementNS(
+      'http://www.w3.org/2000/svg',
+      elementType
+    );
+    JSONcontainer[elementType] = { used: [], redundant: [] };
     svgContainer.appendChild(element);
   }
   JSONcontainer[elementType].used.push(element);
   return element;
 };
-
 
 /**
  * Allocate or generate an SVG element if needed. Store a reference to it in the JSON container and draw it in the svgContainer
@@ -92,43 +98,42 @@ exports.getSVGElement = function (elementType, JSONcontainer, svgContainer) {
  * @param {Element} insertBefore
  * @returns {*}
  */
-exports.getDOMElement = function (elementType, JSONcontainer, DOMContainer, insertBefore) {
+exports.getDOMElement = function (
+  elementType,
+  JSONcontainer,
+  DOMContainer,
+  insertBefore
+) {
   var element;
   // allocate DOM element, if it doesnt yet exist, create one.
-  if (JSONcontainer.hasOwnProperty(elementType)) { // this element has been created before
+  if (JSONcontainer.hasOwnProperty(elementType)) {
+    // this element has been created before
     // check if there is an redundant element
     if (JSONcontainer[elementType].redundant.length > 0) {
       element = JSONcontainer[elementType].redundant[0];
       JSONcontainer[elementType].redundant.shift();
-    }
-    else {
+    } else {
       // create a new element and add it to the SVG
       element = document.createElement(elementType);
       if (insertBefore !== undefined) {
         DOMContainer.insertBefore(element, insertBefore);
-      }
-      else {
+      } else {
         DOMContainer.appendChild(element);
       }
     }
-  }
-  else {
+  } else {
     // create a new element and add it to the SVG, also create a new object in the svgElements to keep track of it.
     element = document.createElement(elementType);
-    JSONcontainer[elementType] = {used: [], redundant: []};
+    JSONcontainer[elementType] = { used: [], redundant: [] };
     if (insertBefore !== undefined) {
       DOMContainer.insertBefore(element, insertBefore);
-    }
-    else {
+    } else {
       DOMContainer.appendChild(element);
     }
   }
   JSONcontainer[elementType].used.push(element);
   return element;
 };
-
-
-
 
 /**
  * Draw a point object. This is a separate function because it can also be called by the legend.
@@ -143,28 +148,33 @@ exports.getDOMElement = function (elementType, JSONcontainer, DOMContainer, inse
  * @param {Object} labelObj
  * @returns {vis.PointItem}
  */
-exports.drawPoint = function(x, y, groupTemplate, JSONcontainer, svgContainer, labelObj) {
+exports.drawPoint = function (
+  x,
+  y,
+  groupTemplate,
+  JSONcontainer,
+  svgContainer,
+  labelObj
+) {
   var point;
   if (groupTemplate.style == 'circle') {
     point = exports.getSVGElement('circle', JSONcontainer, svgContainer);
-    point.setAttributeNS(null, "cx", x);
-    point.setAttributeNS(null, "cy", y);
-    point.setAttributeNS(null, "r", 0.5 * groupTemplate.size);
-  }
-  else {
+    point.setAttributeNS(null, 'cx', x);
+    point.setAttributeNS(null, 'cy', y);
+    point.setAttributeNS(null, 'r', 0.5 * groupTemplate.size);
+  } else {
     point = exports.getSVGElement('rect', JSONcontainer, svgContainer);
-    point.setAttributeNS(null, "x", x - 0.5 * groupTemplate.size);
-    point.setAttributeNS(null, "y", y - 0.5 * groupTemplate.size);
-    point.setAttributeNS(null, "width", groupTemplate.size);
-    point.setAttributeNS(null, "height", groupTemplate.size);
+    point.setAttributeNS(null, 'x', x - 0.5 * groupTemplate.size);
+    point.setAttributeNS(null, 'y', y - 0.5 * groupTemplate.size);
+    point.setAttributeNS(null, 'width', groupTemplate.size);
+    point.setAttributeNS(null, 'height', groupTemplate.size);
   }
 
   if (groupTemplate.styles !== undefined) {
-    point.setAttributeNS(null, "style", groupTemplate.styles);
+    point.setAttributeNS(null, 'style', groupTemplate.styles);
   }
-  point.setAttributeNS(null, "class", groupTemplate.className + " vis-point");
+  point.setAttributeNS(null, 'class', groupTemplate.className + ' vis-point');
   //handle label
-
 
   if (labelObj) {
     var label = exports.getSVGElement('text', JSONcontainer, svgContainer);
@@ -180,10 +190,10 @@ exports.drawPoint = function(x, y, groupTemplate, JSONcontainer, svgContainer, l
     }
 
     if (labelObj.className) {
-      label.setAttributeNS(null, "class", labelObj.className  + " vis-label");
+      label.setAttributeNS(null, 'class', labelObj.className + ' vis-label');
     }
-    label.setAttributeNS(null, "x", x);
-    label.setAttributeNS(null, "y", y);
+    label.setAttributeNS(null, 'x', x);
+    label.setAttributeNS(null, 'y', y);
   }
 
   return point;
@@ -201,20 +211,29 @@ exports.drawPoint = function(x, y, groupTemplate, JSONcontainer, svgContainer, l
  * @param {Object} svgContainer
  * @param {string} style
  */
-exports.drawBar = function (x, y, width, height, className, JSONcontainer, svgContainer, style) {
+exports.drawBar = function (
+  x,
+  y,
+  width,
+  height,
+  className,
+  JSONcontainer,
+  svgContainer,
+  style
+) {
   if (height != 0) {
     if (height < 0) {
       height *= -1;
       y -= height;
     }
-    var rect = exports.getSVGElement('rect',JSONcontainer, svgContainer);
-    rect.setAttributeNS(null, "x", x - 0.5 * width);
-    rect.setAttributeNS(null, "y", y);
-    rect.setAttributeNS(null, "width", width);
-    rect.setAttributeNS(null, "height", height);
-    rect.setAttributeNS(null, "class", className);
+    var rect = exports.getSVGElement('rect', JSONcontainer, svgContainer);
+    rect.setAttributeNS(null, 'x', x - 0.5 * width);
+    rect.setAttributeNS(null, 'y', y);
+    rect.setAttributeNS(null, 'width', width);
+    rect.setAttributeNS(null, 'height', height);
+    rect.setAttributeNS(null, 'class', className);
     if (style) {
-      rect.setAttributeNS(null, "style", style);
+      rect.setAttributeNS(null, 'style', style);
     }
   }
 };

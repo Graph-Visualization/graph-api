@@ -33,29 +33,29 @@ function LineGraph(body, options) {
     graphHeight: '400px',
     shaded: {
       enabled: false,
-      orientation: 'bottom' // top, bottom, zero
+      orientation: 'bottom', // top, bottom, zero
     },
     style: 'line', // line, bar
     barChart: {
       width: 50,
       sideBySide: false,
-      align: 'center' // left, center, right
+      align: 'center', // left, center, right
     },
     interpolation: {
       enabled: true,
       parametrization: 'centripetal', // uniform (alpha = 0.0), chordal (alpha = 1.0), centripetal (alpha = 0.5)
-      alpha: 0.5
+      alpha: 0.5,
     },
     drawPoints: {
       enabled: true,
       size: 6,
-      style: 'square' // square, circle
+      style: 'square', // square, circle
     },
     dataAxis: {}, //Defaults are done on DataAxis level
     legend: {}, //Defaults are done on Legend level
     groups: {
-      visibility: {}
-    }
+      visibility: {},
+    },
   };
 
   // options is shared by this lineGraph and all its items
@@ -70,37 +70,43 @@ function LineGraph(body, options) {
   this.forceGraphUpdate = true;
 
   var me = this;
-  this.itemsData = null;    // DataSet
-  this.groupsData = null;   // DataSet
+  this.itemsData = null; // DataSet
+  this.groupsData = null; // DataSet
 
   // listeners for the DataSet of the items
   this.itemListeners = {
-    'add': function (event, params, senderId) {  // eslint-disable-line no-unused-vars
+    add: function (event, params, senderId) {
+      // eslint-disable-line no-unused-vars
       me._onAdd(params.items);
     },
-    'update': function (event, params, senderId) {  // eslint-disable-line no-unused-vars
+    update: function (event, params, senderId) {
+      // eslint-disable-line no-unused-vars
       me._onUpdate(params.items);
     },
-    'remove': function (event, params, senderId) {  // eslint-disable-line no-unused-vars
+    remove: function (event, params, senderId) {
+      // eslint-disable-line no-unused-vars
       me._onRemove(params.items);
-    }
+    },
   };
 
   // listeners for the DataSet of the groups
   this.groupListeners = {
-    'add': function (event, params, senderId) {  // eslint-disable-line no-unused-vars
+    add: function (event, params, senderId) {
+      // eslint-disable-line no-unused-vars
       me._onAddGroups(params.items);
     },
-    'update': function (event, params, senderId) {  // eslint-disable-line no-unused-vars
+    update: function (event, params, senderId) {
+      // eslint-disable-line no-unused-vars
       me._onUpdateGroups(params.items);
     },
-    'remove': function (event, params, senderId) {  // eslint-disable-line no-unused-vars
+    remove: function (event, params, senderId) {
+      // eslint-disable-line no-unused-vars
       me._onRemoveGroups(params.items);
-    }
+    },
   };
 
-  this.items = {};      // object with an Item for every data item
-  this.selection = [];  // list with the ids of all selected nodes
+  this.items = {}; // object with an Item for every data item
+  this.selection = []; // list with the ids of all selected nodes
   this.lastStart = this.body.range.start;
   this.touchParams = {}; // stores properties while dragging
 
@@ -118,7 +124,12 @@ function LineGraph(body, options) {
 
   // create the HTML DOM
   this._create();
-  this.framework = {svg: this.svg, svgElements: this.svgElements, options: this.options, groups: this.groups};
+  this.framework = {
+    svg: this.svg,
+    svgElements: this.svgElements,
+    options: this.options,
+    groups: this.groups,
+  };
 }
 
 LineGraph.prototype = new Component();
@@ -134,21 +145,42 @@ LineGraph.prototype._create = function () {
   // create svg element for graph drawing.
   this.svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
   this.svg.style.position = 'relative';
-  this.svg.style.height = ('' + this.options.graphHeight).replace('px', '') + 'px';
+  this.svg.style.height =
+    ('' + this.options.graphHeight).replace('px', '') + 'px';
   this.svg.style.display = 'block';
   frame.appendChild(this.svg);
 
   // data axis
   this.options.dataAxis.orientation = 'left';
-  this.yAxisLeft = new DataAxis(this.body, this.options.dataAxis, this.svg, this.options.groups);
+  this.yAxisLeft = new DataAxis(
+    this.body,
+    this.options.dataAxis,
+    this.svg,
+    this.options.groups
+  );
 
   this.options.dataAxis.orientation = 'right';
-  this.yAxisRight = new DataAxis(this.body, this.options.dataAxis, this.svg, this.options.groups);
+  this.yAxisRight = new DataAxis(
+    this.body,
+    this.options.dataAxis,
+    this.svg,
+    this.options.groups
+  );
   delete this.options.dataAxis.orientation;
 
   // legends
-  this.legendLeft = new Legend(this.body, this.options.legend, 'left', this.options.groups);
-  this.legendRight = new Legend(this.body, this.options.legend, 'right', this.options.groups);
+  this.legendLeft = new Legend(
+    this.body,
+    this.options.legend,
+    'left',
+    this.options.groups
+  );
+  this.legendRight = new Legend(
+    this.body,
+    this.options.legend,
+    'right',
+    this.options.groups
+  );
 
   this.show();
 };
@@ -159,13 +191,30 @@ LineGraph.prototype._create = function () {
  */
 LineGraph.prototype.setOptions = function (options) {
   if (options) {
-    var fields = ['sampling', 'defaultGroup', 'stack', 'height', 'graphHeight', 'yAxisOrientation', 'style', 'barChart', 'dataAxis', 'sort', 'groups'];
+    var fields = [
+      'sampling',
+      'defaultGroup',
+      'stack',
+      'height',
+      'graphHeight',
+      'yAxisOrientation',
+      'style',
+      'barChart',
+      'dataAxis',
+      'sort',
+      'groups',
+    ];
     if (options.graphHeight === undefined && options.height !== undefined) {
       this.updateSVGheight = true;
       this.updateSVGheightOnResize = true;
-    }
-    else if (this.body.domProps.centerContainer.height !== undefined && options.graphHeight !== undefined) {
-      if (parseInt((options.graphHeight + '').replace("px", '')) < this.body.domProps.centerContainer.height) {
+    } else if (
+      this.body.domProps.centerContainer.height !== undefined &&
+      options.graphHeight !== undefined
+    ) {
+      if (
+        parseInt((options.graphHeight + '').replace('px', '')) <
+        this.body.domProps.centerContainer.height
+      ) {
         this.updateSVGheight = true;
       }
     }
@@ -180,11 +229,9 @@ LineGraph.prototype.setOptions = function (options) {
         if (options.interpolation.parametrization) {
           if (options.interpolation.parametrization == 'uniform') {
             this.options.interpolation.alpha = 0;
-          }
-          else if (options.interpolation.parametrization == 'chordal') {
+          } else if (options.interpolation.parametrization == 'chordal') {
             this.options.interpolation.alpha = 1.0;
-          }
-          else {
+          } else {
             this.options.interpolation.parametrization = 'centripetal';
             this.options.interpolation.alpha = 0.5;
           }
@@ -212,9 +259,10 @@ LineGraph.prototype.setOptions = function (options) {
   }
 
   // this is used to redraw the graph if the visibility of the groups is changed.
-  if (this.dom.frame) { //not on initial run?
-    this.forceGraphUpdate=true;
-    this.body.emitter.emit("_change",{queue: true});
+  if (this.dom.frame) {
+    //not on initial run?
+    this.forceGraphUpdate = true;
+    this.body.emitter.emit('_change', { queue: true });
   }
 };
 
@@ -228,7 +276,6 @@ LineGraph.prototype.hide = function () {
   }
 };
 
-
 /**
  * Show the component in the DOM (when not already visible).
  */
@@ -238,7 +285,6 @@ LineGraph.prototype.show = function () {
     this.body.dom.center.appendChild(this.dom.frame);
   }
 };
-
 
 /**
  * Set items
@@ -252,11 +298,9 @@ LineGraph.prototype.setItems = function (items) {
   // replace the dataset
   if (!items) {
     this.itemsData = null;
-  }
-  else if (items instanceof DataSet || items instanceof DataView) {
+  } else if (items instanceof DataSet || items instanceof DataView) {
     this.itemsData = items;
-  }
-  else {
+  } else {
     throw new TypeError('Data must be an instance of DataSet or DataView');
   }
 
@@ -284,7 +328,6 @@ LineGraph.prototype.setItems = function (items) {
   }
 };
 
-
 /**
  * Set groups
  * @param {vis.DataSet} groups
@@ -310,11 +353,9 @@ LineGraph.prototype.setGroups = function (groups) {
   // replace the dataset
   if (!groups) {
     this.groupsData = null;
-  }
-  else if (groups instanceof DataSet || groups instanceof DataView) {
+  } else if (groups instanceof DataSet || groups instanceof DataView) {
     this.groupsData = groups;
-  }
-  else {
+  } else {
     throw new TypeError('Data must be an instance of DataSet or DataView');
   }
 
@@ -357,7 +398,7 @@ LineGraph.prototype._onRemoveGroups = function (groupIds) {
     this._removeGroup(groupIds[i]);
   }
   this.forceGraphUpdate = true;
-  this.body.emitter.emit("_change",{queue: true});
+  this.body.emitter.emit('_change', { queue: true });
 };
 
 /**
@@ -371,8 +412,7 @@ LineGraph.prototype._removeGroup = function (groupId) {
       this.yAxisRight.removeGroup(groupId);
       this.legendRight.removeGroup(groupId);
       this.legendRight.redraw();
-    }
-    else {
+    } else {
       this.yAxisLeft.removeGroup(groupId);
       this.legendLeft.removeGroup(groupId);
       this.legendLeft.redraw();
@@ -390,17 +430,20 @@ LineGraph.prototype._removeGroup = function (groupId) {
  */
 LineGraph.prototype._updateGroup = function (group, groupId) {
   if (!this.groups.hasOwnProperty(groupId)) {
-    this.groups[groupId] = new GraphGroup(group, groupId, this.options, this.groupsUsingDefaultStyles);
+    this.groups[groupId] = new GraphGroup(
+      group,
+      groupId,
+      this.options,
+      this.groupsUsingDefaultStyles
+    );
     if (this.groups[groupId].options.yAxisOrientation == 'right') {
       this.yAxisRight.addGroup(groupId, this.groups[groupId]);
       this.legendRight.addGroup(groupId, this.groups[groupId]);
-    }
-    else {
+    } else {
       this.yAxisLeft.addGroup(groupId, this.groups[groupId]);
       this.legendLeft.addGroup(groupId, this.groups[groupId]);
     }
-  }
-  else {
+  } else {
     this.groups[groupId].update(group);
     if (this.groups[groupId].options.yAxisOrientation == 'right') {
       this.yAxisRight.updateGroup(groupId, this.groups[groupId]);
@@ -408,8 +451,7 @@ LineGraph.prototype._updateGroup = function (group, groupId) {
       //If yAxisOrientation changed, clean out the group from the other axis.
       this.yAxisLeft.removeGroup(groupId);
       this.legendLeft.removeGroup(groupId);
-    }
-    else {
+    } else {
       this.yAxisLeft.updateGroup(groupId, this.groups[groupId]);
       this.legendLeft.updateGroup(groupId, this.groups[groupId]);
       //If yAxisOrientation changed, clean out the group from the other axis.
@@ -420,7 +462,6 @@ LineGraph.prototype._updateGroup = function (group, groupId) {
   this.legendLeft.redraw();
   this.legendRight.redraw();
 };
-
 
 /**
  * this updates all groups, it is used when there is an update the the itemset.
@@ -435,7 +476,7 @@ LineGraph.prototype._updateAllGroupData = function (ids, groupIds) {
     var items = this.itemsData.get();
     var fieldId = this.itemsData._fieldId;
     var idMap = {};
-    if (ids){
+    if (ids) {
       ids.map(function (id) {
         idMap[id] = id;
       });
@@ -449,7 +490,9 @@ LineGraph.prototype._updateAllGroupData = function (ids, groupIds) {
       if (groupId === null || groupId === undefined) {
         groupId = UNGROUPED;
       }
-      groupCounts.hasOwnProperty(groupId) ? groupCounts[groupId]++ : groupCounts[groupId] = 1;
+      groupCounts.hasOwnProperty(groupId)
+        ? groupCounts[groupId]++
+        : (groupCounts[groupId] = 1);
     }
 
     //Pre-load arrays from existing groups if items are not changed (not in ids)
@@ -462,7 +505,7 @@ LineGraph.prototype._updateAllGroupData = function (ids, groupIds) {
 
           groupsContent[groupId] = existing_items.filter(function (item) {
             existingItemsMap[item[fieldId]] = item[fieldId];
-            return (item[fieldId] !== idMap[item[fieldId]]);
+            return item[fieldId] !== idMap[item[fieldId]];
           });
           var newLength = groupCounts[groupId];
           groupCounts[groupId] -= groupsContent[groupId].length;
@@ -480,7 +523,12 @@ LineGraph.prototype._updateAllGroupData = function (ids, groupIds) {
       if (groupId === null || groupId === undefined) {
         groupId = UNGROUPED;
       }
-      if (!groupIds && ids && (item[fieldId] !== idMap[item[fieldId]]) && existingItemsMap.hasOwnProperty(item[fieldId])) {
+      if (
+        !groupIds &&
+        ids &&
+        item[fieldId] !== idMap[item[fieldId]] &&
+        existingItemsMap.hasOwnProperty(item[fieldId])
+      ) {
         continue;
       }
       if (!groupsContent.hasOwnProperty(groupId)) {
@@ -494,13 +542,13 @@ LineGraph.prototype._updateAllGroupData = function (ids, groupIds) {
       extended.y = Number(item.y);
       extended[fieldId] = item[fieldId];
 
-      var index= groupsContent[groupId].length - groupCounts[groupId]--;
+      var index = groupsContent[groupId].length - groupCounts[groupId]--;
       groupsContent[groupId][index] = extended;
     }
 
     //Make sure all groups are present, to allow removal of old groups
-    for (groupId in this.groups){
-      if (this.groups.hasOwnProperty(groupId)){
+    for (groupId in this.groups) {
+      if (this.groups.hasOwnProperty(groupId)) {
         if (!groupsContent.hasOwnProperty(groupId)) {
           groupsContent[groupId] = new Array(0);
         }
@@ -520,7 +568,10 @@ LineGraph.prototype._updateAllGroupData = function (ids, groupIds) {
             group = this.groupsData.get(groupId);
           }
           if (group == undefined) {
-            group = {id: groupId, content: this.options.defaultGroup + groupId};
+            group = {
+              id: groupId,
+              content: this.options.defaultGroup + groupId,
+            };
           }
           this._updateGroup(group, groupId);
           this.groups[groupId].setItems(groupsContent[groupId]);
@@ -528,7 +579,7 @@ LineGraph.prototype._updateAllGroupData = function (ids, groupIds) {
       }
     }
     this.forceGraphUpdate = true;
-    this.body.emitter.emit("_change",{queue: true});
+    this.body.emitter.emit('_change', { queue: true });
   }
 };
 
@@ -541,18 +592,18 @@ LineGraph.prototype.redraw = function () {
 
   // calculate actual size and position
   this.props.width = this.dom.frame.offsetWidth;
-  this.props.height = this.body.domProps.centerContainer.height
-    - this.body.domProps.border.top
-    - this.body.domProps.border.bottom;
+  this.props.height =
+    this.body.domProps.centerContainer.height -
+    this.body.domProps.border.top -
+    this.body.domProps.border.bottom;
 
   // check if this component is resized
   resized = this._isResized() || resized;
 
   // check whether zoomed (in that case we need to re-stack everything)
   var visibleInterval = this.body.range.end - this.body.range.start;
-  var zoomed = (visibleInterval != this.lastVisibleInterval);
+  var zoomed = visibleInterval != this.lastVisibleInterval;
   this.lastVisibleInterval = visibleInterval;
-
 
   // the svg element is three times as big as the width, this allows for fully dragging left and right
   // without reloading the graph. the controls for this are bound to events in the constructor
@@ -561,7 +612,10 @@ LineGraph.prototype.redraw = function () {
     this.svg.style.left = util.option.asSize(-this.props.width);
 
     // if the height of the graph is set as proportional, change the height of the svg
-    if ((this.options.height + '').indexOf("%") != -1 || this.updateSVGheightOnResize == true) {
+    if (
+      (this.options.height + '').indexOf('%') != -1 ||
+      this.updateSVGheightOnResize == true
+    ) {
       this.updateSVGheight = true;
     }
   }
@@ -573,17 +627,21 @@ LineGraph.prototype.redraw = function () {
       this.svg.style.height = this.props.height + 'px';
     }
     this.updateSVGheight = false;
-  }
-  else {
-    this.svg.style.height = ('' + this.options.graphHeight).replace('px', '') + 'px';
+  } else {
+    this.svg.style.height =
+      ('' + this.options.graphHeight).replace('px', '') + 'px';
   }
 
   // zoomed is here to ensure that animations are shown correctly.
-  if (resized == true || zoomed == true || this.abortedGraphUpdate == true || this.forceGraphUpdate == true) {
+  if (
+    resized == true ||
+    zoomed == true ||
+    this.abortedGraphUpdate == true ||
+    this.forceGraphUpdate == true
+  ) {
     resized = this._updateGraph() || resized;
     this.forceGraphUpdate = false;
-  }
-  else {
+  } else {
     // move the whole svg while dragging
     if (this.lastStart != 0) {
       var offset = this.body.range.start - this.lastStart;
@@ -591,7 +649,7 @@ LineGraph.prototype.redraw = function () {
       if (this.props.width != 0) {
         var rangePerPixelInv = this.props.width / range;
         var xOffset = offset * rangePerPixelInv;
-        this.svg.style.left = (-this.props.width - xOffset) + 'px';
+        this.svg.style.left = -this.props.width - xOffset + 'px';
       }
     }
   }
@@ -600,27 +658,30 @@ LineGraph.prototype.redraw = function () {
   return resized;
 };
 
-
-LineGraph.prototype._getSortedGroupIds = function(){
+LineGraph.prototype._getSortedGroupIds = function () {
   // getting group Ids
   var grouplist = [];
   for (var groupId in this.groups) {
     if (this.groups.hasOwnProperty(groupId)) {
       var group = this.groups[groupId];
-      if (group.visible == true && (this.options.groups.visibility[groupId] === undefined || this.options.groups.visibility[groupId] == true)) {
-        grouplist.push({id:groupId,zIndex:group.options.zIndex});
+      if (
+        group.visible == true &&
+        (this.options.groups.visibility[groupId] === undefined ||
+          this.options.groups.visibility[groupId] == true)
+      ) {
+        grouplist.push({ id: groupId, zIndex: group.options.zIndex });
       }
     }
   }
-  util.insertSort(grouplist,function(a,b){
+  util.insertSort(grouplist, function (a, b) {
     var az = a.zIndex;
     var bz = b.zIndex;
-    if (az === undefined) az=0;
-    if (bz === undefined) bz=0;
-    return az==bz? 0: (az<bz ? -1: 1);
+    if (az === undefined) az = 0;
+    if (bz === undefined) bz = 0;
+    return az == bz ? 0 : az < bz ? -1 : 1;
   });
   var groupIds = new Array(grouplist.length);
-  for (var i=0; i< grouplist.length; i++){
+  for (var i = 0; i < grouplist.length; i++) {
     groupIds[i] = grouplist[i].id;
   }
   return groupIds;
@@ -641,7 +702,9 @@ LineGraph.prototype._updateGraph = function () {
     var changeCalled = false;
     // this is the range of the SVG canvas
     var minDate = this.body.util.toGlobalTime(-this.body.domProps.root.width);
-    var maxDate = this.body.util.toGlobalTime(2 * this.body.domProps.root.width);
+    var maxDate = this.body.util.toGlobalTime(
+      2 * this.body.domProps.root.width
+    );
 
     // getting group Ids
     var groupIds = this._getSortedGroupIds();
@@ -679,16 +742,25 @@ LineGraph.prototype._updateGraph = function () {
       for (i = 0; i < groupIds.length; i++) {
         group = this.groups[groupIds[i]];
         if (this.options.stack === true && this.options.style === 'line') {
-          if (group.options.excludeFromStacking == undefined || !group.options.excludeFromStacking) {
+          if (
+            group.options.excludeFromStacking == undefined ||
+            !group.options.excludeFromStacking
+          ) {
             if (below != undefined) {
               this._stack(groupsData[group.id], groupsData[below.id]);
-              if (group.options.shaded.enabled == true && group.options.shaded.orientation !== "group"){
-                if (group.options.shaded.orientation == "top" && below.options.shaded.orientation !== "group"){
-                  below.options.shaded.orientation="group";
-                  below.options.shaded.groupId=group.id;
+              if (
+                group.options.shaded.enabled == true &&
+                group.options.shaded.orientation !== 'group'
+              ) {
+                if (
+                  group.options.shaded.orientation == 'top' &&
+                  below.options.shaded.orientation !== 'group'
+                ) {
+                  below.options.shaded.orientation = 'group';
+                  below.options.shaded.groupId = group.id;
                 } else {
-                  group.options.shaded.orientation="group";
-                  group.options.shaded.groupId=below.id;
+                  group.options.shaded.orientation = 'group';
+                  group.options.shaded.groupId = below.id;
                 }
               }
             }
@@ -702,7 +774,10 @@ LineGraph.prototype._updateGraph = function () {
       var paths = {};
       for (i = 0; i < groupIds.length; i++) {
         group = this.groups[groupIds[i]];
-        if (group.options.style === 'line' && group.options.shaded.enabled == true) {
+        if (
+          group.options.style === 'line' &&
+          group.options.shaded.enabled == true
+        ) {
           var dataset = groupsData[groupIds[i]];
           if (dataset == null || dataset.length == 0) {
             continue;
@@ -710,19 +785,33 @@ LineGraph.prototype._updateGraph = function () {
           if (!paths.hasOwnProperty(groupIds[i])) {
             paths[groupIds[i]] = Lines.calcPath(dataset, group);
           }
-          if (group.options.shaded.orientation === "group") {
+          if (group.options.shaded.orientation === 'group') {
             var subGroupId = group.options.shaded.groupId;
             if (groupIds.indexOf(subGroupId) === -1) {
-              console.log(group.id + ": Unknown shading group target given:" + subGroupId);
+              console.log(
+                group.id + ': Unknown shading group target given:' + subGroupId
+              );
               continue;
             }
             if (!paths.hasOwnProperty(subGroupId)) {
-              paths[subGroupId] = Lines.calcPath(groupsData[subGroupId], this.groups[subGroupId]);
+              paths[subGroupId] = Lines.calcPath(
+                groupsData[subGroupId],
+                this.groups[subGroupId]
+              );
             }
-            Lines.drawShading(paths[groupIds[i]], group, paths[subGroupId], this.framework);
-          }
-          else {
-            Lines.drawShading(paths[groupIds[i]], group, undefined, this.framework);
+            Lines.drawShading(
+              paths[groupIds[i]],
+              group,
+              paths[subGroupId],
+              this.framework
+            );
+          } else {
+            Lines.drawShading(
+              paths[groupIds[i]],
+              group,
+              undefined,
+              this.framework
+            );
           }
         }
       }
@@ -733,27 +822,33 @@ LineGraph.prototype._updateGraph = function () {
         group = this.groups[groupIds[i]];
         if (groupsData[groupIds[i]].length > 0) {
           switch (group.options.style) {
-            case "line":
+            case 'line':
               if (!paths.hasOwnProperty(groupIds[i])) {
-                paths[groupIds[i]] = Lines.calcPath(groupsData[groupIds[i]], group);
+                paths[groupIds[i]] = Lines.calcPath(
+                  groupsData[groupIds[i]],
+                  group
+                );
               }
               Lines.draw(paths[groupIds[i]], group, this.framework);
             // eslint-disable-line no-fallthrough
-            case "point":
+            case 'point':
             // eslint-disable-line no-fallthrough
-            case "points":
-              if (group.options.style == "point" || group.options.style == "points" || group.options.drawPoints.enabled == true) {
+            case 'points':
+              if (
+                group.options.style == 'point' ||
+                group.options.style == 'points' ||
+                group.options.drawPoints.enabled == true
+              ) {
                 Points.draw(groupsData[groupIds[i]], group, this.framework);
               }
               break;
-            case "bar":
+            case 'bar':
             // bar needs to be drawn enmasse
             // eslint-disable-line no-fallthrough
             default:
             //do nothing...
           }
         }
-
       }
     }
   }
@@ -778,13 +873,12 @@ LineGraph.prototype._stack = function (data, subData) {
         subNextPoint = subData[k];
         index = k;
         break;
-      }
-      else if (subData[k].x > data[j].x) { // overshoot
+      } else if (subData[k].x > data[j].x) {
+        // overshoot
         subNextPoint = subData[k];
         if (k == 0) {
           subPrevPoint = subNextPoint;
-        }
-        else {
+        } else {
           subPrevPoint = subData[k - 1];
         }
         index = k;
@@ -801,13 +895,14 @@ LineGraph.prototype._stack = function (data, subData) {
     dy = subNextPoint.y - subPrevPoint.y;
     if (dx == 0) {
       data[j].y = data[j].orginalY + subNextPoint.y;
-    }
-    else {
-      data[j].y = data[j].orginalY + (dy / dx) * (data[j].x - subPrevPoint.x) + subPrevPoint.y; // ax + b where b is data[j].y
+    } else {
+      data[j].y =
+        data[j].orginalY +
+        (dy / dx) * (data[j].x - subPrevPoint.x) +
+        subPrevPoint.y; // ax + b where b is data[j].y
     }
   }
-}
-
+};
 
 /**
  * first select and preprocess the data from the datasets.
@@ -822,7 +917,12 @@ LineGraph.prototype._stack = function (data, subData) {
  * @param {date}   maxDate
  * @private
  */
-LineGraph.prototype._getRelevantData = function (groupIds, groupsData, minDate, maxDate) {
+LineGraph.prototype._getRelevantData = function (
+  groupIds,
+  groupsData,
+  minDate,
+  maxDate
+) {
   var group, i, j, item;
   if (groupIds.length > 0) {
     for (i = 0; i < groupIds.length; i++) {
@@ -831,28 +931,44 @@ LineGraph.prototype._getRelevantData = function (groupIds, groupsData, minDate, 
       // optimization for sorted data
       if (group.options.sort == true) {
         var dateComparator = function (a, b) {
-          return a.getTime() == b.getTime() ? 0 : a < b ? -1 : 1
+          return a.getTime() == b.getTime() ? 0 : a < b ? -1 : 1;
         };
-        var first = Math.max(0, util.binarySearchValue(itemsData, minDate, 'x', 'before', dateComparator));
-        var last = Math.min(itemsData.length, util.binarySearchValue(itemsData, maxDate, 'x', 'after', dateComparator) + 1);
+        var first = Math.max(
+          0,
+          util.binarySearchValue(
+            itemsData,
+            minDate,
+            'x',
+            'before',
+            dateComparator
+          )
+        );
+        var last = Math.min(
+          itemsData.length,
+          util.binarySearchValue(
+            itemsData,
+            maxDate,
+            'x',
+            'after',
+            dateComparator
+          ) + 1
+        );
         if (last <= 0) {
           last = itemsData.length;
         }
-        var dataContainer = new Array(last-first);
+        var dataContainer = new Array(last - first);
         for (j = first; j < last; j++) {
           item = group.itemsData[j];
-          dataContainer[j-first] = item;
+          dataContainer[j - first] = item;
         }
         groupsData[groupIds[i]] = dataContainer;
-      }
-      else {
+      } else {
         // If unsorted data, all data is relevant, just returning entire structure
         groupsData[groupIds[i]] = group.itemsData;
       }
     }
   }
 };
-
 
 /**
  *
@@ -874,22 +990,30 @@ LineGraph.prototype._applySampling = function (groupIds, groupsData) {
           // the global screen is used because changing the width of the yAxis may affect the increment, resulting in an endless loop
           // of width changing of the yAxis.
           //TODO: This assumes sorted data, but that's not guaranteed!
-          var xDistance = this.body.util.toGlobalScreen(dataContainer[dataContainer.length - 1].x) - this.body.util.toGlobalScreen(dataContainer[0].x);
+          var xDistance =
+            this.body.util.toGlobalScreen(
+              dataContainer[dataContainer.length - 1].x
+            ) - this.body.util.toGlobalScreen(dataContainer[0].x);
           var pointsPerPixel = amountOfPoints / xDistance;
-          increment = Math.min(Math.ceil(0.2 * amountOfPoints), Math.max(1, Math.round(pointsPerPixel)));
+          increment = Math.min(
+            Math.ceil(0.2 * amountOfPoints),
+            Math.max(1, Math.round(pointsPerPixel))
+          );
 
           var sampledData = new Array(amountOfPoints);
           for (var j = 0; j < amountOfPoints; j += increment) {
-            var idx = Math.round(j/increment);
-            sampledData[idx]=dataContainer[j];
+            var idx = Math.round(j / increment);
+            sampledData[idx] = dataContainer[j];
           }
-          groupsData[groupIds[i]] = sampledData.splice(0,Math.round(amountOfPoints/increment));
+          groupsData[groupIds[i]] = sampledData.splice(
+            0,
+            Math.round(amountOfPoints / increment)
+          );
         }
       }
     }
   }
 };
-
 
 /**
  *
@@ -913,23 +1037,32 @@ LineGraph.prototype._getYRanges = function (groupIds, groupsData, groupRanges) {
         if (options.stack === true && options.style === 'bar') {
           if (options.yAxisOrientation === 'left') {
             combinedDataLeft = combinedDataLeft.concat(groupData);
-          }
-          else {
+          } else {
             combinedDataRight = combinedDataRight.concat(groupData);
           }
-        }
-        else {
+        } else {
           groupRanges[groupIds[i]] = group.getYRange(groupData, groupIds[i]);
         }
       }
     }
 
     // if bar graphs are stacked, their range need to be handled differently and accumulated over all groups.
-    Bars.getStackedYRange(combinedDataLeft, groupRanges, groupIds, '__barStackLeft', 'left');
-    Bars.getStackedYRange(combinedDataRight, groupRanges, groupIds, '__barStackRight', 'right');
+    Bars.getStackedYRange(
+      combinedDataLeft,
+      groupRanges,
+      groupIds,
+      '__barStackLeft',
+      'left'
+    );
+    Bars.getStackedYRange(
+      combinedDataRight,
+      groupRanges,
+      groupIds,
+      '__barStackRight',
+      'right'
+    );
   }
 };
-
 
 /**
  * this sets the Y ranges for the Y axis. It also determines which of the axis should be shown or hidden.
@@ -942,7 +1075,12 @@ LineGraph.prototype._updateYAxis = function (groupIds, groupRanges) {
   var resized = false;
   var yAxisLeftUsed = false;
   var yAxisRightUsed = false;
-  var minLeft = 1e9, minRight = 1e9, maxLeft = -1e9, maxRight = -1e9, minVal, maxVal;
+  var minLeft = 1e9,
+    minRight = 1e9,
+    maxLeft = -1e9,
+    maxRight = -1e9,
+    minVal,
+    maxVal;
   // if groups are present
   if (groupIds.length > 0) {
     // this is here to make sure that if there are no items in the axis but there are groups, that there is no infinite draw/redraw loop.
@@ -952,8 +1090,7 @@ LineGraph.prototype._updateYAxis = function (groupIds, groupRanges) {
         yAxisLeftUsed = true;
         minLeft = 1e9;
         maxLeft = -1e9;
-      }
-      else if (group && group.options.yAxisOrientation) {
+      } else if (group && group.options.yAxisOrientation) {
         yAxisRightUsed = true;
         minRight = 1e9;
         maxRight = -1e9;
@@ -971,8 +1108,7 @@ LineGraph.prototype._updateYAxis = function (groupIds, groupRanges) {
             yAxisLeftUsed = true;
             minLeft = minLeft > minVal ? minVal : minLeft;
             maxLeft = maxLeft < maxVal ? maxVal : maxLeft;
-          }
-          else {
+          } else {
             yAxisRightUsed = true;
             minRight = minRight > minVal ? minVal : minRight;
             maxRight = maxRight < maxVal ? maxVal : maxRight;
@@ -989,13 +1125,13 @@ LineGraph.prototype._updateYAxis = function (groupIds, groupRanges) {
     }
   }
   resized = this._toggleAxisVisiblity(yAxisLeftUsed, this.yAxisLeft) || resized;
-  resized = this._toggleAxisVisiblity(yAxisRightUsed, this.yAxisRight) || resized;
+  resized =
+    this._toggleAxisVisiblity(yAxisRightUsed, this.yAxisRight) || resized;
 
   if (yAxisRightUsed == true && yAxisLeftUsed == true) {
     this.yAxisLeft.drawIcons = true;
     this.yAxisRight.drawIcons = true;
-  }
-  else {
+  } else {
     this.yAxisLeft.drawIcons = false;
     this.yAxisRight.drawIcons = false;
   }
@@ -1005,20 +1141,23 @@ LineGraph.prototype._updateYAxis = function (groupIds, groupRanges) {
   if (this.yAxisRight.master == false) {
     if (yAxisRightUsed == true) {
       this.yAxisLeft.lineOffset = this.yAxisRight.width;
-    }
-    else {
+    } else {
       this.yAxisLeft.lineOffset = 0;
     }
 
     resized = this.yAxisLeft.redraw() || resized;
     resized = this.yAxisRight.redraw() || resized;
-  }
-  else {
+  } else {
     resized = this.yAxisRight.redraw() || resized;
   }
 
   // clean the accumulated lists
-  var tempGroups = ['__barStackLeft', '__barStackRight', '__lineStackLeft', '__lineStackRight'];
+  var tempGroups = [
+    '__barStackLeft',
+    '__barStackRight',
+    '__lineStackLeft',
+    '__lineStackRight',
+  ];
   for (i = 0; i < tempGroups.length; i++) {
     if (groupIds.indexOf(tempGroups[i]) != -1) {
       groupIds.splice(groupIds.indexOf(tempGroups[i]), 1);
@@ -1027,7 +1166,6 @@ LineGraph.prototype._updateYAxis = function (groupIds, groupRanges) {
 
   return resized;
 };
-
 
 /**
  * This shows or hides the Y axis if needed. If there is a change, the changed event is emitted by the updateYAxis function
@@ -1044,8 +1182,7 @@ LineGraph.prototype._toggleAxisVisiblity = function (axisUsed, axis) {
       axis.hide();
       changed = true;
     }
-  }
-  else {
+  } else {
     if (!axis.dom.frame.parentNode && axis.hidden == true) {
       axis.show();
       changed = true;
@@ -1053,7 +1190,6 @@ LineGraph.prototype._toggleAxisVisiblity = function (axisUsed, axis) {
   }
   return changed;
 };
-
 
 /**
  * This uses the DataAxis object to generate the correct X coordinate on the SVG window. It uses the
@@ -1070,13 +1206,11 @@ LineGraph.prototype._convertXcoordinates = function (datapoints) {
     datapoints[i].screen_y = datapoints[i].y; //starting point for range calculations
     if (datapoints[i].end != undefined) {
       datapoints[i].screen_end = toScreen(datapoints[i].end) + this.props.width;
-    }
-    else {
+    } else {
       datapoints[i].screen_end = undefined;
     }
   }
 };
-
 
 /**
  * This uses the DataAxis object to generate the correct X coordinate on the SVG window. It uses the
@@ -1098,6 +1232,5 @@ LineGraph.prototype._convertYcoordinates = function (datapoints, group) {
   }
   group.setZeroPosition(Math.min(svgHeight, axis.convertValue(0)));
 };
-
 
 module.exports = LineGraph;

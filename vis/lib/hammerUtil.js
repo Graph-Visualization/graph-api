@@ -29,7 +29,6 @@ exports.onRelease = function (hammer, callback) {
   return hammer.on('hammer.input', callback.inputHandler);
 };
 
-
 /**
  * Unregister a touch event, taking place before a gesture
  * @param {Hammer} hammer       A hammer instance
@@ -58,7 +57,7 @@ exports.offRelease = exports.offTouch;
 exports.disablePreventDefaultVertically = function (pinchRecognizer) {
   var TOUCH_ACTION_PAN_Y = 'pan-y';
 
-  pinchRecognizer.getTouchAction = function() {
+  pinchRecognizer.getTouchAction = function () {
     // default method returns [TOUCH_ACTION_NONE]
     return [TOUCH_ACTION_PAN_Y];
   };

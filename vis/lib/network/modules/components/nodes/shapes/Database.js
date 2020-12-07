@@ -1,6 +1,6 @@
 'use strict';
 
-import NodeBase from '../util/NodeBase'
+import NodeBase from '../util/NodeBase';
 
 /**
  * A Database Node/Cluster shape.
@@ -13,7 +13,7 @@ class Database extends NodeBase {
    * @param {Object} body
    * @param {Label} labelModule
    */
-  constructor (options, body, labelModule) {
+  constructor(options, body, labelModule) {
     super(options, body, labelModule);
     this._setMargins(labelModule);
   }
@@ -29,7 +29,7 @@ class Database extends NodeBase {
       var dimensions = this.getDimensionsFromLabel(ctx, selected, hover);
       var size = dimensions.width + this.margin.right + this.margin.left;
 
-      this.width  = size;
+      this.width = size;
       this.height = size;
       this.radius = this.width / 2;
     }
@@ -47,15 +47,25 @@ class Database extends NodeBase {
   draw(ctx, x, y, selected, hover, values) {
     this.resize(ctx, selected, hover);
     this.left = x - this.width / 2;
-    this.top  = y - this.height / 2;
+    this.top = y - this.height / 2;
 
     this.initContextForDraw(ctx, values);
-    ctx.database(x - this.width / 2, y - this.height / 2, this.width, this.height);
+    ctx.database(
+      x - this.width / 2,
+      y - this.height / 2,
+      this.width,
+      this.height
+    );
     this.performFill(ctx, values);
 
     this.updateBoundingBox(x, y, ctx, selected, hover);
-    this.labelModule.draw(ctx, this.left + this.textSize.width / 2 + this.margin.left,
-                               this.top + this.textSize.height / 2 + this.margin.top, selected, hover);
+    this.labelModule.draw(
+      ctx,
+      this.left + this.textSize.width / 2 + this.margin.left,
+      this.top + this.textSize.height / 2 + this.margin.top,
+      selected,
+      hover
+    );
   }
   /**
    *

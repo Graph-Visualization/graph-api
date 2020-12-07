@@ -14,23 +14,22 @@ class SelectionHandler {
   constructor(body, canvas) {
     this.body = body;
     this.canvas = canvas;
-    this.selectionObj = {nodes: [], edges: []};
-    this.hoverObj = {nodes:{},edges:{}};
+    this.selectionObj = { nodes: [], edges: [] };
+    this.hoverObj = { nodes: {}, edges: {} };
 
     this.options = {};
     this.defaultOptions = {
       multiselect: false,
       selectable: true,
       selectConnectedEdges: true,
-      hoverConnectedEdges: true
+      hoverConnectedEdges: true,
     };
     util.extend(this.options, this.defaultOptions);
 
-    this.body.emitter.on("_dataChanged", () => {
-      this.updateSelection()
+    this.body.emitter.on('_dataChanged', () => {
+      this.updateSelection();
     });
   }
-
 
   /**
    *
@@ -38,11 +37,15 @@ class SelectionHandler {
    */
   setOptions(options) {
     if (options !== undefined) {
-      let fields = ['multiselect','hoverConnectedEdges','selectable','selectConnectedEdges'];
-      util.selectiveDeepExtend(fields,this.options, options);
+      let fields = [
+        'multiselect',
+        'hoverConnectedEdges',
+        'selectable',
+        'selectConnectedEdges',
+      ];
+      util.selectiveDeepExtend(fields, this.options, options);
     }
   }
-
 
   /**
    * handles the selection part of the tap;
@@ -61,7 +64,7 @@ class SelectionHandler {
       if (obj !== undefined) {
         selected = this.selectObject(obj);
       }
-      this.body.emitter.emit("_requestRedraw");
+      this.body.emitter.emit('_requestRedraw');
     }
     return selected;
   }
@@ -80,17 +83,15 @@ class SelectionHandler {
         selectionChanged = true;
         if (obj.isSelected() === true) {
           this.deselectObject(obj);
-        }
-        else {
+        } else {
           this.selectObject(obj);
         }
 
-        this.body.emitter.emit("_requestRedraw");
+        this.body.emitter.emit('_requestRedraw');
       }
     }
     return selectionChanged;
   }
-
 
   /**
    * Create an object containing the standard fields for an event.
@@ -104,14 +105,13 @@ class SelectionHandler {
     let properties = {};
 
     properties['pointer'] = {
-      DOM: {x: pointer.x, y: pointer.y},
-      canvas: this.canvas.DOMtoCanvas(pointer)
+      DOM: { x: pointer.x, y: pointer.y },
+      canvas: this.canvas.DOMtoCanvas(pointer),
     };
     properties['event'] = event;
 
     return properties;
   }
-
 
   /**
    * Generate an event which the user can catch.
@@ -125,14 +125,19 @@ class SelectionHandler {
    * @param {Object|undefined} oldSelection             If present, selection state before event occured
    * @param {boolean|undefined} [emptySelection=false]  Indicate if selection data should be passed
    */
-  _generateClickEvent(eventType, event, pointer, oldSelection, emptySelection = false) {
+  _generateClickEvent(
+    eventType,
+    event,
+    pointer,
+    oldSelection,
+    emptySelection = false
+  ) {
     let properties = this._initBaseEvent(event, pointer);
 
     if (emptySelection === true) {
       properties.nodes = [];
       properties.edges = [];
-    }
-    else {
+    } else {
       let tmp = this.getSelection();
       properties.nodes = tmp.nodes;
       properties.edges = tmp.edges;
@@ -182,8 +187,6 @@ class SelectionHandler {
     }
   }
 
-
-
   /**
    * retrieve all nodes overlapping with given object
    * @param {Object} object  An object with parameters left, top, right, bottom
@@ -202,7 +205,6 @@ class SelectionHandler {
     return overlappingNodes;
   }
 
-
   /**
    * Return a position object in canvasspace from a single point in screenspace
    *
@@ -213,13 +215,12 @@ class SelectionHandler {
   _pointerToPositionObject(pointer) {
     let canvasPos = this.canvas.DOMtoCanvas(pointer);
     return {
-      left:   canvasPos.x - 1,
-      top:    canvasPos.y + 1,
-      right:  canvasPos.x + 1,
-      bottom: canvasPos.y - 1
+      left: canvasPos.x - 1,
+      top: canvasPos.y + 1,
+      right: canvasPos.x + 1,
+      bottom: canvasPos.y - 1,
     };
   }
-
 
   /**
    * Get the top node at the passed point (like a click)
@@ -237,16 +238,13 @@ class SelectionHandler {
     if (overlappingNodes.length > 0) {
       if (returnNode === true) {
         return this.body.nodes[overlappingNodes[overlappingNodes.length - 1]];
-      }
-      else {
+      } else {
         return overlappingNodes[overlappingNodes.length - 1];
       }
-    }
-    else {
+    } else {
       return undefined;
     }
   }
-
 
   /**
    * retrieve all edges overlapping with given object, selector is around center
@@ -264,7 +262,6 @@ class SelectionHandler {
     }
   }
 
-
   /**
    * retrieve all nodes overlapping with given object
    * @param {Object} object  An object with parameters left, top, right, bottom
@@ -273,10 +270,9 @@ class SelectionHandler {
    */
   _getAllEdgesOverlappingWith(object) {
     let overlappingEdges = [];
-    this._getEdgesOverlappingWith(object,overlappingEdges);
+    this._getEdgesOverlappingWith(object, overlappingEdges);
     return overlappingEdges;
   }
-
 
   /**
    * Get the edges nearest to the passed point (like a click)
@@ -299,8 +295,15 @@ class SelectionHandler {
         var yFrom = edge.from.y;
         var xTo = edge.to.x;
         var yTo = edge.to.y;
-        var dist = edge.edgeType.getDistanceToEdge(xFrom, yFrom, xTo, yTo, canvasPos.x, canvasPos.y);
-        if(dist < mindist){
+        var dist = edge.edgeType.getDistanceToEdge(
+          xFrom,
+          yFrom,
+          xTo,
+          yTo,
+          canvasPos.x,
+          canvasPos.y
+        );
+        if (dist < mindist) {
           overlappingEdge = edgeId;
           mindist = dist;
         }
@@ -309,16 +312,13 @@ class SelectionHandler {
     if (overlappingEdge !== null) {
       if (returnEdge === true) {
         return this.body.edges[overlappingEdge];
-      }
-      else {
+      } else {
         return overlappingEdge;
       }
-    }
-    else {
+    } else {
       return undefined;
     }
   }
-
 
   /**
    * Add object to the selection array.
@@ -329,8 +329,7 @@ class SelectionHandler {
   _addToSelection(obj) {
     if (obj instanceof Node) {
       this.selectionObj.nodes[obj.id] = obj;
-    }
-    else {
+    } else {
       this.selectionObj.edges[obj.id] = obj;
     }
   }
@@ -344,12 +343,10 @@ class SelectionHandler {
   _addToHover(obj) {
     if (obj instanceof Node) {
       this.hoverObj.nodes[obj.id] = obj;
-    }
-    else {
+    } else {
       this.hoverObj.edges[obj.id] = obj;
     }
   }
-
 
   /**
    * Remove a single option from selection.
@@ -361,8 +358,7 @@ class SelectionHandler {
     if (obj instanceof Node) {
       delete this.selectionObj.nodes[obj.id];
       this._unselectConnectedEdges(obj);
-    }
-    else {
+    } else {
       delete this.selectionObj.edges[obj.id];
     }
   }
@@ -371,20 +367,19 @@ class SelectionHandler {
    * Unselect all. The selectionObj is useful for this.
    */
   unselectAll() {
-    for(let nodeId in this.selectionObj.nodes) {
-      if(this.selectionObj.nodes.hasOwnProperty(nodeId)) {
+    for (let nodeId in this.selectionObj.nodes) {
+      if (this.selectionObj.nodes.hasOwnProperty(nodeId)) {
         this.selectionObj.nodes[nodeId].unselect();
       }
     }
-    for(let edgeId in this.selectionObj.edges) {
-      if(this.selectionObj.edges.hasOwnProperty(edgeId)) {
+    for (let edgeId in this.selectionObj.edges) {
+      if (this.selectionObj.edges.hasOwnProperty(edgeId)) {
         this.selectionObj.edges[edgeId].unselect();
       }
     }
 
-    this.selectionObj = {nodes:{},edges:{}};
+    this.selectionObj = { nodes: {}, edges: {} };
   }
-
 
   /**
    * return the number of selected nodes
@@ -432,7 +427,6 @@ class SelectionHandler {
     return undefined;
   }
 
-
   /**
    * return the number of selected edges
    *
@@ -449,7 +443,6 @@ class SelectionHandler {
     return count;
   }
 
-
   /**
    * return the number of selected objects.
    *
@@ -458,13 +451,13 @@ class SelectionHandler {
    */
   _getSelectedObjectCount() {
     let count = 0;
-    for(let nodeId in this.selectionObj.nodes) {
-      if(this.selectionObj.nodes.hasOwnProperty(nodeId)) {
+    for (let nodeId in this.selectionObj.nodes) {
+      if (this.selectionObj.nodes.hasOwnProperty(nodeId)) {
         count += 1;
       }
     }
-    for(let edgeId in this.selectionObj.edges) {
-      if(this.selectionObj.edges.hasOwnProperty(edgeId)) {
+    for (let edgeId in this.selectionObj.edges) {
+      if (this.selectionObj.edges.hasOwnProperty(edgeId)) {
         count += 1;
       }
     }
@@ -478,19 +471,18 @@ class SelectionHandler {
    * @private
    */
   _selectionIsEmpty() {
-    for(let nodeId in this.selectionObj.nodes) {
-      if(this.selectionObj.nodes.hasOwnProperty(nodeId)) {
+    for (let nodeId in this.selectionObj.nodes) {
+      if (this.selectionObj.nodes.hasOwnProperty(nodeId)) {
         return false;
       }
     }
-    for(let edgeId in this.selectionObj.edges) {
-      if(this.selectionObj.edges.hasOwnProperty(edgeId)) {
+    for (let edgeId in this.selectionObj.edges) {
+      if (this.selectionObj.edges.hasOwnProperty(edgeId)) {
         return false;
       }
     }
     return true;
   }
-
 
   /**
    * check if one of the selected nodes is a cluster.
@@ -499,8 +491,8 @@ class SelectionHandler {
    * @private
    */
   _clusterInSelection() {
-    for(let nodeId in this.selectionObj.nodes) {
-      if(this.selectionObj.nodes.hasOwnProperty(nodeId)) {
+    for (let nodeId in this.selectionObj.nodes) {
+      if (this.selectionObj.nodes.hasOwnProperty(nodeId)) {
         if (this.selectionObj.nodes[nodeId].clusterSize > 1) {
           return true;
         }
@@ -537,7 +529,6 @@ class SelectionHandler {
     }
   }
 
-
   /**
    * unselect the edges connected to the node that is being selected
    *
@@ -551,7 +542,6 @@ class SelectionHandler {
       this._removeFromSelection(edge);
     }
   }
-
 
   /**
    * Remove the highlight from a node or edge, in response to mouse movement
@@ -568,15 +558,13 @@ class SelectionHandler {
       object.hover = false;
       if (object instanceof Node) {
         properties.node = object.id;
-        this.body.emitter.emit("blurNode", properties);
-      }
-      else {
+        this.body.emitter.emit('blurNode', properties);
+      } else {
         properties.edge = object.id;
-        this.body.emitter.emit("blurEdge", properties);
+        this.body.emitter.emit('blurEdge', properties);
       }
     }
   }
-
 
   /**
    * Create the highlight for a node or edge, in response to mouse movement
@@ -588,7 +576,7 @@ class SelectionHandler {
    * @private
    */
   emitHoverEvent(event, pointer, object) {
-    let properties   = this._initBaseEvent(event, pointer);
+    let properties = this._initBaseEvent(event, pointer);
     let hoverChanged = false;
 
     if (object.hover === false) {
@@ -597,17 +585,15 @@ class SelectionHandler {
       hoverChanged = true;
       if (object instanceof Node) {
         properties.node = object.id;
-        this.body.emitter.emit("hoverNode", properties);
-      }
-      else {
+        this.body.emitter.emit('hoverNode', properties);
+      } else {
         properties.edge = object.id;
-        this.body.emitter.emit("hoverEdge", properties);
+        this.body.emitter.emit('hoverEdge', properties);
       }
     }
 
     return hoverChanged;
   }
-
 
   /**
    * Perform actions in response to a mouse movement.
@@ -625,7 +611,11 @@ class SelectionHandler {
     // remove all node hover highlights
     for (let nodeId in this.hoverObj.nodes) {
       if (this.hoverObj.nodes.hasOwnProperty(nodeId)) {
-        if (object === undefined || (object instanceof Node && object.id != nodeId) || object instanceof Edge) {
+        if (
+          object === undefined ||
+          (object instanceof Node && object.id != nodeId) ||
+          object instanceof Edge
+        ) {
           this.emitBlurEvent(event, pointer, this.hoverObj.nodes[nodeId]);
           delete this.hoverObj.nodes[nodeId];
           hoverChanged = true;
@@ -644,7 +634,11 @@ class SelectionHandler {
         }
         // if the blur remains the same and the object is undefined (mouse off) or another
         // edge has been hovered, or another node has been hovered we blur the edge.
-        else if (object === undefined || (object instanceof Edge && object.id != edgeId) || (object instanceof Node && !object.hover)) {
+        else if (
+          object === undefined ||
+          (object instanceof Edge && object.id != edgeId) ||
+          (object instanceof Node && !object.hover)
+        ) {
           this.emitBlurEvent(event, pointer, this.hoverObj.edges[edgeId]);
           delete this.hoverObj.edges[edgeId];
           hoverChanged = true;
@@ -653,7 +647,8 @@ class SelectionHandler {
     }
 
     if (object !== undefined) {
-      hoverChanged = hoverChanged || this.emitHoverEvent(event, pointer, object);
+      hoverChanged =
+        hoverChanged || this.emitHoverEvent(event, pointer, object);
       if (object instanceof Node && this.options.hoverConnectedEdges === true) {
         this._hoverConnectedEdges(object);
       }
@@ -664,9 +659,6 @@ class SelectionHandler {
     }
   }
 
-
-
-
   /**
    *
    * retrieve the currently selected objects
@@ -675,7 +667,7 @@ class SelectionHandler {
   getSelection() {
     let nodeIds = this.getSelectedNodes();
     let edgeIds = this.getSelectedEdges();
-    return {nodes:nodeIds, edges:edgeIds};
+    return { nodes: nodeIds, edges: edgeIds };
   }
 
   /**
@@ -755,7 +747,6 @@ class SelectionHandler {
     this.body.emitter.emit('_requestRedraw');
   }
 
-
   /**
    * select zero or more nodes with the option to highlight edges
    * @param {number[] | string[]} selection     An array with the ids of the
@@ -763,12 +754,11 @@ class SelectionHandler {
    * @param {boolean} [highlightEdges]
    */
   selectNodes(selection, highlightEdges = true) {
-    if (!selection || (selection.length === undefined))
+    if (!selection || selection.length === undefined)
       throw 'Selection must be an array with ids';
 
-    this.setSelection({nodes: selection}, {highlightEdges: highlightEdges});
+    this.setSelection({ nodes: selection }, { highlightEdges: highlightEdges });
   }
-
 
   /**
    * select zero or more edges
@@ -776,10 +766,10 @@ class SelectionHandler {
    *                                            selected nodes.
    */
   selectEdges(selection) {
-    if (!selection || (selection.length === undefined))
+    if (!selection || selection.length === undefined)
       throw 'Selection must be an array with ids';
 
-    this.setSelection({edges: selection});
+    this.setSelection({ edges: selection });
   }
 
   /**
@@ -802,7 +792,6 @@ class SelectionHandler {
       }
     }
   }
-
 
   /**
    * Determine all the visual elements clicked which are on the given point.
@@ -828,7 +817,7 @@ class SelectionHandler {
    * @param {point} pointer  mouse position in screen coordinates
    * @returns {Array.<nodeClickItem|nodeLabelClickItem|edgeClickItem|edgeLabelClickItem>}
    * @private
-   */ 
+   */
   getClickedItems(pointer) {
     let point = this.canvas.DOMtoCanvas(pointer);
     var items = [];

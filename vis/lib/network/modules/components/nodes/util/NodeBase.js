@@ -18,7 +18,7 @@ class NodeBase {
     this.radius = undefined;
     this.margin = undefined;
     this.refreshNeeded = true;
-    this.boundingBox = {top: 0, left: 0, right: 0, bottom: 0};
+    this.boundingBox = { top: 0, left: 0, right: 0, bottom: 0 };
   }
 
   /**
@@ -49,7 +49,7 @@ class NodeBase {
         this.margin.left = this.options.margin;
       }
     }
-    labelModule.adjustSizes(this.margin)
+    labelModule.adjustSizes(this.margin);
   }
 
   /**
@@ -59,12 +59,15 @@ class NodeBase {
    * @returns {number}
    * @private
    */
-  _distanceToBorder(ctx,angle) {
+  _distanceToBorder(ctx, angle) {
     var borderWidth = this.options.borderWidth;
     this.resize(ctx);
-    return Math.min(
+    return (
+      Math.min(
         Math.abs(this.width / 2 / Math.cos(angle)),
-        Math.abs(this.height / 2 / Math.sin(angle))) + borderWidth;
+        Math.abs(this.height / 2 / Math.sin(angle))
+      ) + borderWidth
+    );
   }
 
   /**
@@ -105,12 +108,13 @@ class NodeBase {
       if (ctx.setLineDash !== undefined) {
         let dashes = values.borderDashes;
         if (dashes === true) {
-          dashes = [5,15]
+          dashes = [5, 15];
         }
         ctx.setLineDash(dashes);
-      }
-      else {
-        console.warn("setLineDash is not supported in this browser. The dashed borders cannot be used.");
+      } else {
+        console.warn(
+          'setLineDash is not supported in this browser. The dashed borders cannot be used.'
+        );
         this.options.shapeProperties.borderDashes = false;
         values.borderDashes = false;
       }
@@ -126,9 +130,10 @@ class NodeBase {
     if (values.borderDashes !== false) {
       if (ctx.setLineDash !== undefined) {
         ctx.setLineDash([0]);
-      }
-      else {
-        console.warn("setLineDash is not supported in this browser. The dashed borders cannot be used.");
+      } else {
+        console.warn(
+          'setLineDash is not supported in this browser. The dashed borders cannot be used.'
+        );
         this.options.shapeProperties.borderDashes = false;
         values.borderDashes = false;
       }
@@ -151,7 +156,10 @@ class NodeBase {
       return true;
     }
 
-    return  (this.width === undefined) || (this.labelModule.differentState(selected, hover));
+    return (
+      this.width === undefined ||
+      this.labelModule.differentState(selected, hover)
+    );
   }
 
   /**
@@ -204,19 +212,17 @@ class NodeBase {
     this.performStroke(ctx, values);
   }
 
-
   /**
    *
    * @param {number} margin
    * @private
    */
   _addBoundingBoxMargin(margin) {
-    this.boundingBox.left   -= margin;
-    this.boundingBox.top    -= margin;
+    this.boundingBox.left -= margin;
+    this.boundingBox.top -= margin;
     this.boundingBox.bottom += margin;
-    this.boundingBox.right  += margin;
+    this.boundingBox.right += margin;
   }
-
 
   /**
    * Actual implementation of this method call.
@@ -237,14 +243,13 @@ class NodeBase {
     }
 
     this.left = x - this.width / 2;
-    this.top  = y - this.height/ 2;
+    this.top = y - this.height / 2;
 
-    this.boundingBox.left   = this.left;
-    this.boundingBox.top    = this.top;
+    this.boundingBox.left = this.left;
+    this.boundingBox.top = this.top;
     this.boundingBox.bottom = this.top + this.height;
-    this.boundingBox.right  = this.left + this.width;
+    this.boundingBox.right = this.left + this.width;
   }
-
 
   /**
    * Default implementation of this method call.
@@ -259,7 +264,6 @@ class NodeBase {
   updateBoundingBox(x, y, ctx, selected, hover) {
     this._updateBoundingBox(x, y, ctx, selected, hover);
   }
-
 
   /**
    * Determine the dimensions to use for nodes with an internal label
@@ -278,17 +282,17 @@ class NodeBase {
     // NOTE: previously 'textSize' was not put in 'this' for Ellipse
     // TODO: examine the consequences.
     this.textSize = this.labelModule.getTextSize(ctx, selected, hover);
-    var width  = this.textSize.width;
+    var width = this.textSize.width;
     var height = this.textSize.height;
 
     const DEFAULT_SIZE = 14;
     if (width === 0) {
       // This happens when there is no label text set
-      width = DEFAULT_SIZE;  // use a decent default
+      width = DEFAULT_SIZE; // use a decent default
       height = DEFAULT_SIZE; // if width zero, then height also always zero
     }
 
-    return {width:width, height:height};
+    return { width: width, height: height };
   }
 }
 

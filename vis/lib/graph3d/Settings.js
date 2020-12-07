@@ -3,39 +3,36 @@
 //
 ////////////////////////////////////////////////////////////////////////////////
 var util = require('../util');
-var Camera  = require('./Camera');
+var Camera = require('./Camera');
 var Point3d = require('./Point3d');
-
 
 // enumerate the available styles
 var STYLE = {
-  BAR     : 0,
+  BAR: 0,
   BARCOLOR: 1,
-  BARSIZE : 2,
-  DOT     : 3,
-  DOTLINE : 4,
+  BARSIZE: 2,
+  DOT: 3,
+  DOTLINE: 4,
   DOTCOLOR: 5,
-  DOTSIZE : 6,
-  GRID    : 7,
-  LINE    : 8,
-  SURFACE : 9
+  DOTSIZE: 6,
+  GRID: 7,
+  LINE: 8,
+  SURFACE: 9,
 };
-
 
 // The string representations of the styles
 var STYLENAME = {
-  'dot'      : STYLE.DOT,
-  'dot-line' : STYLE.DOTLINE,
+  dot: STYLE.DOT,
+  'dot-line': STYLE.DOTLINE,
   'dot-color': STYLE.DOTCOLOR,
-  'dot-size' : STYLE.DOTSIZE,
-  'line'     : STYLE.LINE,
-  'grid'     : STYLE.GRID,
-  'surface'  : STYLE.SURFACE,
-  'bar'      : STYLE.BAR,
+  'dot-size': STYLE.DOTSIZE,
+  line: STYLE.LINE,
+  grid: STYLE.GRID,
+  surface: STYLE.SURFACE,
+  bar: STYLE.BAR,
   'bar-color': STYLE.BARCOLOR,
-  'bar-size' : STYLE.BARSIZE
+  'bar-size': STYLE.BARSIZE,
 };
-
 
 /**
  * Field names in the options hash which are of relevance to the user.
@@ -75,11 +72,10 @@ var OPTIONKEYS = [
   'yCenter',
 ];
 
-
 /**
  * Field names in the options hash which are of relevance to the user.
  *
- * Same as OPTIONKEYS, but internally these fields are stored with 
+ * Same as OPTIONKEYS, but internally these fields are stored with
  * prefix 'default' in the name.
  */
 var PREFIXEDOPTIONKEYS = [
@@ -95,13 +91,11 @@ var PREFIXEDOPTIONKEYS = [
   'yStep',
   'zMin',
   'zMax',
-  'zStep'
+  'zStep',
 ];
 
-
 // Placeholder for DEFAULTS reference
-var DEFAULTS = undefined; 
-
+var DEFAULTS = undefined;
 
 /**
  * Check if given hash is empty.
@@ -112,14 +106,12 @@ var DEFAULTS = undefined;
  * @returns {boolean}
  */
 function isEmpty(obj) {
-  for(var prop in obj) {
-    if (obj.hasOwnProperty(prop))
-      return false;
+  for (var prop in obj) {
+    if (obj.hasOwnProperty(prop)) return false;
   }
 
   return true;
 }
-
 
 /**
  * Make first letter of parameter upper case.
@@ -130,13 +122,12 @@ function isEmpty(obj) {
  * @returns {string}
  */
 function capitalize(str) {
-  if (str === undefined || str === "" || typeof str != "string") {
+  if (str === undefined || str === '' || typeof str != 'string') {
     return str;
   }
 
   return str.charAt(0).toUpperCase() + str.slice(1);
 }
-
 
 /**
  * Add a prefix to a field name, taking style guide into account
@@ -146,23 +137,22 @@ function capitalize(str) {
  * @returns {string}
  */
 function prefixFieldName(prefix, fieldName) {
-  if (prefix === undefined || prefix === "") {
+  if (prefix === undefined || prefix === '') {
     return fieldName;
   }
 
   return prefix + capitalize(fieldName);
 }
 
-
 /**
  * Forcibly copy fields from src to dst in a controlled manner.
  *
  * A given field in dst will always be overwitten. If this field
- * is undefined or not present in src, the field in dst will 
+ * is undefined or not present in src, the field in dst will
  * be explicitly set to undefined.
- * 
+ *
  * The intention here is to be able to reset all option fields.
- * 
+ *
  * Only the fields mentioned in array 'fields' will be handled.
  *
  * @param {object} src
@@ -175,13 +165,12 @@ function forceCopy(src, dst, fields, prefix) {
   var dstKey;
 
   for (var i = 0; i < fields.length; ++i) {
-    srcKey  = fields[i];
-    dstKey  = prefixFieldName(prefix, srcKey);
+    srcKey = fields[i];
+    dstKey = prefixFieldName(prefix, srcKey);
 
     dst[dstKey] = src[srcKey];
   }
 }
-
 
 /**
  * Copy fields from src to dst in a safe and controlled manner.
@@ -199,21 +188,20 @@ function safeCopy(src, dst, fields, prefix) {
   var dstKey;
 
   for (var i = 0; i < fields.length; ++i) {
-    srcKey  = fields[i];
+    srcKey = fields[i];
     if (src[srcKey] === undefined) continue;
 
-    dstKey  = prefixFieldName(prefix, srcKey);
+    dstKey = prefixFieldName(prefix, srcKey);
 
     dst[dstKey] = src[srcKey];
   }
 }
 
-
 /**
  * Initialize dst with the values in src.
  *
- * src is the hash with the default values. 
- * A reference DEFAULTS to this hash is stored locally for 
+ * src is the hash with the default values.
+ * A reference DEFAULTS to this hash is stored locally for
  * further handling.
  *
  * For now, dst is assumed to be a Graph3d instance.
@@ -239,11 +227,11 @@ function setDefaults(src, dst) {
   setSpecialSettings(src, dst);
 
   // Following are internal fields, not part of the user settings
-  dst.margin = 10;                  // px
-  dst.showGrayBottom = false;       // TODO: this does not work correctly
+  dst.margin = 10; // px
+  dst.showGrayBottom = false; // TODO: this does not work correctly
   dst.showTooltip = false;
   dst.onclick_callback = null;
-  dst.eye = new Point3d(0, 0, -1);  // TODO: set eye.z about 3/4 of the width of the window?
+  dst.eye = new Point3d(0, 0, -1); // TODO: set eye.z about 3/4 of the width of the window?
 }
 
 /**
@@ -303,7 +291,6 @@ function setSpecialSettings(src, dst) {
   }
 }
 
-
 /**
  * Set the value of setting 'showLegend'
  *
@@ -316,22 +303,21 @@ function setSpecialSettings(src, dst) {
 function setShowLegend(showLegend, dst) {
   if (showLegend === undefined) {
     // If the default was auto, make a choice for this field
-    var isAutoByDefault = (DEFAULTS.showLegend === undefined);
+    var isAutoByDefault = DEFAULTS.showLegend === undefined;
 
     if (isAutoByDefault) {
       // these styles default to having legends
-      var isLegendGraphStyle = dst.style === STYLE.DOTCOLOR
-                            || dst.style === STYLE.DOTSIZE;
+      var isLegendGraphStyle =
+        dst.style === STYLE.DOTCOLOR || dst.style === STYLE.DOTSIZE;
 
       dst.showLegend = isLegendGraphStyle;
     } else {
-       // Leave current value as is
+      // Leave current value as is
     }
   } else {
     dst.showLegend = showLegend;
   }
 }
-
 
 /**
  * Retrieve the style index from given styleName
@@ -348,7 +334,6 @@ function getStyleNumberByName(styleName) {
 
   return number;
 }
-
 
 /**
  * Check if given number is a valid style number.
@@ -376,7 +361,7 @@ function checkStyleNumber(style) {
  */
 function setStyle(style, dst) {
   if (style === undefined) {
-    return;   // Nothing to do
+    return; // Nothing to do
   }
 
   var styleNumber;
@@ -384,13 +369,13 @@ function setStyle(style, dst) {
   if (typeof style === 'string') {
     styleNumber = getStyleNumberByName(style);
 
-    if (styleNumber === -1 ) {
-      throw new Error('Style \'' + style + '\' is invalid');
+    if (styleNumber === -1) {
+      throw new Error("Style '" + style + "' is invalid");
     }
   } else {
     // Do a pedantic check on style number value
     if (!checkStyleNumber(style)) {
-      throw new Error('Style \'' + style + '\' is invalid');
+      throw new Error("Style '" + style + "' is invalid");
     }
 
     styleNumber = style;
@@ -398,7 +383,6 @@ function setStyle(style, dst) {
 
   dst.style = styleNumber;
 }
-
 
 /**
  * Set the background styling for the graph
@@ -410,17 +394,16 @@ function setBackgroundColor(backgroundColor, dst) {
   var stroke = 'gray';
   var strokeWidth = 1;
 
-  if (typeof(backgroundColor) === 'string') {
+  if (typeof backgroundColor === 'string') {
     fill = backgroundColor;
     stroke = 'none';
     strokeWidth = 0;
-  }
-  else if (typeof(backgroundColor) === 'object') {
-    if (backgroundColor.fill !== undefined)    fill = backgroundColor.fill;
-    if (backgroundColor.stroke !== undefined)    stroke = backgroundColor.stroke;
-    if (backgroundColor.strokeWidth !== undefined) strokeWidth = backgroundColor.strokeWidth;
-  }
-  else {
+  } else if (typeof backgroundColor === 'object') {
+    if (backgroundColor.fill !== undefined) fill = backgroundColor.fill;
+    if (backgroundColor.stroke !== undefined) stroke = backgroundColor.stroke;
+    if (backgroundColor.strokeWidth !== undefined)
+      strokeWidth = backgroundColor.strokeWidth;
+  } else {
     throw new Error('Unsupported type of backgroundColor');
   }
 
@@ -437,7 +420,7 @@ function setBackgroundColor(backgroundColor, dst) {
  */
 function setDataColor(dataColor, dst) {
   if (dataColor === undefined) {
-    return;    // Nothing to do
+    return; // Nothing to do
   }
 
   if (dst.dataColor === undefined) {
@@ -445,10 +428,9 @@ function setDataColor(dataColor, dst) {
   }
 
   if (typeof dataColor === 'string') {
-    dst.dataColor.fill   = dataColor;
+    dst.dataColor.fill = dataColor;
     dst.dataColor.stroke = dataColor;
-  }
-  else {
+  } else {
     if (dataColor.fill) {
       dst.dataColor.fill = dataColor.fill;
     }
@@ -480,8 +462,7 @@ function setCameraPosition(cameraPosition, dst) {
   dst.camera.setArmLength(camPos.distance);
 }
 
-
-module.exports.STYLE             = STYLE;
-module.exports.setDefaults       = setDefaults;
-module.exports.setOptions        = setOptions;
+module.exports.STYLE = STYLE;
+module.exports.setDefaults = setDefaults;
+module.exports.setOptions = setOptions;
 module.exports.setCameraPosition = setCameraPosition;

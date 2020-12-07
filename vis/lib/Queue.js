@@ -76,17 +76,19 @@ Queue.extend = function (object, options) {
     queue.flush();
   };
 
-  var methods = [{
-    name: 'flush',
-    original: undefined
-  }];
+  var methods = [
+    {
+      name: 'flush',
+      original: undefined,
+    },
+  ];
 
   if (options && options.replace) {
     for (var i = 0; i < options.replace.length; i++) {
       var name = options.replace[i];
       methods.push({
         name: name,
-        original: object[name]
+        original: object[name],
       });
       queue.replace(object, name);
     }
@@ -94,7 +96,7 @@ Queue.extend = function (object, options) {
 
   queue._extended = {
     object: object,
-    methods: methods
+    methods: methods,
   };
 
   return queue;
@@ -114,8 +116,7 @@ Queue.prototype.destroy = function () {
       var method = methods[i];
       if (method.original) {
         object[method.name] = method.original;
-      }
-      else {
+      } else {
         delete object[method.name];
       }
     }
@@ -128,7 +129,7 @@ Queue.prototype.destroy = function () {
  * @param {Object} object   Object having the method
  * @param {string} method   The method name
  */
-Queue.prototype.replace = function(object, method) {
+Queue.prototype.replace = function (object, method) {
   var me = this;
   var original = object[method];
   if (!original) {
@@ -146,7 +147,7 @@ Queue.prototype.replace = function(object, method) {
     me.queue({
       args: args,
       fn: original,
-      context: this
+      context: this,
     });
   };
 };
@@ -155,11 +156,10 @@ Queue.prototype.replace = function(object, method) {
  * Queue a call
  * @param {function | {fn: function, args: Array} | {fn: function, args: Array, context: Object}} entry
  */
-Queue.prototype.queue = function(entry) {
+Queue.prototype.queue = function (entry) {
   if (typeof entry === 'function') {
-    this._queue.push({fn: entry});
-  }
-  else {
+    this._queue.push({ fn: entry });
+  } else {
     this._queue.push(entry);
   }
 

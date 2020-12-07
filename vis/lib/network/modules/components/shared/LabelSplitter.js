@@ -1,24 +1,21 @@
 let LabelAccumulator = require('./LabelAccumulator').default;
 let ComponentUtil = require('./ComponentUtil').default;
 
-
 /**
  * Helper class for Label which explodes the label text into lines and blocks within lines
  *
  * @private
  */
 class LabelSplitter {
-
   /**
    * @param {CanvasRenderingContext2D} ctx Canvas rendering context
    * @param {Label} parent reference to the Label instance using current instance
-   * @param {boolean} selected 
+   * @param {boolean} selected
    * @param {boolean} hover
    */
   constructor(ctx, parent, selected, hover) {
     this.ctx = ctx;
     this.parent = parent;
-
 
     /**
      * Callback to determine text width; passed to LabelAccumulator instance
@@ -42,13 +39,11 @@ class LabelSplitter {
         width = measure.width;
       }
 
-      return {width, values: values};
+      return { width, values: values };
     };
-
 
     this.lines = new LabelAccumulator(textWidth);
   }
-
 
   /**
    * Split passed text of a label into lines and blocks.
@@ -62,7 +57,7 @@ class LabelSplitter {
    *
    * This might not be the best way to do it, but this is as it has been working till now.
    * In order not to break existing functionality, for the time being this behaviour will
-   * be retained in any code changes. 
+   * be retained in any code changes.
    *
    * @param {string} text  text to split
    * @returns {Array<line>}
@@ -75,8 +70,8 @@ class LabelSplitter {
     var font = this.parent.fontOptions;
 
     // Normalize the end-of-line's to a single representation - order important
-    text = text.replace(/\r\n/g, '\n');  // Dos EOL's
-    text = text.replace(/\r/g, '\n');        // Mac EOL's
+    text = text.replace(/\r\n/g, '\n'); // Dos EOL's
+    text = text.replace(/\r/g, '\n'); // Mac EOL's
 
     // Note that at this point, there can be no \r's in the text.
     // This is used later on splitStringIntoLines() to split multifont texts.
@@ -93,7 +88,7 @@ class LabelSplitter {
         if (blocks === undefined) continue;
 
         if (blocks.length === 0) {
-          this.lines.newLine("");
+          this.lines.newLine('');
           continue;
         }
 
@@ -101,16 +96,16 @@ class LabelSplitter {
           // widthConstraint.maximum defined
           //console.log('Running widthConstraint multi, max: ' + this.fontOptions.maxWdt);
           for (let j = 0; j < blocks.length; j++) {
-            let mod  = blocks[j].mod;
+            let mod = blocks[j].mod;
             let text = blocks[j].text;
             this.splitStringIntoLines(text, mod, true);
           }
         } else {
           // widthConstraint.maximum NOT defined
           for (let j = 0; j < blocks.length; j++) {
-            let mod  = blocks[j].mod;
+            let mod = blocks[j].mod;
             let text = blocks[j].text;
-            this.lines.append(text, mod); 
+            this.lines.append(text, mod);
           }
         }
 
@@ -127,14 +122,13 @@ class LabelSplitter {
       } else {
         // widthConstraint.maximum NOT defined
         for (let i = 0; i < lineCount; i++) {
-          this.lines.newLine(nlLines[i]); 
+          this.lines.newLine(nlLines[i]);
         }
       }
     }
-   
+
     return this.lines.finalize();
   }
-
 
   /**
    * normalize the markup system
@@ -147,11 +141,10 @@ class LabelSplitter {
     if (markupSystem === 'markdown' || markupSystem === 'md') {
       system = 'markdown';
     } else if (markupSystem === true || markupSystem === 'html') {
-      system = 'html'
+      system = 'html';
     }
     return system;
   }
-
 
   /**
    *
@@ -169,19 +162,17 @@ class LabelSplitter {
       mono: false,
       spacing: false,
       position: 0,
-      buffer: "",
-      modStack: []
+      buffer: '',
+      modStack: [],
     };
 
-    s.mod = function() {
-      return (this.modStack.length === 0) ? 'normal' : this.modStack[0];
+    s.mod = function () {
+      return this.modStack.length === 0 ? 'normal' : this.modStack[0];
     };
 
-    s.modName = function() {
-      if (this.modStack.length === 0)
-        return 'normal';
-      else if (this.modStack[0] === 'mono')
-        return 'mono';
+    s.modName = function () {
+      if (this.modStack.length === 0) return 'normal';
+      else if (this.modStack[0] === 'mono') return 'mono';
       else {
         if (s.bold && s.ital) {
           return 'boldital';
@@ -193,26 +184,27 @@ class LabelSplitter {
       }
     };
 
-    s.emitBlock = function(override=false) {  // eslint-disable-line no-unused-vars
+    s.emitBlock = function (override = false) {
+      // eslint-disable-line no-unused-vars
       if (this.spacing) {
-        this.add(" ");
+        this.add(' ');
         this.spacing = false;
       }
       if (this.buffer.length > 0) {
         blocks.push({ text: this.buffer, mod: this.modName() });
-        this.buffer = "";
+        this.buffer = '';
       }
     };
 
-    s.add = function(text) {
-      if (text === " ") {
+    s.add = function (text) {
+      if (text === ' ') {
         s.spacing = true;
       }
       if (s.spacing) {
-        this.buffer += " ";
+        this.buffer += ' ';
         this.spacing = false;
       }
-      if (text != " ") {
+      if (text != ' ') {
         this.buffer += text;
       }
     };
@@ -226,32 +218,47 @@ class LabelSplitter {
           s.add(ch);
         }
       } else if (/</.test(ch)) {
-        if (!s.mono && !s.bold && /<b>/.test(text.substr(s.position,3))) {
+        if (!s.mono && !s.bold && /<b>/.test(text.substr(s.position, 3))) {
           s.emitBlock();
           s.bold = true;
-          s.modStack.unshift("bold");
+          s.modStack.unshift('bold');
           s.position += 2;
-        } else if (!s.mono && !s.ital && /<i>/.test(text.substr(s.position,3))) {
+        } else if (
+          !s.mono &&
+          !s.ital &&
+          /<i>/.test(text.substr(s.position, 3))
+        ) {
           s.emitBlock();
           s.ital = true;
-          s.modStack.unshift("ital");
+          s.modStack.unshift('ital');
           s.position += 2;
-        } else if (!s.mono && /<code>/.test(text.substr(s.position,6))) {
+        } else if (!s.mono && /<code>/.test(text.substr(s.position, 6))) {
           s.emitBlock();
           s.mono = true;
-          s.modStack.unshift("mono");
+          s.modStack.unshift('mono');
           s.position += 5;
-        } else if (!s.mono && (s.mod() === 'bold') && /<\/b>/.test(text.substr(s.position,4))) {
+        } else if (
+          !s.mono &&
+          s.mod() === 'bold' &&
+          /<\/b>/.test(text.substr(s.position, 4))
+        ) {
           s.emitBlock();
           s.bold = false;
           s.modStack.shift();
           s.position += 3;
-        } else if (!s.mono && (s.mod() === 'ital') && /<\/i>/.test(text.substr(s.position,4))) {
+        } else if (
+          !s.mono &&
+          s.mod() === 'ital' &&
+          /<\/i>/.test(text.substr(s.position, 4))
+        ) {
           s.emitBlock();
           s.ital = false;
           s.modStack.shift();
           s.position += 3;
-        } else if ((s.mod() === 'mono') && /<\/code>/.test(text.substr(s.position,7))) {
+        } else if (
+          s.mod() === 'mono' &&
+          /<\/code>/.test(text.substr(s.position, 7))
+        ) {
           s.emitBlock();
           s.mono = false;
           s.modStack.shift();
@@ -260,24 +267,23 @@ class LabelSplitter {
           s.add(ch);
         }
       } else if (/&/.test(ch)) {
-        if (/&lt;/.test(text.substr(s.position,4))) {
-          s.add("<");
+        if (/&lt;/.test(text.substr(s.position, 4))) {
+          s.add('<');
           s.position += 3;
-        } else if (/&amp;/.test(text.substr(s.position,5))) {
-          s.add("&");
+        } else if (/&amp;/.test(text.substr(s.position, 5))) {
+          s.add('&');
           s.position += 4;
         } else {
-          s.add("&");
+          s.add('&');
         }
       } else {
         s.add(ch);
       }
-      s.position++
+      s.position++;
     }
     s.emitBlock();
     return blocks;
   }
-
 
   /**
    *
@@ -296,19 +302,17 @@ class LabelSplitter {
       beginable: true,
       spacing: false,
       position: 0,
-      buffer: "",
-      modStack: []
+      buffer: '',
+      modStack: [],
     };
 
-    s.mod = function() {
-      return (this.modStack.length === 0) ? 'normal' : this.modStack[0];
+    s.mod = function () {
+      return this.modStack.length === 0 ? 'normal' : this.modStack[0];
     };
 
-    s.modName = function() {
-      if (this.modStack.length === 0)
-        return 'normal';
-      else if (this.modStack[0] === 'mono')
-        return 'mono';
+    s.modName = function () {
+      if (this.modStack.length === 0) return 'normal';
+      else if (this.modStack[0] === 'mono') return 'mono';
       else {
         if (s.bold && s.ital) {
           return 'boldital';
@@ -320,26 +324,27 @@ class LabelSplitter {
       }
     };
 
-    s.emitBlock = function(override=false) {  // eslint-disable-line no-unused-vars
+    s.emitBlock = function (override = false) {
+      // eslint-disable-line no-unused-vars
       if (this.spacing) {
-        this.add(" ");
+        this.add(' ');
         this.spacing = false;
       }
       if (this.buffer.length > 0) {
         blocks.push({ text: this.buffer, mod: this.modName() });
-        this.buffer = "";
+        this.buffer = '';
       }
     };
 
-    s.add = function(text) {
-      if (text === " ") {
+    s.add = function (text) {
+      if (text === ' ') {
         s.spacing = true;
       }
       if (s.spacing) {
-        this.buffer += " ";
+        this.buffer += ' ';
         this.spacing = false;
       }
-      if (text != " ") {
+      if (text != ' ') {
         this.buffer += text;
       }
     };
@@ -352,9 +357,9 @@ class LabelSplitter {
         } else {
           s.add(ch);
         }
-        s.beginable = true
+        s.beginable = true;
       } else if (/\\/.test(ch)) {
-        if (s.position < text.length+1) {
+        if (s.position < text.length + 1) {
           s.position++;
           ch = text.charAt(s.position);
           if (/ \t/.test(ch)) {
@@ -364,36 +369,55 @@ class LabelSplitter {
             s.beginable = false;
           }
         }
-      } else if (!s.mono && !s.bold && (s.beginable || s.spacing) && /\*/.test(ch)) {
+      } else if (
+        !s.mono &&
+        !s.bold &&
+        (s.beginable || s.spacing) &&
+        /\*/.test(ch)
+      ) {
         s.emitBlock();
         s.bold = true;
-        s.modStack.unshift("bold");
-      } else if (!s.mono && !s.ital && (s.beginable || s.spacing) && /\_/.test(ch)) {
+        s.modStack.unshift('bold');
+      } else if (
+        !s.mono &&
+        !s.ital &&
+        (s.beginable || s.spacing) &&
+        /\_/.test(ch)
+      ) {
         s.emitBlock();
         s.ital = true;
-        s.modStack.unshift("ital");
+        s.modStack.unshift('ital');
       } else if (!s.mono && (s.beginable || s.spacing) && /`/.test(ch)) {
         s.emitBlock();
         s.mono = true;
-        s.modStack.unshift("mono");
-      } else if (!s.mono && (s.mod() === "bold") && /\*/.test(ch)) {
-        if ((s.position === text.length-1) || /[.,_` \t\n]/.test(text.charAt(s.position+1))) {
+        s.modStack.unshift('mono');
+      } else if (!s.mono && s.mod() === 'bold' && /\*/.test(ch)) {
+        if (
+          s.position === text.length - 1 ||
+          /[.,_` \t\n]/.test(text.charAt(s.position + 1))
+        ) {
           s.emitBlock();
           s.bold = false;
           s.modStack.shift();
         } else {
           s.add(ch);
         }
-      } else if (!s.mono && (s.mod() === "ital") && /\_/.test(ch)) {
-        if ((s.position === text.length-1) || /[.,*` \t\n]/.test(text.charAt(s.position+1))) {
+      } else if (!s.mono && s.mod() === 'ital' && /\_/.test(ch)) {
+        if (
+          s.position === text.length - 1 ||
+          /[.,*` \t\n]/.test(text.charAt(s.position + 1))
+        ) {
           s.emitBlock();
           s.ital = false;
           s.modStack.shift();
         } else {
           s.add(ch);
         }
-      } else if (s.mono && (s.mod() === "mono") && /`/.test(ch)) {
-        if ((s.position === text.length-1) || (/[.,*_ \t\n]/.test(text.charAt(s.position+1)))) {
+      } else if (s.mono && s.mod() === 'mono' && /`/.test(ch)) {
+        if (
+          s.position === text.length - 1 ||
+          /[.,*_ \t\n]/.test(text.charAt(s.position + 1))
+        ) {
           s.emitBlock();
           s.mono = false;
           s.modStack.shift();
@@ -404,12 +428,11 @@ class LabelSplitter {
         s.add(ch);
         s.beginable = false;
       }
-      s.position++
+      s.position++;
     }
     s.emitBlock();
     return blocks;
   }
-
 
   /**
    * Explodes a piece of text into single-font blocks using a given markup
@@ -422,17 +445,18 @@ class LabelSplitter {
   splitBlocks(text, markupSystem) {
     let system = this.decodeMarkupSystem(markupSystem);
     if (system === 'none') {
-      return [{
-        text: text,
-        mod: 'normal'
-      }]
+      return [
+        {
+          text: text,
+          mod: 'normal',
+        },
+      ];
     } else if (system === 'markdown') {
       return this.splitMarkdownBlocks(text);
     } else if (system === 'html') {
       return this.splitHtmlBlocks(text);
     }
   }
-
 
   /**
    * @param {string} text
@@ -441,14 +465,13 @@ class LabelSplitter {
    */
   overMaxWidth(text) {
     let width = this.ctx.measureText(text).width;
-    return (this.lines.curWidth() + width > this.parent.fontOptions.maxWdt);
+    return this.lines.curWidth() + width > this.parent.fontOptions.maxWdt;
   }
 
-
   /**
-   * Determine the longest part of the sentence which still fits in the 
+   * Determine the longest part of the sentence which still fits in the
    * current max width.
-   * 
+   *
    * @param {Array} words  Array of strings signifying a text lines
    * @return {number}      index of first item in string making string go over max
    * @private
@@ -458,7 +481,7 @@ class LabelSplitter {
     let w = 0;
 
     while (w < words.length) {
-      let pre = (text === '') ? '' : ' ';
+      let pre = text === '' ? '' : ' ';
       let newText = text + pre + words[w];
 
       if (this.overMaxWidth(newText)) break;
@@ -469,35 +492,33 @@ class LabelSplitter {
     return w;
   }
 
-
   /**
    * Determine the longest part of the string which still fits in the
    * current max width.
-   * 
+   *
    * @param {Array} words Array of strings signifying a text lines
    * @return {number} index of first item in string making string go over max
    */
-   getLongestFitWord(words) {
-     let w = 0;
+  getLongestFitWord(words) {
+    let w = 0;
 
-     while (w < words.length) {
-       if (this.overMaxWidth(words.slice(0,w))) break;
-       w++;
-     }
+    while (w < words.length) {
+      if (this.overMaxWidth(words.slice(0, w))) break;
+      w++;
+    }
 
-     return w;
+    return w;
   }
-
 
   /**
    * Split the passed text into lines, according to width constraint (if any).
-   * 
+   *
    * The method assumes that the input string is a single line, i.e. without lines break.
    *
    * This method retains spaces, if still present (case `font.multi: false`).
    * A space which falls on an internal line break, will be replaced by a newline.
    * There is no special handling of tabs; these go along with the flow.
-   * 
+   *
    * @param {string} str
    * @param {string} [mod='normal']
    * @param {boolean} [appendLast=false]
@@ -531,12 +552,12 @@ class LabelSplitter {
           newW++;
         }
 
-        let text = words.slice(0, w).join("");
+        let text = words.slice(0, w).join('');
 
         if (w == words.length && appendLast) {
-          this.lines.append(text, mod); 
+          this.lines.append(text, mod);
         } else {
-          this.lines.newLine(text, mod); 
+          this.lines.newLine(text, mod);
         }
 
         // Adjust the word, so that the rest will be done next iteration
@@ -544,6 +565,6 @@ class LabelSplitter {
       }
     }
   }
-} 
+}
 
 export default LabelSplitter;

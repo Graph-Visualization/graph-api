@@ -14,7 +14,8 @@ function Slider(container, options) {
     throw new Error('No container element defined');
   }
   this.container = container;
-  this.visible = (options && options.visible != undefined) ? options.visible : true;
+  this.visible =
+    options && options.visible != undefined ? options.visible : true;
 
   if (this.visible) {
     this.frame = document.createElement('DIV');
@@ -60,10 +61,18 @@ function Slider(container, options) {
 
     // create events
     var me = this;
-    this.frame.slide.onmousedown = function (event) {me._onMouseDown(event);};
-    this.frame.prev.onclick = function (event) {me.prev(event);};
-    this.frame.play.onclick = function (event) {me.togglePlay(event);};
-    this.frame.next.onclick = function (event) {me.next(event);};
+    this.frame.slide.onmousedown = function (event) {
+      me._onMouseDown(event);
+    };
+    this.frame.prev.onclick = function (event) {
+      me.prev(event);
+    };
+    this.frame.play.onclick = function (event) {
+      me.togglePlay(event);
+    };
+    this.frame.next.onclick = function (event) {
+      me.next(event);
+    };
   }
 
   this.onChangeCallback = undefined;
@@ -79,7 +88,7 @@ function Slider(container, options) {
 /**
  * Select the previous index
  */
-Slider.prototype.prev = function() {
+Slider.prototype.prev = function () {
   var index = this.getIndex();
   if (index > 0) {
     index--;
@@ -90,7 +99,7 @@ Slider.prototype.prev = function() {
 /**
  * Select the next index
  */
-Slider.prototype.next = function() {
+Slider.prototype.next = function () {
   var index = this.getIndex();
   if (index < this.values.length - 1) {
     index++;
@@ -101,22 +110,21 @@ Slider.prototype.next = function() {
 /**
  * Select the next index
  */
-Slider.prototype.playNext = function() {
+Slider.prototype.playNext = function () {
   var start = new Date();
 
   var index = this.getIndex();
   if (index < this.values.length - 1) {
     index++;
     this.setIndex(index);
-  }
-  else if (this.playLoop) {
+  } else if (this.playLoop) {
     // jump to the start
     index = 0;
     this.setIndex(index);
   }
 
   var end = new Date();
-  var diff = (end - start);
+  var diff = end - start;
 
   // calculate how much time it to to set the index and to execute the callback
   // function.
@@ -124,13 +132,15 @@ Slider.prototype.playNext = function() {
   // document.title = diff // TODO: cleanup
 
   var me = this;
-  this.playTimeout = setTimeout(function() {me.playNext();}, interval);
+  this.playTimeout = setTimeout(function () {
+    me.playNext();
+  }, interval);
 };
 
 /**
  * Toggle start or stop playing
  */
-Slider.prototype.togglePlay = function() {
+Slider.prototype.togglePlay = function () {
   if (this.playTimeout === undefined) {
     this.play();
   } else {
@@ -141,7 +151,7 @@ Slider.prototype.togglePlay = function() {
 /**
  * Start playing
  */
-Slider.prototype.play = function() {
+Slider.prototype.play = function () {
   // Test whether already playing
   if (this.playTimeout) return;
 
@@ -155,7 +165,7 @@ Slider.prototype.play = function() {
 /**
  * Stop playing
  */
-Slider.prototype.stop = function() {
+Slider.prototype.stop = function () {
   clearInterval(this.playTimeout);
   this.playTimeout = undefined;
 
@@ -170,7 +180,7 @@ Slider.prototype.stop = function() {
  *
  * @param {function} callback
  */
-Slider.prototype.setOnChangeCallback = function(callback) {
+Slider.prototype.setOnChangeCallback = function (callback) {
   this.onChangeCallback = callback;
 };
 
@@ -178,7 +188,7 @@ Slider.prototype.setOnChangeCallback = function(callback) {
  * Set the interval for playing the list
  * @param {number} interval   The interval in milliseconds
  */
-Slider.prototype.setPlayInterval = function(interval) {
+Slider.prototype.setPlayInterval = function (interval) {
   this.playInterval = interval;
 };
 
@@ -186,7 +196,7 @@ Slider.prototype.setPlayInterval = function(interval) {
  * Retrieve the current play interval
  * @return {number} interval   The interval in milliseconds
  */
-Slider.prototype.getPlayInterval = function() {
+Slider.prototype.getPlayInterval = function () {
   return this.playInterval;
 };
 
@@ -197,15 +207,14 @@ Slider.prototype.getPlayInterval = function() {
  *               when the start is passed.
  *
  */
-Slider.prototype.setPlayLoop = function(doLoop) {
+Slider.prototype.setPlayLoop = function (doLoop) {
   this.playLoop = doLoop;
 };
-
 
 /**
  * Execute the onchange callback function
  */
-Slider.prototype.onChange = function() {
+Slider.prototype.onChange = function () {
   if (this.onChangeCallback !== undefined) {
     this.onChangeCallback();
   }
@@ -214,48 +223,47 @@ Slider.prototype.onChange = function() {
 /**
  * redraw the slider on the correct place
  */
-Slider.prototype.redraw = function() {
+Slider.prototype.redraw = function () {
   if (this.frame) {
     // resize the bar
-    this.frame.bar.style.top = (this.frame.clientHeight/2 -
-        this.frame.bar.offsetHeight/2) + 'px';
-    this.frame.bar.style.width = (this.frame.clientWidth -
-        this.frame.prev.clientWidth -
-        this.frame.play.clientWidth -
-        this.frame.next.clientWidth - 30)  + 'px';
+    this.frame.bar.style.top =
+      this.frame.clientHeight / 2 - this.frame.bar.offsetHeight / 2 + 'px';
+    this.frame.bar.style.width =
+      this.frame.clientWidth -
+      this.frame.prev.clientWidth -
+      this.frame.play.clientWidth -
+      this.frame.next.clientWidth -
+      30 +
+      'px';
 
     // position the slider button
     var left = this.indexToLeft(this.index);
-    this.frame.slide.style.left = (left) + 'px';
+    this.frame.slide.style.left = left + 'px';
   }
 };
-
 
 /**
  * Set the list with values for the slider
  * @param {Array} values   A javascript array with values (any type)
  */
-Slider.prototype.setValues = function(values) {
+Slider.prototype.setValues = function (values) {
   this.values = values;
 
-  if (this.values.length > 0)
-    this.setIndex(0);
-  else
-    this.index = undefined;
+  if (this.values.length > 0) this.setIndex(0);
+  else this.index = undefined;
 };
 
 /**
  * Select a value by its index
  * @param {number} index
  */
-Slider.prototype.setIndex = function(index) {
+Slider.prototype.setIndex = function (index) {
   if (index < this.values.length) {
     this.index = index;
 
     this.redraw();
     this.onChange();
-  }
-  else {
+  } else {
     throw new Error('Index out of range');
   }
 };
@@ -264,23 +272,21 @@ Slider.prototype.setIndex = function(index) {
  * retrieve the index of the currently selected vaue
  * @return {number} index
  */
-Slider.prototype.getIndex = function() {
+Slider.prototype.getIndex = function () {
   return this.index;
 };
-
 
 /**
  * retrieve the currently selected value
  * @return {*} value
  */
-Slider.prototype.get = function() {
+Slider.prototype.get = function () {
   return this.values[this.index];
 };
 
-
-Slider.prototype._onMouseDown = function(event) {
+Slider.prototype._onMouseDown = function (event) {
   // only react on left mouse button down
-  var leftButtonDown = event.which ? (event.which === 1) : (event.button === 1);
+  var leftButtonDown = event.which ? event.which === 1 : event.button === 1;
   if (!leftButtonDown) return;
 
   this.startClientX = event.clientX;
@@ -292,37 +298,38 @@ Slider.prototype._onMouseDown = function(event) {
   // we store the function onmousemove and onmouseup in the graph, so we can
   // remove the eventlisteners lateron in the function mouseUp()
   var me = this;
-  this.onmousemove = function (event) {me._onMouseMove(event);};
-  this.onmouseup   = function (event) {me._onMouseUp(event);};
+  this.onmousemove = function (event) {
+    me._onMouseMove(event);
+  };
+  this.onmouseup = function (event) {
+    me._onMouseUp(event);
+  };
   util.addEventListener(document, 'mousemove', this.onmousemove);
-  util.addEventListener(document, 'mouseup',   this.onmouseup);
+  util.addEventListener(document, 'mouseup', this.onmouseup);
   util.preventDefault(event);
 };
 
-
 Slider.prototype.leftToIndex = function (left) {
-  var width = parseFloat(this.frame.bar.style.width) -
-      this.frame.slide.clientWidth - 10;
+  var width =
+    parseFloat(this.frame.bar.style.width) - this.frame.slide.clientWidth - 10;
   var x = left - 3;
 
-  var index = Math.round(x / width * (this.values.length-1));
+  var index = Math.round((x / width) * (this.values.length - 1));
   if (index < 0) index = 0;
-  if (index > this.values.length-1) index = this.values.length-1;
+  if (index > this.values.length - 1) index = this.values.length - 1;
 
   return index;
 };
 
 Slider.prototype.indexToLeft = function (index) {
-  var width = parseFloat(this.frame.bar.style.width) -
-      this.frame.slide.clientWidth - 10;
+  var width =
+    parseFloat(this.frame.bar.style.width) - this.frame.slide.clientWidth - 10;
 
-  var x = index / (this.values.length-1) * width;
+  var x = (index / (this.values.length - 1)) * width;
   var left = x + 3;
 
   return left;
 };
-
-
 
 Slider.prototype._onMouseMove = function (event) {
   var diff = event.clientX - this.startClientX;
@@ -335,8 +342,8 @@ Slider.prototype._onMouseMove = function (event) {
   util.preventDefault();
 };
 
-
-Slider.prototype._onMouseUp = function (event) {  // eslint-disable-line no-unused-vars
+Slider.prototype._onMouseUp = function (event) {
+  // eslint-disable-line no-unused-vars
   this.frame.style.cursor = 'auto';
 
   // remove event listeners

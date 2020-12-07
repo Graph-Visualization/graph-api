@@ -15,7 +15,7 @@ exports.graph3d = {
   Point2d: require('./lib/graph3d/Point2d'),
   Point3d: require('./lib/graph3d/Point3d'),
   Slider: require('./lib/graph3d/Slider'),
-  StepNumber: require('./lib/graph3d/StepNumber')
+  StepNumber: require('./lib/graph3d/StepNumber'),
 };
 
 // bundled external libraries

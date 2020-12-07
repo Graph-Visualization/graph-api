@@ -26,14 +26,17 @@
 function toggleTable(tableId, parent, clickedRow) {
   var table = document.getElementById(tableId);
   var wasOpen = false;
-  for (var i = 0, row; row = table.rows[i]; i++) {
+  for (var i = 0, row; (row = table.rows[i]); i++) {
     if (row.getAttribute('parent') === parent) {
       if (row.className.indexOf('hidden') !== -1) {
-        row.className = row.className.replace(' hidden','').replace('hidden','');
+        row.className = row.className
+          .replace(' hidden', '')
+          .replace('hidden', '');
         row.className += ' visible';
-      }
-      else {
-        row.className = row.className.replace(' visible','').replace('visible','');;
+      } else {
+        row.className = row.className
+          .replace(' visible', '')
+          .replace('visible', '');
         row.className += ' hidden';
         wasOpen = true;
       }
@@ -44,10 +47,11 @@ function toggleTable(tableId, parent, clickedRow) {
   if (wasOpen === true) {
     spans = document.getElementsByClassName('caret');
     clickedRow.className += ' collapsible';
-  }
-  else {
-    spans = document.getElementsByClassName('right-caret')
-    clickedRow.className = clickedRow.className.replace(' collapsible','').replace('collapsible','');;
+  } else {
+    spans = document.getElementsByClassName('right-caret');
+    clickedRow.className = clickedRow.className
+      .replace(' collapsible', '')
+      .replace('collapsible', '');
   }
 
   for (var i = 0; i < spans.length; i++) {
@@ -64,10 +68,16 @@ function toggleTab(tabThis) {
     var child = parentNode.children[i];
     var targetNodeId = child.getAttribute('targetNode');
     if (targetNodeId) {
-      var targetNode = document.getElementById(child.getAttribute('targetNode'));
-      targetNode.className = targetNode.className.replace(' hidden', '').replace('hidden', '') + ' hidden';
+      var targetNode = document.getElementById(
+        child.getAttribute('targetNode')
+      );
+      targetNode.className =
+        targetNode.className.replace(' hidden', '').replace('hidden', '') +
+        ' hidden';
     }
-    child.className = child.className.replace(' active','').replace('active','');
+    child.className = child.className
+      .replace(' active', '')
+      .replace('active', '');
   }
 
   // activate the tab
@@ -75,7 +85,8 @@ function toggleTab(tabThis) {
   var ownTargetNodeId = tabThis.getAttribute('targetNode');
   if (ownTargetNodeId) {
     var ownTargetNode = document.getElementById(ownTargetNodeId);
-    ownTargetNode.className = ownTargetNode.className.replace(' hidden','').replace('hidden','');
+    ownTargetNode.className = ownTargetNode.className
+      .replace(' hidden', '')
+      .replace('hidden', '');
   }
-
 }

@@ -38,7 +38,7 @@ class RepulsionSolver {
     var nodeDistance = this.options.nodeDistance;
 
     // approximation constants
-    var a = (-2 / 3) / nodeDistance;
+    var a = -2 / 3 / nodeDistance;
     var b = 4 / 3;
 
     // we loop from i over all but the last entree in the array
@@ -54,15 +54,14 @@ class RepulsionSolver {
 
         // same condition as BarnesHutSolver, making sure nodes are never 100% overlapping.
         if (distance === 0) {
-          distance = 0.1*Math.random();
+          distance = 0.1 * Math.random();
           dx = distance;
         }
 
         if (distance < 2 * nodeDistance) {
           if (distance < 0.5 * nodeDistance) {
             repulsingForce = 1.0;
-          }
-          else {
+          } else {
             repulsingForce = a * distance + b; // linear approx of  1 / (1 + Math.exp((distance / nodeDistance - 1) * steepness))
           }
           repulsingForce = repulsingForce / distance;
@@ -79,6 +78,5 @@ class RepulsionSolver {
     }
   }
 }
-
 
 export default RepulsionSolver;

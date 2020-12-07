@@ -23,7 +23,7 @@ exports.timeline = {
       BackgroundItem: require('./lib/timeline/component/item/BackgroundItem'),
       BoxItem: require('./lib/timeline/component/item/BoxItem'),
       PointItem: require('./lib/timeline/component/item/PointItem'),
-      RangeItem: require('./lib/timeline/component/item/RangeItem')
+      RangeItem: require('./lib/timeline/component/item/RangeItem'),
     },
 
     BackgroundGroup: require('./lib/timeline/component/BackgroundGroup'),
@@ -37,8 +37,8 @@ exports.timeline = {
     ItemSet: require('./lib/timeline/component/ItemSet'),
     Legend: require('./lib/timeline/component/Legend'),
     LineGraph: require('./lib/timeline/component/LineGraph'),
-    TimeAxis: require('./lib/timeline/component/TimeAxis')
-  }
+    TimeAxis: require('./lib/timeline/component/TimeAxis'),
+  },
 };
 
 // bundled external libraries

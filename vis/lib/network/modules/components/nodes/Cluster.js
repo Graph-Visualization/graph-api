@@ -1,5 +1,5 @@
-let util = require("../../../../util");
-let Node = require("../Node").default;
+let util = require('../../../../util');
+let Node = require('../Node').default;
 
 /**
  * A Cluster is a special Node that allows a group of Nodes positioned closely together
@@ -16,14 +16,20 @@ class Cluster extends Node {
    * @param {Object} globalOptions
    * @param {Object} defaultOptions     Global default options for nodes
    */
-  constructor(options, body, imagelist, grouplist, globalOptions, defaultOptions) {
+  constructor(
+    options,
+    body,
+    imagelist,
+    grouplist,
+    globalOptions,
+    defaultOptions
+  ) {
     super(options, body, imagelist, grouplist, globalOptions, defaultOptions);
 
     this.isCluster = true;
     this.containedNodes = {};
     this.containedEdges = {};
   }
-
 
   /**
    * Transfer child cluster data to current and disconnect the child cluster.
@@ -35,7 +41,9 @@ class Cluster extends Node {
   _openChildCluster(childClusterId) {
     let childCluster = this.body.nodes[childClusterId];
     if (this.containedNodes[childClusterId] === undefined) {
-      throw new Error('node with id: ' + childClusterId + ' not in current cluster');
+      throw new Error(
+        'node with id: ' + childClusterId + ' not in current cluster'
+      );
     }
     if (!childCluster.isCluster) {
       throw new Error('node with id: ' + childClusterId + ' is not a cluster');
@@ -63,7 +71,9 @@ class Cluster extends Node {
       util.forEach(this.edges, (parentClusterEdge) => {
         // Assumption: a clustered edge can only be present in a single clustering edge
         // Not tested here
-        let index = parentClusterEdge.clusteringEdgeReplacingIds.indexOf(clusterEdge.id);
+        let index = parentClusterEdge.clusteringEdgeReplacingIds.indexOf(
+          clusterEdge.id
+        );
         if (index === -1) return;
 
         util.forEach(clusterEdge.clusteringEdgeReplacingIds, (srcId) => {
@@ -80,6 +90,5 @@ class Cluster extends Node {
     childCluster.edges = [];
   }
 }
-
 
 export default Cluster;

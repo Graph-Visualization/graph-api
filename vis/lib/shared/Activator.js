@@ -17,7 +17,7 @@ function Activator(container) {
   this.active = false;
 
   this.dom = {
-    container: container
+    container: container,
   };
 
   this.dom.overlay = document.createElement('div');
@@ -31,9 +31,14 @@ function Activator(container) {
   // block all touch events (except tap)
   var me = this;
   var events = [
-    'tap', 'doubletap', 'press',
+    'tap',
+    'doubletap',
+    'press',
     'pinch',
-    'pan', 'panstart', 'panmove', 'panend'
+    'pan',
+    'panstart',
+    'panmove',
+    'panend',
   ];
   events.forEach(function (event) {
     me.hammer.on(event, function (event) {
@@ -146,7 +151,7 @@ Activator.prototype._onTapOverlay = function (event) {
 function _hasParent(element, parent) {
   while (element) {
     if (element === parent) {
-      return true
+      return true;
     }
     element = element.parentNode;
   }

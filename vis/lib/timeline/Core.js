@@ -11,7 +11,7 @@ var CustomTime = require('./component/CustomTime');
  * Create a timeline visualization
  * @constructor Core
  */
-function Core () {}
+function Core() {}
 
 // turn Core into an event emitter
 Emitter(Core.prototype);
@@ -28,45 +28,47 @@ Core.prototype._create = function (container) {
 
   this.dom.container = container;
 
-  this.dom.root                 = document.createElement('div');
-  this.dom.background           = document.createElement('div');
-  this.dom.backgroundVertical   = document.createElement('div');
+  this.dom.root = document.createElement('div');
+  this.dom.background = document.createElement('div');
+  this.dom.backgroundVertical = document.createElement('div');
   this.dom.backgroundHorizontal = document.createElement('div');
-  this.dom.centerContainer      = document.createElement('div');
-  this.dom.leftContainer        = document.createElement('div');
-  this.dom.rightContainer       = document.createElement('div');
-  this.dom.center               = document.createElement('div');
-  this.dom.left                 = document.createElement('div');
-  this.dom.right                = document.createElement('div');
-  this.dom.top                  = document.createElement('div');
-  this.dom.bottom               = document.createElement('div');
-  this.dom.shadowTop            = document.createElement('div');
-  this.dom.shadowBottom         = document.createElement('div');
-  this.dom.shadowTopLeft        = document.createElement('div');
-  this.dom.shadowBottomLeft     = document.createElement('div');
-  this.dom.shadowTopRight       = document.createElement('div');
-  this.dom.shadowBottomRight    = document.createElement('div');
-  this.dom.rollingModeBtn       = document.createElement('div');
+  this.dom.centerContainer = document.createElement('div');
+  this.dom.leftContainer = document.createElement('div');
+  this.dom.rightContainer = document.createElement('div');
+  this.dom.center = document.createElement('div');
+  this.dom.left = document.createElement('div');
+  this.dom.right = document.createElement('div');
+  this.dom.top = document.createElement('div');
+  this.dom.bottom = document.createElement('div');
+  this.dom.shadowTop = document.createElement('div');
+  this.dom.shadowBottom = document.createElement('div');
+  this.dom.shadowTopLeft = document.createElement('div');
+  this.dom.shadowBottomLeft = document.createElement('div');
+  this.dom.shadowTopRight = document.createElement('div');
+  this.dom.shadowBottomRight = document.createElement('div');
+  this.dom.rollingModeBtn = document.createElement('div');
 
-  this.dom.root.className                 = 'vis-timeline';
-  this.dom.background.className           = 'vis-panel vis-background';
-  this.dom.backgroundVertical.className   = 'vis-panel vis-background vis-vertical';
-  this.dom.backgroundHorizontal.className = 'vis-panel vis-background vis-horizontal';
-  this.dom.centerContainer.className      = 'vis-panel vis-center';
-  this.dom.leftContainer.className        = 'vis-panel vis-left';
-  this.dom.rightContainer.className       = 'vis-panel vis-right';
-  this.dom.top.className                  = 'vis-panel vis-top';
-  this.dom.bottom.className               = 'vis-panel vis-bottom';
-  this.dom.left.className                 = 'vis-content';
-  this.dom.center.className               = 'vis-content';
-  this.dom.right.className                = 'vis-content';
-  this.dom.shadowTop.className            = 'vis-shadow vis-top';
-  this.dom.shadowBottom.className         = 'vis-shadow vis-bottom';
-  this.dom.shadowTopLeft.className        = 'vis-shadow vis-top';
-  this.dom.shadowBottomLeft.className     = 'vis-shadow vis-bottom';
-  this.dom.shadowTopRight.className       = 'vis-shadow vis-top';
-  this.dom.shadowBottomRight.className    = 'vis-shadow vis-bottom';
-  this.dom.rollingModeBtn.className       = 'vis-rolling-mode-btn';
+  this.dom.root.className = 'vis-timeline';
+  this.dom.background.className = 'vis-panel vis-background';
+  this.dom.backgroundVertical.className =
+    'vis-panel vis-background vis-vertical';
+  this.dom.backgroundHorizontal.className =
+    'vis-panel vis-background vis-horizontal';
+  this.dom.centerContainer.className = 'vis-panel vis-center';
+  this.dom.leftContainer.className = 'vis-panel vis-left';
+  this.dom.rightContainer.className = 'vis-panel vis-right';
+  this.dom.top.className = 'vis-panel vis-top';
+  this.dom.bottom.className = 'vis-panel vis-bottom';
+  this.dom.left.className = 'vis-content';
+  this.dom.center.className = 'vis-content';
+  this.dom.right.className = 'vis-content';
+  this.dom.shadowTop.className = 'vis-shadow vis-top';
+  this.dom.shadowBottom.className = 'vis-shadow vis-bottom';
+  this.dom.shadowTopLeft.className = 'vis-shadow vis-top';
+  this.dom.shadowBottomLeft.className = 'vis-shadow vis-bottom';
+  this.dom.shadowTopRight.className = 'vis-shadow vis-top';
+  this.dom.shadowBottomRight.className = 'vis-shadow vis-bottom';
+  this.dom.rollingModeBtn.className = 'vis-rolling-mode-btn';
 
   this.dom.root.appendChild(this.dom.background);
   this.dom.root.appendChild(this.dom.backgroundVertical);
@@ -103,29 +105,40 @@ Core.prototype._create = function (container) {
     bottom: {},
     border: {},
     scrollTop: 0,
-    scrollTopMin: 0
+    scrollTopMin: 0,
   };
 
-  this.on('rangechange', function () {
-    if (this.initialDrawDone === true) {
-      this._redraw();
-    }
-  }.bind(this));
-  this.on('rangechanged', function () {
-    if (!this.initialRangeChangeDone) {
-      this.initialRangeChangeDone = true;
-    }
-  }.bind(this));
-  this.on('touch',       this._onTouch.bind(this));
-  this.on('panmove',         this._onDrag.bind(this));
+  this.on(
+    'rangechange',
+    function () {
+      if (this.initialDrawDone === true) {
+        this._redraw();
+      }
+    }.bind(this)
+  );
+  this.on(
+    'rangechanged',
+    function () {
+      if (!this.initialRangeChangeDone) {
+        this.initialRangeChangeDone = true;
+      }
+    }.bind(this)
+  );
+  this.on('touch', this._onTouch.bind(this));
+  this.on('panmove', this._onDrag.bind(this));
 
   var me = this;
   this._origRedraw = this._redraw.bind(this);
   this._redraw = util.throttle(this._origRedraw);
 
   this.on('_change', function (properties) {
-    if (me.itemSet && me.itemSet.initialItemSetDrawn && properties && properties.queue == true) {
-      me._redraw()
+    if (
+      me.itemSet &&
+      me.itemSet.initialItemSetDrawn &&
+      properties &&
+      properties.queue == true
+    ) {
+      me._redraw();
     } else {
       me._origRedraw();
     }
@@ -134,16 +147,23 @@ Core.prototype._create = function (container) {
   // create event listeners for all interesting events, these events will be
   // emitted via emitter
   this.hammer = new Hammer(this.dom.root);
-  var pinchRecognizer = this.hammer.get('pinch').set({enable: true});
+  var pinchRecognizer = this.hammer.get('pinch').set({ enable: true });
   hammerUtil.disablePreventDefaultVertically(pinchRecognizer);
-  this.hammer.get('pan').set({threshold:5, direction: Hammer.DIRECTION_HORIZONTAL});
+  this.hammer
+    .get('pan')
+    .set({ threshold: 5, direction: Hammer.DIRECTION_HORIZONTAL });
   this.listeners = {};
 
   var events = [
-    'tap', 'doubletap', 'press',
+    'tap',
+    'doubletap',
+    'press',
     'pinch',
-    'pan', 'panstart', 'panmove', 'panend'
-      // TODO: cleanup
+    'pan',
+    'panstart',
+    'panmove',
+    'panend',
+    // TODO: cleanup
     //'touch', 'pinch',
     //'tap', 'doubletap', 'hold',
     //'dragstart', 'drag', 'dragend',
@@ -160,14 +180,20 @@ Core.prototype._create = function (container) {
   });
 
   // emulate a touch event (emitted before the start of a pan, pinch, tap, or press)
-  hammerUtil.onTouch(this.hammer, function (event) {
-    me.emit('touch', event);
-  }.bind(this));
+  hammerUtil.onTouch(
+    this.hammer,
+    function (event) {
+      me.emit('touch', event);
+    }.bind(this)
+  );
 
   // emulate a release event (emitted after a pan, pinch, tap, or press)
-  hammerUtil.onRelease(this.hammer, function (event) {
-    me.emit('release', event);
-  }.bind(this));
+  hammerUtil.onRelease(
+    this.hammer,
+    function (event) {
+      me.emit('release', event);
+    }.bind(this)
+  );
 
   /**
    *
@@ -183,22 +209,30 @@ Core.prototype._create = function (container) {
     var deltaY = 0;
 
     // Old school scrollwheel delta
-    if ( 'detail'      in event ) { deltaY = event.detail * -1;      }
-    if ( 'wheelDelta'  in event ) { deltaY = event.wheelDelta;       }
-    if ( 'wheelDeltaY' in event ) { deltaY = event.wheelDeltaY;      }
-    if ( 'wheelDeltaX' in event ) { deltaX = event.wheelDeltaX * -1; }
+    if ('detail' in event) {
+      deltaY = event.detail * -1;
+    }
+    if ('wheelDelta' in event) {
+      deltaY = event.wheelDelta;
+    }
+    if ('wheelDeltaY' in event) {
+      deltaY = event.wheelDeltaY;
+    }
+    if ('wheelDeltaX' in event) {
+      deltaX = event.wheelDeltaX * -1;
+    }
 
     // Firefox < 17 horizontal scrolling related to DOMMouseScroll event
-    if ( 'axis' in event && event.axis === event.HORIZONTAL_AXIS ) {
+    if ('axis' in event && event.axis === event.HORIZONTAL_AXIS) {
       deltaX = deltaY * -1;
       deltaY = 0;
     }
 
     // New school wheel delta (wheel event)
-    if ( 'deltaY' in event ) {
+    if ('deltaY' in event) {
       deltaY = event.deltaY * -1;
     }
-    if ( 'deltaX' in event ) {
+    if ('deltaX' in event) {
       deltaX = event.deltaX;
     }
 
@@ -222,7 +256,7 @@ Core.prototype._create = function (container) {
       var delta = Math.abs(deltaX) >= Math.abs(deltaY) ? deltaX : deltaY;
 
       // calculate a single scroll jump relative to the range scale
-      var diff = (delta / 120) * (this.range.end - this.range.start) / 20;
+      var diff = ((delta / 120) * (this.range.end - this.range.start)) / 20;
       // calculate new start and end
       var newStart = this.range.start + diff;
       var newEnd = this.range.end + diff;
@@ -230,7 +264,7 @@ Core.prototype._create = function (container) {
       var options = {
         animation: false,
         byUser: true,
-        event: event
+        event: event,
       };
       this.range.setRange(newStart, newEnd, options);
     }
@@ -238,12 +272,23 @@ Core.prototype._create = function (container) {
 
   if (this.dom.centerContainer.addEventListener) {
     // IE9, Chrome, Safari, Opera
-    this.dom.centerContainer.addEventListener("mousewheel", onMouseWheel.bind(this), false);
+    this.dom.centerContainer.addEventListener(
+      'mousewheel',
+      onMouseWheel.bind(this),
+      false
+    );
     // Firefox
-    this.dom.centerContainer.addEventListener("DOMMouseScroll", onMouseWheel.bind(this), false);
+    this.dom.centerContainer.addEventListener(
+      'DOMMouseScroll',
+      onMouseWheel.bind(this),
+      false
+    );
   } else {
     // IE 6/7/8
-    this.dom.centerContainer.attachEvent("onmousewheel", onMouseWheel.bind(this));
+    this.dom.centerContainer.attachEvent(
+      'onmousewheel',
+      onMouseWheel.bind(this)
+    );
   }
 
   /**
@@ -261,8 +306,14 @@ Core.prototype._create = function (container) {
     }
   }
 
-  this.dom.left.parentNode.addEventListener('scroll', onMouseScrollSide.bind(this));
-  this.dom.right.parentNode.addEventListener('scroll', onMouseScrollSide.bind(this));
+  this.dom.left.parentNode.addEventListener(
+    'scroll',
+    onMouseScrollSide.bind(this)
+  );
+  this.dom.right.parentNode.addEventListener(
+    'scroll',
+    onMouseScrollSide.bind(this)
+  );
 
   var itemAddedToTimeline = false;
 
@@ -277,12 +328,12 @@ Core.prototype._create = function (container) {
     }
 
     // make sure your target is a vis element
-    if (!event.target.className.indexOf("vis") > -1) return;
+    if (!event.target.className.indexOf('vis') > -1) return;
 
     // make sure only one item is added every time you're over the timeline
     if (itemAddedToTimeline) return;
 
-    event.dataTransfer.dropEffect = 'move';  
+    event.dataTransfer.dropEffect = 'move';
     itemAddedToTimeline = true;
     return false;
   }
@@ -294,12 +345,16 @@ Core.prototype._create = function (container) {
    */
   function handleDrop(event) {
     // prevent redirect to blank page - Firefox
-    if(event.preventDefault) { event.preventDefault(); }
-    if(event.stopPropagation) { event.stopPropagation(); }
+    if (event.preventDefault) {
+      event.preventDefault();
+    }
+    if (event.stopPropagation) {
+      event.stopPropagation();
+    }
     // return when dropping non-vis items
     try {
-      var itemData = JSON.parse(event.dataTransfer.getData("text"))
-      if (!itemData || !itemData.content) return
+      var itemData = JSON.parse(event.dataTransfer.getData('text'));
+      if (!itemData || !itemData.content) return;
     } catch (err) {
       return false;
     }
@@ -307,7 +362,7 @@ Core.prototype._create = function (container) {
     itemAddedToTimeline = false;
     event.center = {
       x: event.clientX,
-      y: event.clientY
+      y: event.clientY,
     };
 
     if (itemData.target !== 'item') {
@@ -315,11 +370,15 @@ Core.prototype._create = function (container) {
     } else {
       me.itemSet._onDropObjectOnItem(event);
     }
-    me.emit('drop', me.getEventProperties(event))
+    me.emit('drop', me.getEventProperties(event));
     return false;
   }
 
-  this.dom.center.addEventListener('dragover', handleDragOver.bind(this), false);
+  this.dom.center.addEventListener(
+    'dragover',
+    handleDragOver.bind(this),
+    false
+  );
   this.dom.center.addEventListener('drop', handleDrop.bind(this), false);
 
   this.customTimes = [];
@@ -365,38 +424,54 @@ Core.prototype.setOptions = function (options) {
   if (options) {
     // copy the known options
     var fields = [
-      'width', 'height', 'minHeight', 'maxHeight', 'autoResize',
-      'start', 'end', 'clickToUse', 'dataAttributes', 'hiddenDates',
-      'locale', 'locales', 'moment', 'rtl', 'zoomKey', 'horizontalScroll', 'verticalScroll'
+      'width',
+      'height',
+      'minHeight',
+      'maxHeight',
+      'autoResize',
+      'start',
+      'end',
+      'clickToUse',
+      'dataAttributes',
+      'hiddenDates',
+      'locale',
+      'locales',
+      'moment',
+      'rtl',
+      'zoomKey',
+      'horizontalScroll',
+      'verticalScroll',
     ];
-    util.selectiveExtend(fields, this.options, options); 
+    util.selectiveExtend(fields, this.options, options);
 
     this.dom.rollingModeBtn.style.visibility = 'hidden';
 
     if (this.options.rtl) {
-      this.dom.container.style.direction = "rtl";
-      this.dom.backgroundVertical.className = 'vis-panel vis-background vis-vertical-rtl';    
+      this.dom.container.style.direction = 'rtl';
+      this.dom.backgroundVertical.className =
+        'vis-panel vis-background vis-vertical-rtl';
     }
 
     if (this.options.verticalScroll) {
       if (this.options.rtl) {
-        this.dom.rightContainer.className = 'vis-panel vis-right vis-vertical-scroll';
+        this.dom.rightContainer.className =
+          'vis-panel vis-right vis-vertical-scroll';
       } else {
-        this.dom.leftContainer.className = 'vis-panel vis-left vis-vertical-scroll';
+        this.dom.leftContainer.className =
+          'vis-panel vis-left vis-vertical-scroll';
       }
     }
 
     if (typeof this.options.orientation !== 'object') {
-      this.options.orientation = {item:undefined,axis:undefined};
+      this.options.orientation = { item: undefined, axis: undefined };
     }
     if ('orientation' in options) {
       if (typeof options.orientation === 'string') {
         this.options.orientation = {
           item: options.orientation,
-          axis: options.orientation
+          axis: options.orientation,
         };
-      }
-      else if (typeof options.orientation === 'object') {
+      } else if (typeof options.orientation === 'object') {
         if ('item' in options.orientation) {
           this.options.orientation.item = options.orientation.item;
         }
@@ -408,7 +483,7 @@ Core.prototype.setOptions = function (options) {
 
     if (this.options.orientation.axis === 'both') {
       if (!this.timeAxis2) {
-        var timeAxis2 = this.timeAxis2 = new TimeAxis(this.body);
+        var timeAxis2 = (this.timeAxis2 = new TimeAxis(this.body));
         timeAxis2.setOptions = function (options) {
           var _options = options ? util.extend({}, options) : {};
           _options.orientation = 'top'; // override the orientation option, always top
@@ -416,8 +491,7 @@ Core.prototype.setOptions = function (options) {
         };
         this.components.push(timeAxis2);
       }
-    }
-    else {
+    } else {
       if (this.timeAxis2) {
         var index = this.components.indexOf(this.timeAxis2);
         if (index !== -1) {
@@ -431,12 +505,16 @@ Core.prototype.setOptions = function (options) {
     // if the graph2d's drawPoints is a function delegate the callback to the onRender property
     if (typeof options.drawPoints == 'function') {
       options.drawPoints = {
-          onRender: options.drawPoints
+        onRender: options.drawPoints,
       };
     }
 
     if ('hiddenDates' in this.options) {
-      DateUtil.convertHiddenOptions(this.options.moment, this.body, this.options.hiddenDates);
+      DateUtil.convertHiddenOptions(
+        this.options.moment,
+        this.body,
+        this.options.hiddenDates
+      );
     }
 
     if ('clickToUse' in options) {
@@ -444,8 +522,7 @@ Core.prototype.setOptions = function (options) {
         if (!this.activator) {
           this.activator = new Activator(this.dom.root);
         }
-      }
-      else {
+      } else {
         if (this.activator) {
           this.activator.destroy();
           delete this.activator;
@@ -454,7 +531,9 @@ Core.prototype.setOptions = function (options) {
     }
 
     if ('showCustomTime' in options) {
-      throw new Error('Option `showCustomTime` is deprecated. Create a custom time bar via timeline.addCustomTime(time [, id])');
+      throw new Error(
+        'Option `showCustomTime` is deprecated. Create a custom time bar via timeline.addCustomTime(time [, id])'
+      );
     }
 
     // enable/disable autoResize
@@ -462,7 +541,7 @@ Core.prototype.setOptions = function (options) {
   }
 
   // propagate options to all components
-  this.components.forEach(component => component.setOptions(options));
+  this.components.forEach((component) => component.setOptions(options));
 
   // enable/disable configure
   if ('configure' in options) {
@@ -477,7 +556,7 @@ Core.prototype.setOptions = function (options) {
     this.components.forEach(function (component) {
       util.deepExtend(appliedOptions, component.options);
     });
-    this.configurator.setModuleOptions({global: appliedOptions});
+    this.configurator.setModuleOptions({ global: appliedOptions });
   }
 
   this._redraw();
@@ -527,11 +606,10 @@ Core.prototype.destroy = function () {
   this.hammer = null;
 
   // give all components the opportunity to cleanup
-  this.components.forEach(component => component.destroy());
+  this.components.forEach((component) => component.destroy());
 
   this.body = null;
 };
-
 
 /**
  * Set a custom time bar
@@ -544,7 +622,7 @@ Core.prototype.setCustomTime = function (time, id) {
   });
 
   if (customTimes.length === 0) {
-    throw new Error('No custom time bar found with id ' + JSON.stringify(id))
+    throw new Error('No custom time bar found with id ' + JSON.stringify(id));
   }
 
   if (customTimes.length > 0) {
@@ -557,13 +635,13 @@ Core.prototype.setCustomTime = function (time, id) {
  * @param {number} [id=undefined]    Id of the custom time bar.
  * @return {Date | undefined} customTime
  */
-Core.prototype.getCustomTime = function(id) {
+Core.prototype.getCustomTime = function (id) {
   var customTimes = this.customTimes.filter(function (component) {
     return component.options.id === id;
   });
 
   if (customTimes.length === 0) {
-    throw new Error('No custom time bar found with id ' + JSON.stringify(id))
+    throw new Error('No custom time bar found with id ' + JSON.stringify(id));
   }
   return customTimes[0].getCustomTime();
 };
@@ -574,13 +652,13 @@ Core.prototype.getCustomTime = function(id) {
  * @param {number} [id=undefined]    Id of the custom time bar.
  * @returns {*}
  */
-Core.prototype.setCustomTimeTitle = function(title, id) {
+Core.prototype.setCustomTimeTitle = function (title, id) {
   var customTimes = this.customTimes.filter(function (component) {
     return component.options.id === id;
   });
 
   if (customTimes.length === 0) {
-    throw new Error('No custom time bar found with id ' + JSON.stringify(id))
+    throw new Error('No custom time bar found with id ' + JSON.stringify(id));
   }
   if (customTimes.length > 0) {
     return customTimes[0].setCustomTitle(title);
@@ -608,21 +686,25 @@ Core.prototype.getEventProperties = function (event) {
  * @return {number | string}               Returns the id of the new bar
  */
 Core.prototype.addCustomTime = function (time, id) {
-  var timestamp = time !== undefined
-      ? util.convert(time, 'Date').valueOf()
-      : new Date();
+  var timestamp =
+    time !== undefined ? util.convert(time, 'Date').valueOf() : new Date();
 
   var exists = this.customTimes.some(function (customTime) {
     return customTime.options.id === id;
   });
   if (exists) {
-    throw new Error('A custom time with id ' + JSON.stringify(id) + ' already exists');
+    throw new Error(
+      'A custom time with id ' + JSON.stringify(id) + ' already exists'
+    );
   }
 
-  var customTime = new CustomTime(this.body, util.extend({}, this.options, {
-    time : timestamp,
-    id : id
-  }));
+  var customTime = new CustomTime(
+    this.body,
+    util.extend({}, this.options, {
+      time: timestamp,
+      id: id,
+    })
+  );
 
   this.customTimes.push(customTime);
   this.components.push(customTime);
@@ -638,27 +720,28 @@ Core.prototype.addCustomTime = function (time, id) {
  */
 Core.prototype.removeCustomTime = function (id) {
   var customTimes = this.customTimes.filter(function (bar) {
-    return (bar.options.id === id);
+    return bar.options.id === id;
   });
 
   if (customTimes.length === 0) {
-    throw new Error('No custom time bar found with id ' + JSON.stringify(id))
+    throw new Error('No custom time bar found with id ' + JSON.stringify(id));
   }
 
-  customTimes.forEach(function (customTime) {
-    this.customTimes.splice(this.customTimes.indexOf(customTime), 1);
-    this.components.splice(this.components.indexOf(customTime), 1);
-    customTime.destroy();
-  }.bind(this))
+  customTimes.forEach(
+    function (customTime) {
+      this.customTimes.splice(this.customTimes.indexOf(customTime), 1);
+      this.components.splice(this.components.indexOf(customTime), 1);
+      customTime.destroy();
+    }.bind(this)
+  );
 };
-
 
 /**
  * Get the id's of the currently visible items.
  * @returns {Array} The ids of the visible items
  */
-Core.prototype.getVisibleItems = function() {
-  return this.itemSet && this.itemSet.getVisibleItems() || [];
+Core.prototype.getVisibleItems = function () {
+  return (this.itemSet && this.itemSet.getVisibleItems()) || [];
 };
 
 /**
@@ -672,7 +755,7 @@ Core.prototype.getVisibleItems = function() {
  *                                    function is 'easeInOutQuad'.
  * @param {function} [callback] a callback funtion to be executed at the end of this function
  */
-Core.prototype.fit = function(options, callback) {
+Core.prototype.fit = function (options, callback) {
   var range = this.getDataRange();
 
   // skip range set if there is no min and max date
@@ -684,7 +767,8 @@ Core.prototype.fit = function(options, callback) {
   var interval = range.max - range.min;
   var min = new Date(range.min.valueOf() - interval * 0.01);
   var max = new Date(range.max.valueOf() + interval * 0.01);
-  var animation = (options && options.animation !== undefined) ? options.animation : true;
+  var animation =
+    options && options.animation !== undefined ? options.animation : true;
   this.range.setRange(min, max, { animation: animation }, callback);
 };
 
@@ -693,7 +777,7 @@ Core.prototype.fit = function(options, callback) {
  * [at]returns {{min: [Date], max: [Date]}}
  * @protected
  */
-Core.prototype.getDataRange = function() {
+Core.prototype.getDataRange = function () {
   // must be implemented by Timeline and Graph2d
   throw new Error('Cannot invoke abstract method getDataRange');
 };
@@ -720,8 +804,8 @@ Core.prototype.getDataRange = function() {
  *                                    function is 'easeInOutQuad'.
  * @param {function} [callback] a callback funtion to be executed at the end of this function
  */
-Core.prototype.setWindow = function(start, end, options, callback) {
-  if (typeof arguments[2] == "function") {
+Core.prototype.setWindow = function (start, end, options, callback) {
+  if (typeof arguments[2] == 'function') {
     callback = arguments[2];
     options = {};
   }
@@ -729,17 +813,21 @@ Core.prototype.setWindow = function(start, end, options, callback) {
   var range;
   if (arguments.length == 1) {
     range = arguments[0];
-    animation = (range.animation !== undefined) ? range.animation : true;
+    animation = range.animation !== undefined ? range.animation : true;
     this.range.setRange(range.start, range.end, { animation: animation });
-  }
-  else if (arguments.length == 2 && typeof arguments[1] == "function") {
+  } else if (arguments.length == 2 && typeof arguments[1] == 'function') {
     range = arguments[0];
     callback = arguments[1];
-    animation = (range.animation !== undefined) ? range.animation : true;
-    this.range.setRange(range.start, range.end, { animation: animation }, callback);
-  }
-  else {
-    animation = (options && options.animation !== undefined) ? options.animation : true;
+    animation = range.animation !== undefined ? range.animation : true;
+    this.range.setRange(
+      range.start,
+      range.end,
+      { animation: animation },
+      callback
+    );
+  } else {
+    animation =
+      options && options.animation !== undefined ? options.animation : true;
     this.range.setRange(start, end, { animation: animation }, callback);
   }
 };
@@ -756,8 +844,8 @@ Core.prototype.setWindow = function(start, end, options, callback) {
  *                                    function is 'easeInOutQuad'.
  * @param {function} [callback] a callback funtion to be executed at the end of this function
  */
-Core.prototype.moveTo = function(time, options, callback) {
-  if (typeof arguments[1] == "function") {
+Core.prototype.moveTo = function (time, options, callback) {
+  if (typeof arguments[1] == 'function') {
     callback = arguments[1];
     options = {};
   }
@@ -766,7 +854,8 @@ Core.prototype.moveTo = function(time, options, callback) {
 
   var start = t - interval / 2;
   var end = t + interval / 2;
-  var animation = (options && options.animation !== undefined) ? options.animation : true;
+  var animation =
+    options && options.animation !== undefined ? options.animation : true;
 
   this.range.setRange(start, end, { animation: animation }, callback);
 };
@@ -775,11 +864,11 @@ Core.prototype.moveTo = function(time, options, callback) {
  * Get the visible window
  * @return {{start: Date, end: Date}}   Visible range
  */
-Core.prototype.getWindow = function() {
+Core.prototype.getWindow = function () {
   var range = this.range.getRange();
   return {
     start: new Date(range.start),
-    end: new Date(range.end)
+    end: new Date(range.end),
   };
 };
 
@@ -795,9 +884,9 @@ Core.prototype.getWindow = function() {
  *                                    function is 'easeInOutQuad'.
  * @param {function} [callback] a callback funtion to be executed at the end of this function
  */
-Core.prototype.zoomIn = function(percentage, options, callback) {
+Core.prototype.zoomIn = function (percentage, options, callback) {
   if (!percentage || percentage < 0 || percentage > 1) return;
-  if (typeof arguments[1] == "function") {
+  if (typeof arguments[1] == 'function') {
     callback = arguments[1];
     options = {};
   }
@@ -825,9 +914,9 @@ Core.prototype.zoomIn = function(percentage, options, callback) {
  *                                    function is 'easeInOutQuad'.
  * @param {function} [callback] a callback funtion to be executed at the end of this function
  */
-Core.prototype.zoomOut = function(percentage, options, callback) {
-  if (!percentage || percentage < 0 || percentage > 1) return
-  if (typeof arguments[1] == "function") {
+Core.prototype.zoomOut = function (percentage, options, callback) {
+  if (!percentage || percentage < 0 || percentage > 1) return;
+  if (typeof arguments[1] == 'function') {
     callback = arguments[1];
     options = {};
   }
@@ -835,8 +924,8 @@ Core.prototype.zoomOut = function(percentage, options, callback) {
   var start = range.start.valueOf();
   var end = range.end.valueOf();
   var interval = end - start;
-  var newStart = start - interval * percentage / 2;
-  var newEnd = end + interval * percentage / 2;
+  var newStart = start - (interval * percentage) / 2;
+  var newEnd = end + (interval * percentage) / 2;
 
   this.setWindow(newStart, newEnd, options, callback);
 };
@@ -846,7 +935,7 @@ Core.prototype.zoomOut = function(percentage, options, callback) {
  *
  * Note: this function will be overridden on construction with a trottled version
  */
-Core.prototype.redraw = function() {
+Core.prototype.redraw = function () {
   this._redraw();
 };
 
@@ -855,7 +944,7 @@ Core.prototype.redraw = function() {
  * method redraw.
  * @protected
  */
-Core.prototype._redraw = function() {
+Core.prototype._redraw = function () {
   this.redrawCount++;
   var resized = false;
   var options = this.options;
@@ -864,14 +953,17 @@ Core.prototype._redraw = function() {
 
   if (!dom || !dom.container || dom.root.offsetWidth == 0) return; // when destroyed, or invisible
 
-  DateUtil.updateHiddenDates(this.options.moment, this.body, this.options.hiddenDates);
+  DateUtil.updateHiddenDates(
+    this.options.moment,
+    this.body,
+    this.options.hiddenDates
+  );
 
   // update class names
   if (options.orientation == 'top') {
     util.addClassName(dom.root, 'vis-top');
     util.removeClassName(dom.root, 'vis-bottom');
-  }
-  else {
+  } else {
     util.removeClassName(dom.root, 'vis-top');
     util.addClassName(dom.root, 'vis-bottom');
   }
@@ -882,18 +974,20 @@ Core.prototype._redraw = function() {
   dom.root.style.width = util.option.asSize(options.width, '');
 
   // calculate border widths
-  props.border.left   = (dom.centerContainer.offsetWidth - dom.centerContainer.clientWidth) / 2;
-  props.border.right  = props.border.left;
-  props.border.top    = (dom.centerContainer.offsetHeight - dom.centerContainer.clientHeight) / 2;
+  props.border.left =
+    (dom.centerContainer.offsetWidth - dom.centerContainer.clientWidth) / 2;
+  props.border.right = props.border.left;
+  props.border.top =
+    (dom.centerContainer.offsetHeight - dom.centerContainer.clientHeight) / 2;
   props.border.bottom = props.border.top;
-  props.borderRootHeight= dom.root.offsetHeight - dom.root.clientHeight;
+  props.borderRootHeight = dom.root.offsetHeight - dom.root.clientHeight;
   props.borderRootWidth = dom.root.offsetWidth - dom.root.clientWidth;
 
   // workaround for a bug in IE: the clientWidth of an element with
   // a height:0px and overflow:hidden is not calculated and always has value 0
   if (dom.centerContainer.clientHeight === 0) {
     props.border.left = props.border.top;
-    props.border.right  = props.border.left;
+    props.border.right = props.border.left;
   }
   if (dom.root.clientHeight === 0) {
     props.borderRootWidth = props.borderRootHeight;
@@ -902,28 +996,40 @@ Core.prototype._redraw = function() {
   // calculate the heights. If any of the side panels is empty, we set the height to
   // minus the border width, such that the border will be invisible
   props.center.height = dom.center.offsetHeight;
-  props.left.height   = dom.left.offsetHeight;
-  props.right.height  = dom.right.offsetHeight;
-  props.top.height    = dom.top.clientHeight    || -props.border.top;
+  props.left.height = dom.left.offsetHeight;
+  props.right.height = dom.right.offsetHeight;
+  props.top.height = dom.top.clientHeight || -props.border.top;
   props.bottom.height = dom.bottom.clientHeight || -props.border.bottom;
 
   // TODO: compensate borders when any of the panels is empty.
 
   // apply auto height
   // TODO: only calculate autoHeight when needed (else we cause an extra reflow/repaint of the DOM)
-  var contentHeight = Math.max(props.left.height, props.center.height, props.right.height);
-  var autoHeight = props.top.height + contentHeight + props.bottom.height +
-    props.borderRootHeight + props.border.top + props.border.bottom;
+  var contentHeight = Math.max(
+    props.left.height,
+    props.center.height,
+    props.right.height
+  );
+  var autoHeight =
+    props.top.height +
+    contentHeight +
+    props.bottom.height +
+    props.borderRootHeight +
+    props.border.top +
+    props.border.bottom;
   dom.root.style.height = util.option.asSize(options.height, autoHeight + 'px');
 
   // calculate heights of the content panels
   props.root.height = dom.root.offsetHeight;
   props.background.height = props.root.height - props.borderRootHeight;
-  var containerHeight = props.root.height - props.top.height - props.bottom.height -
+  var containerHeight =
+    props.root.height -
+    props.top.height -
+    props.bottom.height -
     props.borderRootHeight;
-  props.centerContainer.height  = containerHeight;
-  props.leftContainer.height    = containerHeight;
-  props.rightContainer.height   = props.leftContainer.height;
+  props.centerContainer.height = containerHeight;
+  props.leftContainer.height = containerHeight;
+  props.rightContainer.height = props.leftContainer.height;
 
   // calculate the widths of the panels
   props.root.width = dom.root.offsetWidth;
@@ -936,13 +1042,17 @@ Core.prototype._redraw = function() {
   if (options.verticalScroll) {
     if (options.rtl) {
       props.left.width = dom.leftContainer.clientWidth || -props.border.left;
-      props.right.width = dom.rightContainer.clientWidth + props.scrollbarWidth || -props.border.right;
+      props.right.width =
+        dom.rightContainer.clientWidth + props.scrollbarWidth ||
+        -props.border.right;
     } else {
-      props.left.width = dom.leftContainer.clientWidth + props.scrollbarWidth || -props.border.left;
+      props.left.width =
+        dom.leftContainer.clientWidth + props.scrollbarWidth ||
+        -props.border.left;
       props.right.width = dom.rightContainer.clientWidth || -props.border.right;
     }
   } else {
-    props.left.width = dom.leftContainer.clientWidth  || -props.border.left;
+    props.left.width = dom.leftContainer.clientWidth || -props.border.left;
     props.right.width = dom.rightContainer.clientWidth || -props.border.right;
   }
 
@@ -954,40 +1064,54 @@ Core.prototype._redraw = function() {
 
   // reposition the scrollable contents
   if (options.orientation.item != 'top') {
-    offset += Math.max(props.centerContainer.height - props.center.height -
-      props.border.top - props.border.bottom, 0);
+    offset += Math.max(
+      props.centerContainer.height -
+        props.center.height -
+        props.border.top -
+        props.border.bottom,
+      0
+    );
   }
-  dom.center.style.top  = offset + 'px';
-  
+  dom.center.style.top = offset + 'px';
+
   // show shadows when vertical scrolling is available
   var visibilityTop = props.scrollTop == 0 ? 'hidden' : '';
   var visibilityBottom = props.scrollTop == props.scrollTopMin ? 'hidden' : '';
-  dom.shadowTop.style.visibility          = visibilityTop;
-  dom.shadowBottom.style.visibility       = visibilityBottom;
-  dom.shadowTopLeft.style.visibility      = visibilityTop;
-  dom.shadowBottomLeft.style.visibility   = visibilityBottom;
-  dom.shadowTopRight.style.visibility     = visibilityTop;
-  dom.shadowBottomRight.style.visibility  = visibilityBottom;
+  dom.shadowTop.style.visibility = visibilityTop;
+  dom.shadowBottom.style.visibility = visibilityBottom;
+  dom.shadowTopLeft.style.visibility = visibilityTop;
+  dom.shadowBottomLeft.style.visibility = visibilityBottom;
+  dom.shadowTopRight.style.visibility = visibilityTop;
+  dom.shadowBottomRight.style.visibility = visibilityBottom;
 
   if (options.verticalScroll) {
     dom.rightContainer.className = 'vis-panel vis-right vis-vertical-scroll';
     dom.leftContainer.className = 'vis-panel vis-left vis-vertical-scroll';
 
-    dom.shadowTopRight.style.visibility     = "hidden";
-    dom.shadowBottomRight.style.visibility  = "hidden";
-    dom.shadowTopLeft.style.visibility      = "hidden";
-    dom.shadowBottomLeft.style.visibility   = "hidden";
+    dom.shadowTopRight.style.visibility = 'hidden';
+    dom.shadowBottomRight.style.visibility = 'hidden';
+    dom.shadowTopLeft.style.visibility = 'hidden';
+    dom.shadowBottomLeft.style.visibility = 'hidden';
 
-    dom.left.style.top    = '0px';
-    dom.right.style.top   = '0px';
+    dom.left.style.top = '0px';
+    dom.right.style.top = '0px';
   }
 
-  if (!options.verticalScroll ||  props.center.height < props.centerContainer.height) {
-    dom.left.style.top    = offset + 'px';
-    dom.right.style.top   = offset + 'px';
-    dom.rightContainer.className = dom.rightContainer.className.replace(new RegExp('(?:^|\\s)'+ 'vis-vertical-scroll' + '(?:\\s|$)'), ' ');
-    dom.leftContainer.className = dom.leftContainer.className.replace(new RegExp('(?:^|\\s)'+ 'vis-vertical-scroll' + '(?:\\s|$)'), ' ');
-    props.left.width = dom.leftContainer.clientWidth  || -props.border.left;
+  if (
+    !options.verticalScroll ||
+    props.center.height < props.centerContainer.height
+  ) {
+    dom.left.style.top = offset + 'px';
+    dom.right.style.top = offset + 'px';
+    dom.rightContainer.className = dom.rightContainer.className.replace(
+      new RegExp('(?:^|\\s)' + 'vis-vertical-scroll' + '(?:\\s|$)'),
+      ' '
+    );
+    dom.leftContainer.className = dom.leftContainer.className.replace(
+      new RegExp('(?:^|\\s)' + 'vis-vertical-scroll' + '(?:\\s|$)'),
+      ' '
+    );
+    props.left.width = dom.leftContainer.clientWidth || -props.border.left;
     props.right.width = dom.rightContainer.clientWidth || -props.border.right;
     this._setDOM();
   }
@@ -995,7 +1119,9 @@ Core.prototype._redraw = function() {
   // enable/disable vertical panning
   var contentsOverflow = props.center.height > props.centerContainer.height;
   this.hammer.get('pan').set({
-    direction: contentsOverflow ? Hammer.DIRECTION_ALL : Hammer.DIRECTION_HORIZONTAL
+    direction: contentsOverflow
+      ? Hammer.DIRECTION_ALL
+      : Hammer.DIRECTION_HORIZONTAL,
   });
 
   // redraw all components
@@ -1007,8 +1133,7 @@ Core.prototype._redraw = function() {
     if (this.redrawCount < MAX_REDRAW) {
       this.body.emitter.emit('_change');
       return;
-    }
-    else {
+    } else {
       console.log('WARNING: infinite loop in redraw?');
     }
   } else {
@@ -1016,7 +1141,7 @@ Core.prototype._redraw = function() {
   }
 
   //Emit public 'changed' event for UI updates, see issue #1592
-  this.body.emitter.emit("changed");
+  this.body.emitter.emit('changed');
 };
 
 Core.prototype._setDOM = function () {
@@ -1025,47 +1150,52 @@ Core.prototype._setDOM = function () {
 
   props.leftContainer.width = props.left.width;
   props.rightContainer.width = props.right.width;
-  var centerWidth = props.root.width - props.left.width - props.right.width - props.borderRootWidth;
-  props.center.width          = centerWidth;
+  var centerWidth =
+    props.root.width -
+    props.left.width -
+    props.right.width -
+    props.borderRootWidth;
+  props.center.width = centerWidth;
   props.centerContainer.width = centerWidth;
-  props.top.width             = centerWidth;
-  props.bottom.width          = centerWidth;
+  props.top.width = centerWidth;
+  props.bottom.width = centerWidth;
 
   // resize the panels
-  dom.background.style.height           = props.background.height + 'px';
-  dom.backgroundVertical.style.height   = props.background.height + 'px';
+  dom.background.style.height = props.background.height + 'px';
+  dom.backgroundVertical.style.height = props.background.height + 'px';
   dom.backgroundHorizontal.style.height = props.centerContainer.height + 'px';
-  dom.centerContainer.style.height      = props.centerContainer.height + 'px';
-  dom.leftContainer.style.height        = props.leftContainer.height + 'px';
-  dom.rightContainer.style.height       = props.rightContainer.height + 'px';
+  dom.centerContainer.style.height = props.centerContainer.height + 'px';
+  dom.leftContainer.style.height = props.leftContainer.height + 'px';
+  dom.rightContainer.style.height = props.rightContainer.height + 'px';
 
-  dom.background.style.width            = props.background.width + 'px';
-  dom.backgroundVertical.style.width    = props.centerContainer.width + 'px';
-  dom.backgroundHorizontal.style.width  = props.background.width + 'px';
-  dom.centerContainer.style.width       = props.center.width + 'px';
-  dom.top.style.width                   = props.top.width + 'px';
-  dom.bottom.style.width                = props.bottom.width + 'px';
+  dom.background.style.width = props.background.width + 'px';
+  dom.backgroundVertical.style.width = props.centerContainer.width + 'px';
+  dom.backgroundHorizontal.style.width = props.background.width + 'px';
+  dom.centerContainer.style.width = props.center.width + 'px';
+  dom.top.style.width = props.top.width + 'px';
+  dom.bottom.style.width = props.bottom.width + 'px';
 
   // reposition the panels
-  dom.background.style.left           = '0';
-  dom.background.style.top            = '0';
-  dom.backgroundVertical.style.left   = (props.left.width + props.border.left) + 'px';
-  dom.backgroundVertical.style.top    = '0';
+  dom.background.style.left = '0';
+  dom.background.style.top = '0';
+  dom.backgroundVertical.style.left =
+    props.left.width + props.border.left + 'px';
+  dom.backgroundVertical.style.top = '0';
   dom.backgroundHorizontal.style.left = '0';
-  dom.backgroundHorizontal.style.top  = props.top.height + 'px';
-  dom.centerContainer.style.left      = props.left.width + 'px';
-  dom.centerContainer.style.top       = props.top.height + 'px';
-  dom.leftContainer.style.left        = '0';
-  dom.leftContainer.style.top         = props.top.height + 'px';
-  dom.rightContainer.style.left       = (props.left.width + props.center.width) + 'px';
-  dom.rightContainer.style.top        = props.top.height + 'px';
-  dom.top.style.left                  = props.left.width + 'px';
-  dom.top.style.top                   = '0';
-  dom.bottom.style.left               = props.left.width + 'px';
-  dom.bottom.style.top                = (props.top.height + props.centerContainer.height) + 'px';
-  dom.center.style.left               = '0';
-  dom.left.style.left                 = '0';
-  dom.right.style.left                = '0';
+  dom.backgroundHorizontal.style.top = props.top.height + 'px';
+  dom.centerContainer.style.left = props.left.width + 'px';
+  dom.centerContainer.style.top = props.top.height + 'px';
+  dom.leftContainer.style.left = '0';
+  dom.leftContainer.style.top = props.top.height + 'px';
+  dom.rightContainer.style.left = props.left.width + props.center.width + 'px';
+  dom.rightContainer.style.top = props.top.height + 'px';
+  dom.top.style.left = props.left.width + 'px';
+  dom.top.style.top = '0';
+  dom.bottom.style.left = props.left.width + 'px';
+  dom.bottom.style.top = props.top.height + props.centerContainer.height + 'px';
+  dom.center.style.left = '0';
+  dom.left.style.left = '0';
+  dom.right.style.left = '0';
 };
 
 // TODO: deprecated since version 1.1.0, remove some day
@@ -1080,7 +1210,7 @@ Core.prototype.repaint = function () {
  * @param {Date | string | number} time     A Date, unix timestamp, or
  *                                          ISO date string.
  */
-Core.prototype.setCurrentTime = function(time) {
+Core.prototype.setCurrentTime = function (time) {
   if (!this.currentTime) {
     throw new Error('Option showCurrentTime must be true');
   }
@@ -1093,7 +1223,7 @@ Core.prototype.setCurrentTime = function(time) {
  * Only applicable when option `showCurrentTime` is true.
  * @return {Date} Returns the current time.
  */
-Core.prototype.getCurrentTime = function() {
+Core.prototype.getCurrentTime = function () {
   if (!this.currentTime) {
     throw new Error('Option showCurrentTime must be true');
   }
@@ -1108,7 +1238,7 @@ Core.prototype.getCurrentTime = function() {
  * @protected
  */
 // TODO: move this function to Range
-Core.prototype._toTime = function(x) {
+Core.prototype._toTime = function (x) {
   return DateUtil.toTime(this, x, this.props.center.width);
 };
 
@@ -1119,7 +1249,7 @@ Core.prototype._toTime = function(x) {
  * @protected
  */
 // TODO: move this function to Range
-Core.prototype._toGlobalTime = function(x) {
+Core.prototype._toGlobalTime = function (x) {
   return DateUtil.toTime(this, x, this.props.root.width);
   //var conversion = this.range.conversion(this.props.root.width);
   //return new Date(x / conversion.scale + conversion.offset);
@@ -1133,11 +1263,9 @@ Core.prototype._toGlobalTime = function(x) {
  * @protected
  */
 // TODO: move this function to Range
-Core.prototype._toScreen = function(time) {
+Core.prototype._toScreen = function (time) {
   return DateUtil.toScreen(this, time, this.props.center.width);
 };
-
-
 
 /**
  * Convert a datetime (Date object) into a position on the root
@@ -1148,12 +1276,11 @@ Core.prototype._toScreen = function(time) {
  * @protected
  */
 // TODO: move this function to Range
-Core.prototype._toGlobalScreen = function(time) {
+Core.prototype._toGlobalScreen = function (time) {
   return DateUtil.toScreen(this, time, this.props.root.width);
   //var conversion = this.range.conversion(this.props.root.width);
   //return (time.valueOf() - conversion.offset) * conversion.scale;
 };
-
 
 /**
  * Initialize watching when option autoResize is true
@@ -1162,8 +1289,7 @@ Core.prototype._toGlobalScreen = function(time) {
 Core.prototype._initAutoResize = function () {
   if (this.options.autoResize == true) {
     this._startAutoResize();
-  }
-  else {
+  } else {
     this._stopAutoResize();
   }
 };
@@ -1178,7 +1304,7 @@ Core.prototype._startAutoResize = function () {
 
   this._stopAutoResize();
 
-  this._onResize = function() {
+  this._onResize = function () {
     if (me.options.autoResize != true) {
       // stop watching when the option autoResize is changed to false
       me._stopAutoResize();
@@ -1190,8 +1316,10 @@ Core.prototype._startAutoResize = function () {
       // Note: we compare offsetWidth here, not clientWidth. For some reason,
       // IE does not restore the clientWidth from 0 to the actual width after
       // changing the timeline's container display style from none to visible
-      if ((me.dom.root.offsetWidth != me.props.lastWidth) ||
-        (me.dom.root.offsetHeight != me.props.lastHeight)) {
+      if (
+        me.dom.root.offsetWidth != me.props.lastWidth ||
+        me.dom.root.offsetHeight != me.props.lastHeight
+      ) {
         me.props.lastWidth = me.dom.root.offsetWidth;
         me.props.lastHeight = me.dom.root.offsetHeight;
         me.props.scrollbarWidth = util.getScrollBarWidth();
@@ -1206,8 +1334,8 @@ Core.prototype._startAutoResize = function () {
 
   //Prevent initial unnecessary redraw
   if (me.dom.root) {
-      me.props.lastWidth = me.dom.root.offsetWidth;
-      me.props.lastHeight = me.dom.root.offsetHeight;
+    me.props.lastWidth = me.dom.root.offsetWidth;
+    me.props.lastHeight = me.dom.root.offsetHeight;
   }
 
   this.watchTimer = setInterval(this._onResize, 1000);
@@ -1235,7 +1363,8 @@ Core.prototype._stopAutoResize = function () {
  * @param {Event} event
  * @private
  */
-Core.prototype._onTouch = function (event) {  // eslint-disable-line no-unused-vars
+Core.prototype._onTouch = function (event) {
+  // eslint-disable-line no-unused-vars
   this.touch.allowDragging = true;
   this.touch.initialScrollTop = this.props.scrollTop;
 };
@@ -1245,7 +1374,8 @@ Core.prototype._onTouch = function (event) {  // eslint-disable-line no-unused-v
  * @param {Event} event
  * @private
  */
-Core.prototype._onPinch = function (event) {  // eslint-disable-line no-unused-vars
+Core.prototype._onPinch = function (event) {
+  // eslint-disable-line no-unused-vars
   this.touch.allowDragging = false;
 };
 
@@ -1255,7 +1385,7 @@ Core.prototype._onPinch = function (event) {  // eslint-disable-line no-unused-v
  * @private
  */
 Core.prototype._onDrag = function (event) {
-  if (!event) return
+  if (!event) return;
   // refuse to drag when we where pinching to prevent the timeline make a jump
   // when releasing the fingers in opposite order from the touch screen
   if (!this.touch.allowDragging) return;
@@ -1271,7 +1401,7 @@ Core.prototype._onDrag = function (event) {
   }
 
   if (newScrollTop != oldScrollTop) {
-    this.emit("verticalDrag");
+    this.emit('verticalDrag');
   }
 };
 
@@ -1294,12 +1424,15 @@ Core.prototype._setScrollTop = function (scrollTop) {
  */
 Core.prototype._updateScrollTop = function () {
   // recalculate the scrollTopMin
-  var scrollTopMin = Math.min(this.props.centerContainer.height - this.props.center.height, 0); // is negative or zero
+  var scrollTopMin = Math.min(
+    this.props.centerContainer.height - this.props.center.height,
+    0
+  ); // is negative or zero
   if (scrollTopMin != this.props.scrollTopMin) {
     // in case of bottom orientation, change the scrollTop such that the contents
     // do not move relative to the time axis at the bottom
     if (this.options.orientation.item != 'top') {
-      this.props.scrollTop += (scrollTopMin - this.props.scrollTopMin);
+      this.props.scrollTop += scrollTopMin - this.props.scrollTopMin;
     }
     this.props.scrollTopMin = scrollTopMin;
   }

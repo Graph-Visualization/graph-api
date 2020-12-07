@@ -15,7 +15,19 @@ var Points = require('./graph2d_types/points');
  */
 function GraphGroup(group, groupId, options, groupsUsingDefaultStyles) {
   this.id = groupId;
-  var fields = ['sampling', 'style', 'sort', 'yAxisOrientation', 'barChart', 'drawPoints', 'shaded', 'interpolation', 'zIndex','excludeFromStacking', 'excludeFromLegend'];
+  var fields = [
+    'sampling',
+    'style',
+    'sort',
+    'yAxisOrientation',
+    'barChart',
+    'drawPoints',
+    'shaded',
+    'interpolation',
+    'zIndex',
+    'excludeFromStacking',
+    'excludeFromLegend',
+  ];
   this.options = util.selectiveBridgeObject(fields, options);
   this.usingDefaultStyle = group.className === undefined;
   this.groupsUsingDefaultStyles = groupsUsingDefaultStyles;
@@ -36,12 +48,11 @@ GraphGroup.prototype.setItems = function (items) {
   if (items != null) {
     this.itemsData = items;
     if (this.options.sort == true) {
-      util.insertSort(this.itemsData,function (a, b) {
+      util.insertSort(this.itemsData, function (a, b) {
         return a.x > b.x ? 1 : -1;
       });
     }
-  }
-  else {
+  } else {
     this.itemsData = [];
   }
 };
@@ -64,14 +75,23 @@ GraphGroup.prototype.setZeroPosition = function (pos) {
  */
 GraphGroup.prototype.setOptions = function (options) {
   if (options !== undefined) {
-    var fields = ['sampling', 'style', 'sort', 'yAxisOrientation', 'barChart', 'zIndex','excludeFromStacking', 'excludeFromLegend'];
+    var fields = [
+      'sampling',
+      'style',
+      'sort',
+      'yAxisOrientation',
+      'barChart',
+      'zIndex',
+      'excludeFromStacking',
+      'excludeFromLegend',
+    ];
     util.selectiveDeepExtend(fields, this.options, options);
 
     // if the group's drawPoints is a function delegate the callback to the onRender property
     if (typeof options.drawPoints == 'function') {
       options.drawPoints = {
-        onRender: options.drawPoints
-      }
+        onRender: options.drawPoints,
+      };
     }
 
     util.mergeOptions(this.options, options, 'interpolation');
@@ -83,11 +103,9 @@ GraphGroup.prototype.setOptions = function (options) {
         if (options.interpolation.parametrization) {
           if (options.interpolation.parametrization == 'uniform') {
             this.options.interpolation.alpha = 0;
-          }
-          else if (options.interpolation.parametrization == 'chordal') {
+          } else if (options.interpolation.parametrization == 'chordal') {
             this.options.interpolation.alpha = 1.0;
-          }
-          else {
+          } else {
             this.options.interpolation.parametrization = 'centripetal';
             this.options.interpolation.alpha = 0.5;
           }
@@ -97,7 +115,6 @@ GraphGroup.prototype.setOptions = function (options) {
   }
 };
 
-
 /**
  * this updates the current group class with the latest group dataset entree, used in _updateGroup in linegraph
  * @param {vis.Group} group
@@ -105,7 +122,10 @@ GraphGroup.prototype.setOptions = function (options) {
 GraphGroup.prototype.update = function (group) {
   this.group = group;
   this.content = group.content || 'graph';
-  this.className = group.className || this.className || 'vis-graph-group' + this.groupsUsingDefaultStyles[0] % 10;
+  this.className =
+    group.className ||
+    this.className ||
+    'vis-graph-group' + (this.groupsUsingDefaultStyles[0] % 10);
   this.visible = group.visible === undefined ? true : group.visible;
   this.style = group.style;
   this.setOptions(group.options);
@@ -121,30 +141,45 @@ GraphGroup.prototype.update = function (group) {
  * @param {number} y
  * @returns {{icon: (*|Element), label: (*|string), orientation: *}}
  */
-GraphGroup.prototype.getLegend = function (iconWidth, iconHeight, framework, x, y) {
+GraphGroup.prototype.getLegend = function (
+  iconWidth,
+  iconHeight,
+  framework,
+  x,
+  y
+) {
   if (framework == undefined || framework == null) {
-    var svg = document.createElementNS('http://www.w3.org/2000/svg', "svg");
-    framework = {svg: svg, svgElements:{}, options: this.options, groups: [this]}
+    var svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+    framework = {
+      svg: svg,
+      svgElements: {},
+      options: this.options,
+      groups: [this],
+    };
   }
-  if (x == undefined || x == null){
+  if (x == undefined || x == null) {
     x = 0;
   }
-  if (y == undefined || y == null){
+  if (y == undefined || y == null) {
     y = 0.5 * iconHeight;
   }
-  switch (this.options.style){
-    case "line":
+  switch (this.options.style) {
+    case 'line':
       Lines.drawIcon(this, x, y, iconWidth, iconHeight, framework);
       break;
-    case "points": //explicit no break
-    case "point":
+    case 'points': //explicit no break
+    case 'point':
       Points.drawIcon(this, x, y, iconWidth, iconHeight, framework);
       break;
-    case "bar":
+    case 'bar':
       Bars.drawIcon(this, x, y, iconWidth, iconHeight, framework);
       break;
   }
-  return {icon: framework.svg, label: this.content, orientation: this.options.yAxisOrientation};
+  return {
+    icon: framework.svg,
+    label: this.content,
+    orientation: this.options.yAxisOrientation,
+  };
 };
 
 GraphGroup.prototype.getYRange = function (groupData) {
@@ -154,7 +189,11 @@ GraphGroup.prototype.getYRange = function (groupData) {
     yMin = yMin > groupData[j].y ? groupData[j].y : yMin;
     yMax = yMax < groupData[j].y ? groupData[j].y : yMax;
   }
-  return {min: yMin, max: yMax, yAxisOrientation: this.options.yAxisOrientation};
+  return {
+    min: yMin,
+    max: yMax,
+    yAxisOrientation: this.options.yAxisOrientation,
+  };
 };
 
 module.exports = GraphGroup;

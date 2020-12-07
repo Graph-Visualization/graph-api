@@ -1,6 +1,6 @@
 'use strict';
 
-import CircleImageBase from '../util/CircleImageBase'
+import CircleImageBase from '../util/CircleImageBase';
 
 /**
  * A Circle Node/Cluster shape.
@@ -28,8 +28,10 @@ class Circle extends CircleImageBase {
     if (this.needsRefresh(selected, hover)) {
       var dimensions = this.getDimensionsFromLabel(ctx, selected, hover);
 
-      var diameter = Math.max(dimensions.width  + this.margin.right + this.margin.left,
-                              dimensions.height + this.margin.top   + this.margin.bottom);
+      var diameter = Math.max(
+        dimensions.width + this.margin.right + this.margin.left,
+        dimensions.height + this.margin.top + this.margin.bottom
+      );
 
       this.options.size = diameter / 2; // NOTE: this size field only set here, not in Ellipse, Database, Box
       this.width = diameter;
@@ -54,9 +56,14 @@ class Circle extends CircleImageBase {
 
     this._drawRawCircle(ctx, x, y, values);
 
-    this.updateBoundingBox(x,y);
-    this.labelModule.draw(ctx, this.left + this.textSize.width / 2 + this.margin.left,
-                               y, selected, hover);
+    this.updateBoundingBox(x, y);
+    this.labelModule.draw(
+      ctx,
+      this.left + this.textSize.width / 2 + this.margin.left,
+      y,
+      selected,
+      hover
+    );
   }
 
   /**
@@ -77,7 +84,8 @@ class Circle extends CircleImageBase {
    * @param {number} angle - Unused
    * @returns {number}
    */
-  distanceToBorder(ctx, angle) {  // eslint-disable-line no-unused-vars
+  distanceToBorder(ctx, angle) {
+    // eslint-disable-line no-unused-vars
     this.resize(ctx);
     return this.width * 0.5;
   }

@@ -2,7 +2,6 @@ let util = require('../../util');
 var NavigationHandler = require('./components/NavigationHandler').default;
 var Popup = require('./../../shared/Popup').default;
 
-
 /**
  * Handler for interactions
  */
@@ -16,21 +15,21 @@ class InteractionHandler {
     this.body = body;
     this.canvas = canvas;
     this.selectionHandler = selectionHandler;
-    this.navigationHandler = new NavigationHandler(body,canvas);
+    this.navigationHandler = new NavigationHandler(body, canvas);
 
     // bind the events from hammer to functions in this object
-    this.body.eventListeners.onTap        = this.onTap.bind(this);
-    this.body.eventListeners.onTouch      = this.onTouch.bind(this);
-    this.body.eventListeners.onDoubleTap  = this.onDoubleTap.bind(this);
-    this.body.eventListeners.onHold       = this.onHold.bind(this);
-    this.body.eventListeners.onDragStart  = this.onDragStart.bind(this);
-    this.body.eventListeners.onDrag       = this.onDrag.bind(this);
-    this.body.eventListeners.onDragEnd    = this.onDragEnd.bind(this);
+    this.body.eventListeners.onTap = this.onTap.bind(this);
+    this.body.eventListeners.onTouch = this.onTouch.bind(this);
+    this.body.eventListeners.onDoubleTap = this.onDoubleTap.bind(this);
+    this.body.eventListeners.onHold = this.onHold.bind(this);
+    this.body.eventListeners.onDragStart = this.onDragStart.bind(this);
+    this.body.eventListeners.onDrag = this.onDrag.bind(this);
+    this.body.eventListeners.onDragEnd = this.onDragEnd.bind(this);
     this.body.eventListeners.onMouseWheel = this.onMouseWheel.bind(this);
-    this.body.eventListeners.onPinch      = this.onPinch.bind(this);
-    this.body.eventListeners.onMouseMove  = this.onMouseMove.bind(this);
-    this.body.eventListeners.onRelease    = this.onRelease.bind(this);
-    this.body.eventListeners.onContext    = this.onContext.bind(this);
+    this.body.eventListeners.onPinch = this.onPinch.bind(this);
+    this.body.eventListeners.onMouseMove = this.onMouseMove.bind(this);
+    this.body.eventListeners.onRelease = this.onRelease.bind(this);
+    this.body.eventListeners.onContext = this.onContext.bind(this);
 
     this.touchTime = 0;
     this.drag = {};
@@ -43,21 +42,21 @@ class InteractionHandler {
 
     this.options = {};
     this.defaultOptions = {
-      dragNodes:true,
+      dragNodes: true,
       dragView: true,
       hover: false,
       keyboard: {
         enabled: false,
-        speed: {x: 10, y: 10, zoom: 0.02},
-        bindToWindow: true
+        speed: { x: 10, y: 10, zoom: 0.02 },
+        bindToWindow: true,
       },
       navigationButtons: false,
       tooltipDelay: 300,
-      zoomView: true
+      zoomView: true,
     };
-    util.extend(this.options,this.defaultOptions);
+    util.extend(this.options, this.defaultOptions);
 
-    this.bindEventListeners()
+    this.bindEventListeners();
   }
 
   /**
@@ -67,7 +66,7 @@ class InteractionHandler {
     this.body.emitter.on('destroy', () => {
       clearTimeout(this.popupTimer);
       delete this.body.functions.getPointer;
-    })
+    });
   }
 
   /**
@@ -77,7 +76,14 @@ class InteractionHandler {
   setOptions(options) {
     if (options !== undefined) {
       // extend all but the values in fields
-      let fields = ['hideEdgesOnDrag','hideNodesOnDrag','keyboard','multiselect','selectable','selectConnectedEdges'];
+      let fields = [
+        'hideEdgesOnDrag',
+        'hideNodesOnDrag',
+        'keyboard',
+        'multiselect',
+        'selectable',
+        'selectConnectedEdges',
+      ];
       util.selectiveNotDeepExtend(fields, this.options, options);
 
       // merge the keyboard options in.
@@ -94,7 +100,6 @@ class InteractionHandler {
     this.navigationHandler.setOptions(this.options);
   }
 
-
   /**
    * Get the pointer location from a touch location
    * @param {{x: number, y: number}} touch
@@ -104,10 +109,9 @@ class InteractionHandler {
   getPointer(touch) {
     return {
       x: touch.x - util.getAbsoluteLeft(this.canvas.frame.canvas),
-      y: touch.y - util.getAbsoluteTop(this.canvas.frame.canvas)
+      y: touch.y - util.getAbsoluteTop(this.canvas.frame.canvas),
     };
   }
-
 
   /**
    * On start of a touch gesture, store the pointer
@@ -124,7 +128,6 @@ class InteractionHandler {
     }
   }
 
-
   /**
    * handle tap/click event: select/unselect a node
    * @param {Event} event
@@ -132,13 +135,13 @@ class InteractionHandler {
    */
   onTap(event) {
     let pointer = this.getPointer(event.center);
-    let multiselect = this.selectionHandler.options.multiselect &&
-        (event.changedPointers[0].ctrlKey || event.changedPointers[0].metaKey);
+    let multiselect =
+      this.selectionHandler.options.multiselect &&
+      (event.changedPointers[0].ctrlKey || event.changedPointers[0].metaKey);
 
     this.checkSelectionChanges(pointer, event, multiselect);
     this.selectionHandler._generateClickEvent('click', event, pointer);
   }
-
 
   /**
    * handle doubletap event
@@ -149,7 +152,6 @@ class InteractionHandler {
     let pointer = this.getPointer(event.center);
     this.selectionHandler._generateClickEvent('doubleClick', event, pointer);
   }
-
 
   /**
    * handle long tap event: multi select nodes
@@ -165,7 +167,6 @@ class InteractionHandler {
     this.selectionHandler._generateClickEvent('click', event, pointer);
     this.selectionHandler._generateClickEvent('hold', event, pointer);
   }
-
 
   /**
    * handle the release of the screen
@@ -187,10 +188,9 @@ class InteractionHandler {
    * @param {Event} event
    */
   onContext(event) {
-    let pointer = this.getPointer({x:event.clientX, y:event.clientY});
+    let pointer = this.getPointer({ x: event.clientX, y: event.clientY });
     this.selectionHandler._generateClickEvent('oncontext', event, pointer);
   }
-
 
   /**
    * Select and deselect nodes depending current selection change.
@@ -212,23 +212,38 @@ class InteractionHandler {
     let selected = false;
     if (add === true) {
       selected = this.selectionHandler.selectAdditionalOnPoint(pointer);
-    }
-    else {
+    } else {
       selected = this.selectionHandler.selectOnPoint(pointer);
     }
     let currentSelection = this.selectionHandler.getSelection();
 
     // See NOTE in method comment for the reason to do it like this
-    let deselectedItems = this._determineDifference(previousSelection, currentSelection);
-    let selectedItems   = this._determineDifference(currentSelection , previousSelection);
+    let deselectedItems = this._determineDifference(
+      previousSelection,
+      currentSelection
+    );
+    let selectedItems = this._determineDifference(
+      currentSelection,
+      previousSelection
+    );
 
     if (deselectedItems.edges.length > 0) {
-      this.selectionHandler._generateClickEvent('deselectEdge', event, pointer, previousSelection);
+      this.selectionHandler._generateClickEvent(
+        'deselectEdge',
+        event,
+        pointer,
+        previousSelection
+      );
       selected = true;
     }
 
     if (deselectedItems.nodes.length > 0) {
-      this.selectionHandler._generateClickEvent('deselectNode', event, pointer, previousSelection);
+      this.selectionHandler._generateClickEvent(
+        'deselectNode',
+        event,
+        pointer,
+        previousSelection
+      );
       selected = true;
     }
 
@@ -243,11 +258,11 @@ class InteractionHandler {
     }
 
     // fire the select event if anything has been selected or deselected
-    if (selected === true) { // select or unselect
+    if (selected === true) {
+      // select or unselect
       this.selectionHandler._generateClickEvent('select', event, pointer);
     }
   }
-
 
   /**
    * Remove all node and edge id's from the first set that are present in the second one.
@@ -258,7 +273,7 @@ class InteractionHandler {
    * @private
    */
   _determineDifference(firstSet, secondSet) {
-    let arrayDiff = function(firstArr, secondArr) {
+    let arrayDiff = function (firstArr, secondArr) {
       let result = [];
 
       for (let i = 0; i < firstArr.length; i++) {
@@ -273,10 +288,9 @@ class InteractionHandler {
 
     return {
       nodes: arrayDiff(firstSet.nodes, secondSet.nodes),
-      edges: arrayDiff(firstSet.edges, secondSet.edges)
+      edges: arrayDiff(firstSet.edges, secondSet.edges),
     };
   }
-
 
   /**
    * This function is called by onDragStart.
@@ -296,7 +310,7 @@ class InteractionHandler {
 
     this.drag.dragging = true;
     this.drag.selection = [];
-    this.drag.translation = util.extend({},this.body.view.translation); // copy the object
+    this.drag.translation = util.extend({}, this.body.view.translation); // copy the object
     this.drag.nodeId = undefined;
 
     if (node !== undefined && this.options.dragNodes === true) {
@@ -308,7 +322,11 @@ class InteractionHandler {
       }
 
       // after select to contain the node
-      this.selectionHandler._generateClickEvent('dragStart', event, this.drag.pointer);
+      this.selectionHandler._generateClickEvent(
+        'dragStart',
+        event,
+        this.drag.pointer
+      );
 
       let selection = this.selectionHandler.selectionObj.nodes;
       // create an array with the selected nodes and their original location and status
@@ -323,7 +341,7 @@ class InteractionHandler {
             x: object.x,
             y: object.y,
             xFixed: object.options.fixed.x,
-            yFixed: object.options.fixed.y
+            yFixed: object.options.fixed.y,
           };
 
           object.options.fixed.x = true;
@@ -332,13 +350,17 @@ class InteractionHandler {
           this.drag.selection.push(s);
         }
       }
-    }
-    else {
+    } else {
       // fallback if no node is selected and thus the view is dragged.
-      this.selectionHandler._generateClickEvent('dragStart', event, this.drag.pointer, undefined, true);
+      this.selectionHandler._generateClickEvent(
+        'dragStart',
+        event,
+        this.drag.pointer,
+        undefined,
+        true
+      );
     }
   }
-
 
   /**
    * handle drag event
@@ -368,21 +390,30 @@ class InteractionHandler {
         let node = selection.node;
         // only move the node if it was not fixed initially
         if (selection.xFixed === false) {
-          node.x = this.canvas._XconvertDOMtoCanvas(this.canvas._XconvertCanvasToDOM(selection.x) + deltaX);
+          node.x = this.canvas._XconvertDOMtoCanvas(
+            this.canvas._XconvertCanvasToDOM(selection.x) + deltaX
+          );
         }
         // only move the node if it was not fixed initially
         if (selection.yFixed === false) {
-          node.y = this.canvas._YconvertDOMtoCanvas(this.canvas._YconvertCanvasToDOM(selection.y) + deltaY);
+          node.y = this.canvas._YconvertDOMtoCanvas(
+            this.canvas._YconvertCanvasToDOM(selection.y) + deltaY
+          );
         }
       });
 
       // start the simulation of the physics
       this.body.emitter.emit('startSimulation');
-    }
-    else {
+    } else {
       // move the network
       if (this.options.dragView === true) {
-        this.selectionHandler._generateClickEvent('dragging', event, pointer, undefined, true);
+        this.selectionHandler._generateClickEvent(
+          'dragging',
+          event,
+          pointer,
+          undefined,
+          true
+        );
 
         // if the drag was not started properly because the click started outside the network div, start it now.
         if (this.drag.pointer === undefined) {
@@ -392,12 +423,14 @@ class InteractionHandler {
         let diffX = pointer.x - this.drag.pointer.x;
         let diffY = pointer.y - this.drag.pointer.y;
 
-        this.body.view.translation = {x:this.drag.translation.x + diffX, y:this.drag.translation.y + diffY};
+        this.body.view.translation = {
+          x: this.drag.translation.x + diffX,
+          y: this.drag.translation.y + diffY,
+        };
         this.body.emitter.emit('_requestRedraw');
       }
     }
   }
-
 
   /**
    * handle drag start event
@@ -413,16 +446,23 @@ class InteractionHandler {
         s.node.options.fixed.x = s.xFixed;
         s.node.options.fixed.y = s.yFixed;
       });
-      this.selectionHandler._generateClickEvent('dragEnd', event, this.getPointer(event.center));
+      this.selectionHandler._generateClickEvent(
+        'dragEnd',
+        event,
+        this.getPointer(event.center)
+      );
       this.body.emitter.emit('startSimulation');
-    }
-    else {
-      this.selectionHandler._generateClickEvent('dragEnd', event, this.getPointer(event.center), undefined, true);
+    } else {
+      this.selectionHandler._generateClickEvent(
+        'dragEnd',
+        event,
+        this.getPointer(event.center),
+        undefined,
+        true
+      );
       this.body.emitter.emit('_requestRedraw');
     }
   }
-
-
 
   /**
    * Handle pinch event
@@ -439,9 +479,8 @@ class InteractionHandler {
 
     // TODO: enabled moving while pinching?
     let scale = this.pinch.scale * event.scale;
-    this.zoom(scale, pointer)
+    this.zoom(scale, pointer);
   }
-
 
   /**
    * Zoom the network in or out
@@ -473,7 +512,7 @@ class InteractionHandler {
       let ty = (1 - scaleFrac) * pointer.y + translation.y * scaleFrac;
 
       this.body.view.scale = scale;
-      this.body.view.translation = {x:tx, y:ty};
+      this.body.view.translation = { x: tx, y: ty };
 
       if (preScaleDragPointer != undefined) {
         let postScaleDragPointer = this.canvas.canvasToDOM(preScaleDragPointer);
@@ -484,14 +523,20 @@ class InteractionHandler {
       this.body.emitter.emit('_requestRedraw');
 
       if (scaleOld < scale) {
-        this.body.emitter.emit('zoom', {direction: '+', scale: this.body.view.scale, pointer: pointer});
-      }
-      else {
-        this.body.emitter.emit('zoom', {direction: '-', scale: this.body.view.scale, pointer: pointer});
+        this.body.emitter.emit('zoom', {
+          direction: '+',
+          scale: this.body.view.scale,
+          pointer: pointer,
+        });
+      } else {
+        this.body.emitter.emit('zoom', {
+          direction: '-',
+          scale: this.body.view.scale,
+          pointer: pointer,
+        });
       }
     }
   }
-
 
   /**
    * Event handler for mouse wheel event, used to zoom the timeline
@@ -504,10 +549,11 @@ class InteractionHandler {
     if (this.options.zoomView === true) {
       // retrieve delta
       let delta = 0;
-      if (event.wheelDelta) { /* IE/Opera. */
+      if (event.wheelDelta) {
+        /* IE/Opera. */
         delta = event.wheelDelta / 120;
-      }
-      else if (event.detail) { /* Mozilla case. */
+      } else if (event.detail) {
+        /* Mozilla case. */
         // In Mozilla, sign of delta is different than in IE.
         // Also, delta is multiple of 3.
         delta = -event.detail / 3;
@@ -517,17 +563,16 @@ class InteractionHandler {
       // Basically, delta is now positive if wheel was scrolled up,
       // and negative, if wheel was scrolled down.
       if (delta !== 0) {
-
         // calculate the new scale
         let scale = this.body.view.scale;
         let zoom = delta / 10;
         if (delta < 0) {
           zoom = zoom / (1 - zoom);
         }
-        scale *= (1 + zoom);
+        scale *= 1 + zoom;
 
         // calculate the pointer location
-        let pointer = this.getPointer({x: event.clientX, y: event.clientY});
+        let pointer = this.getPointer({ x: event.clientX, y: event.clientY });
 
         // apply the new scale
         this.zoom(scale, pointer);
@@ -538,14 +583,13 @@ class InteractionHandler {
     }
   }
 
-
   /**
    * Mouse move handler for checking whether the title moves over a node with a title.
    * @param  {Event} event
    * @private
    */
   onMouseMove(event) {
-    let pointer = this.getPointer({x:event.clientX, y:event.clientY});
+    let pointer = this.getPointer({ x: event.clientX, y: event.clientY });
     let popupVisible = false;
 
     // check if the previously selected node is still selected
@@ -563,7 +607,10 @@ class InteractionHandler {
     }
 
     // if we bind the keyboard to the div, we have to highlight it to use it. This highlights it on mouse over.
-    if (this.options.keyboard.bindToWindow === false && this.options.keyboard.enabled === true) {
+    if (
+      this.options.keyboard.bindToWindow === false &&
+      this.options.keyboard.enabled === true
+    ) {
       this.canvas.frame.focus();
     }
 
@@ -574,7 +621,10 @@ class InteractionHandler {
         this.popupTimer = undefined;
       }
       if (!this.drag.dragging) {
-        this.popupTimer = setTimeout(() => this._checkShowPopup(pointer), this.options.tooltipDelay);
+        this.popupTimer = setTimeout(
+          () => this._checkShowPopup(pointer),
+          this.options.tooltipDelay
+        );
       }
     }
 
@@ -584,8 +634,6 @@ class InteractionHandler {
     }
   }
 
-
-
   /**
    * Check if there is an element on the given position in the network
    * (a node or edge). If so, and if this element has a title,
@@ -594,17 +642,18 @@ class InteractionHandler {
    * @param {{x:number, y:number}} pointer
    * @private
    */
- _checkShowPopup(pointer) {
+  _checkShowPopup(pointer) {
     let x = this.canvas._XconvertDOMtoCanvas(pointer.x);
     let y = this.canvas._YconvertDOMtoCanvas(pointer.y);
     let pointerObj = {
-      left:   x,
-      top:    y,
-      right:  x,
-      bottom: y
+      left: x,
+      top: y,
+      right: x,
+      bottom: y,
     };
 
-    let previousPopupObjId = this.popupObj === undefined ? undefined : this.popupObj.id;
+    let previousPopupObjId =
+      this.popupObj === undefined ? undefined : this.popupObj.id;
     let nodeUnderCursor = false;
     let popupType = 'node';
 
@@ -669,10 +718,9 @@ class InteractionHandler {
         this.popup.setPosition(pointer.x + 3, pointer.y - 5);
         this.popup.setText(this.popupObj.getTitle());
         this.popup.show();
-        this.body.emitter.emit('showPopup',this.popupObj.id);
+        this.body.emitter.emit('showPopup', this.popupObj.id);
       }
-    }
-    else {
+    } else {
       if (this.popup !== undefined) {
         this.popup.hide();
         this.body.emitter.emit('hidePopup');
@@ -680,37 +728,41 @@ class InteractionHandler {
     }
   }
 
-
   /**
    * Check if the popup must be hidden, which is the case when the mouse is no
    * longer hovering on the object
    * @param {{x:number, y:number}} pointer
    * @private
    */
- _checkHidePopup(pointer) {
+  _checkHidePopup(pointer) {
     let pointerObj = this.selectionHandler._pointerToPositionObject(pointer);
 
     let stillOnObj = false;
     if (this.popup.popupTargetType === 'node') {
       if (this.body.nodes[this.popup.popupTargetId] !== undefined) {
-        stillOnObj = this.body.nodes[this.popup.popupTargetId].isOverlappingWith(pointerObj);
+        stillOnObj = this.body.nodes[
+          this.popup.popupTargetId
+        ].isOverlappingWith(pointerObj);
 
         // if the mouse is still one the node, we have to check if it is not also on one that is drawn on top of it.
         // we initially only check stillOnObj because this is much faster.
         if (stillOnObj === true) {
           let overNode = this.selectionHandler.getNodeAt(pointer);
-          stillOnObj = overNode === undefined ? false : overNode.id === this.popup.popupTargetId;
+          stillOnObj =
+            overNode === undefined
+              ? false
+              : overNode.id === this.popup.popupTargetId;
         }
       }
-    }
-    else {
+    } else {
       if (this.selectionHandler.getNodeAt(pointer) === undefined) {
         if (this.body.edges[this.popup.popupTargetId] !== undefined) {
-          stillOnObj = this.body.edges[this.popup.popupTargetId].isOverlappingWith(pointerObj);
+          stillOnObj = this.body.edges[
+            this.popup.popupTargetId
+          ].isOverlappingWith(pointerObj);
         }
       }
     }
-
 
     if (stillOnObj === false) {
       this.popupObj = undefined;

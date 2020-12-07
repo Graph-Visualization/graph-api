@@ -1,8 +1,7 @@
-let util = require("../../util");
+let util = require('../../util');
 let DataSet = require('../../DataSet');
 let DataView = require('../../DataView');
-var Node = require("./components/Node").default;
-
+var Node = require('./components/Node').default;
 
 /**
  * Handler for Nodes
@@ -24,9 +23,15 @@ class NodesHandler {
     this.body.functions.createNode = this.create.bind(this);
 
     this.nodesListeners = {
-      add: (event, params) => { this.add(params.items); },
-      update: (event, params) => { this.update(params.items, params.data, params.oldData); },
-      remove: (event, params) => { this.remove(params.items); }
+      add: (event, params) => {
+        this.add(params.items);
+      },
+      update: (event, params) => {
+        this.update(params.items, params.data, params.oldData);
+      },
+      remove: (event, params) => {
+        this.remove(params.items);
+      },
     };
 
     this.defaultOptions = {
@@ -38,16 +43,16 @@ class NodesHandler {
         background: '#97C2FC',
         highlight: {
           border: '#2B7CE9',
-          background: '#D2E5FF'
+          background: '#D2E5FF',
         },
         hover: {
           border: '#2B7CE9',
-          background: '#D2E5FF'
-        }
+          background: '#D2E5FF',
+        },
       },
       fixed: {
         x: false,
-        y: false
+        y: false,
       },
       font: {
         color: '#343434',
@@ -60,28 +65,28 @@ class NodesHandler {
         vadjust: 0,
         multi: false,
         bold: {
-          mod: 'bold'
+          mod: 'bold',
         },
         boldital: {
-          mod: 'bold italic'
+          mod: 'bold italic',
         },
         ital: {
-          mod: 'italic'
+          mod: 'italic',
         },
         mono: {
           mod: '',
           size: 15, // px
           face: 'monospace',
-          vadjust: 2
-        }
+          vadjust: 2,
+        },
       },
       group: undefined,
       hidden: false,
       icon: {
-        face: 'FontAwesome',  //'FontAwesome',
-        code: undefined,  //'\uf007',
-        size: 50,  //50,
-        color: '#2B7CE9'   //'#aa00ff'
+        face: 'FontAwesome', //'FontAwesome',
+        code: undefined, //'\uf007',
+        size: 50, //50,
+        color: '#2B7CE9', //'#aa00ff'
       },
       image: undefined, // --> URL
       label: undefined,
@@ -91,7 +96,7 @@ class NodesHandler {
         top: 5,
         right: 5,
         bottom: 5,
-        left: 5
+        left: 5,
       },
       mass: 1,
       physics: true,
@@ -103,38 +108,37 @@ class NodesHandler {
           min: 14,
           max: 30,
           maxVisible: 30,
-          drawThreshold: 5
+          drawThreshold: 5,
         },
         customScalingFunction: function (min, max, total, value) {
           if (max === min) {
             return 0.5;
-          }
-          else {
+          } else {
             let scale = 1 / (max - min);
             return Math.max(0, (value - min) * scale);
           }
-        }
+        },
       },
       shadow: {
         enabled: false,
         color: 'rgba(0,0,0,0.5)',
         size: 10,
         x: 5,
-        y: 5
+        y: 5,
       },
       shape: 'ellipse',
       shapeProperties: {
         borderDashes: false, // only for borders
-        borderRadius: 6,     // only for box shape
-        interpolation: true,  // only for image and circularImage shapes
-        useImageSize: false,  // only for image and circularImage shapes
-        useBorderWithImage: false  // only for image shape
+        borderRadius: 6, // only for box shape
+        interpolation: true, // only for image and circularImage shapes
+        useImageSize: false, // only for image and circularImage shapes
+        useBorderWithImage: false, // only for image shape
       },
       size: 25,
       title: undefined,
       value: undefined,
       x: undefined,
-      y: undefined
+      y: undefined,
     };
 
     // Protect from idiocy
@@ -156,8 +160,7 @@ class NodesHandler {
     this.body.emitter.on('refresh', this.refresh.bind(this));
     this.body.emitter.on('destroy', () => {
       util.forEach(this.nodesListeners, (callback, event) => {
-        if (this.body.data.nodes)
-          this.body.data.nodes.off(event, callback);
+        if (this.body.data.nodes) this.body.data.nodes.off(event, callback);
       });
       delete this.body.functions.createNode;
       delete this.nodesListeners.add;
@@ -221,15 +224,12 @@ class NodesHandler {
 
     if (nodes instanceof DataSet || nodes instanceof DataView) {
       this.body.data.nodes = nodes;
-    }
-    else if (Array.isArray(nodes)) {
+    } else if (Array.isArray(nodes)) {
       this.body.data.nodes = new DataSet();
       this.body.data.nodes.add(nodes);
-    }
-    else if (!nodes) {
+    } else if (!nodes) {
       this.body.data.nodes = new DataSet();
-    }
-    else {
+    } else {
       throw new TypeError('Array or DataSet expected');
     }
 
@@ -256,10 +256,9 @@ class NodesHandler {
     }
 
     if (doNotEmit === false) {
-      this.body.emitter.emit("_dataChanged");
+      this.body.emitter.emit('_dataChanged');
     }
   }
-
 
   /**
    * Add nodes
@@ -281,7 +280,7 @@ class NodesHandler {
     this.layoutEngine.positionInitially(newNodes);
 
     if (doNotEmit === false) {
-      this.body.emitter.emit("_dataChanged");
+      this.body.emitter.emit('_dataChanged');
     }
   }
 
@@ -304,8 +303,7 @@ class NodesHandler {
         if (node.setOptions(data)) {
           dataChanged = true;
         }
-      }
-      else {
+      } else {
         dataChanged = true;
         // create node
         node = this.create(data);
@@ -317,17 +315,16 @@ class NodesHandler {
       // Check for any changes which should trigger a layout recalculation
       // For now, this is just 'level' for hierarchical layout
       // Assumption: old and new data arranged in same order; at time of writing, this holds.
-      dataChanged = changedData.some(function(newValue, index) {
+      dataChanged = changedData.some(function (newValue, index) {
         let oldValue = oldData[index];
-        return (oldValue && oldValue.level !== newValue.level);
+        return oldValue && oldValue.level !== newValue.level;
       });
     }
 
     if (dataChanged === true) {
-      this.body.emitter.emit("_dataChanged");
-    }
-    else {
-      this.body.emitter.emit("_dataUpdated");
+      this.body.emitter.emit('_dataChanged');
+    } else {
+      this.body.emitter.emit('_dataUpdated');
     }
   }
 
@@ -344,9 +341,8 @@ class NodesHandler {
       delete nodes[id];
     }
 
-    this.body.emitter.emit("_dataChanged");
+    this.body.emitter.emit('_dataChanged');
   }
-
 
   /**
    * create a node
@@ -355,9 +351,15 @@ class NodesHandler {
    * @returns {*}
    */
   create(properties, constructorClass = Node) {
-    return new constructorClass(properties, this.body, this.images, this.groups, this.options, this.defaultOptions)
+    return new constructorClass(
+      properties,
+      this.body,
+      this.images,
+      this.groups,
+      this.options,
+      this.defaultOptions
+    );
   }
-
 
   /**
    *
@@ -368,14 +370,13 @@ class NodesHandler {
       let data = this.body.data.nodes.get(nodeId);
       if (data !== undefined) {
         if (clearPositions === true) {
-          node.setOptions({x:null, y:null});
+          node.setOptions({ x: null, y: null });
         }
         node.setOptions({ fixed: false });
         node.setOptions(data);
       }
     });
   }
-
 
   /**
    * Returns the positions of the nodes.
@@ -389,26 +390,29 @@ class NodesHandler {
         for (let i = 0; i < ids.length; i++) {
           if (this.body.nodes[ids[i]] !== undefined) {
             let node = this.body.nodes[ids[i]];
-            dataArray[ids[i]] = { x: Math.round(node.x), y: Math.round(node.y) };
+            dataArray[ids[i]] = {
+              x: Math.round(node.x),
+              y: Math.round(node.y),
+            };
           }
         }
-      }
-      else {
+      } else {
         if (this.body.nodes[ids] !== undefined) {
           let node = this.body.nodes[ids];
           dataArray[ids] = { x: Math.round(node.x), y: Math.round(node.y) };
         }
       }
-    }
-    else {
+    } else {
       for (let i = 0; i < this.body.nodeIndices.length; i++) {
         let node = this.body.nodes[this.body.nodeIndices[i]];
-        dataArray[this.body.nodeIndices[i]] = { x: Math.round(node.x), y: Math.round(node.y) };
+        dataArray[this.body.nodeIndices[i]] = {
+          x: Math.round(node.x),
+          y: Math.round(node.y),
+        };
       }
     }
     return dataArray;
   }
-
 
   /**
    * Load the XY positions of the nodes into the dataset.
@@ -421,8 +425,15 @@ class NodesHandler {
     for (let nodeId in dataset._data) {
       if (dataset._data.hasOwnProperty(nodeId)) {
         let node = this.body.nodes[nodeId];
-        if (dataset._data[nodeId].x != Math.round(node.x) || dataset._data[nodeId].y != Math.round(node.y)) {
-          dataArray.push({ id: node.id, x: Math.round(node.x), y: Math.round(node.y) });
+        if (
+          dataset._data[nodeId].x != Math.round(node.x) ||
+          dataset._data[nodeId].y != Math.round(node.y)
+        ) {
+          dataArray.push({
+            id: node.id,
+            x: Math.round(node.x),
+            y: Math.round(node.y),
+          });
         }
       }
     }
@@ -440,7 +451,6 @@ class NodesHandler {
     }
   }
 
-
   /**
    * Get the Ids of nodes connected to this node.
    * @param {Node.id} nodeId
@@ -455,13 +465,14 @@ class NodesHandler {
       let nodeObj = {}; // used to quickly check if node already exists
       for (let i = 0; i < node.edges.length; i++) {
         let edge = node.edges[i];
-        if (direction !== 'to' && edge.toId == node.id) { // these are double equals since ids can be numeric or string
+        if (direction !== 'to' && edge.toId == node.id) {
+          // these are double equals since ids can be numeric or string
           if (nodeObj[edge.fromId] === undefined) {
             nodeList.push(edge.fromId);
             nodeObj[edge.fromId] = true;
           }
-        }
-        else if (direction !== 'from' && edge.fromId == node.id) { // these are double equals since ids can be numeric or string
+        } else if (direction !== 'from' && edge.fromId == node.id) {
+          // these are double equals since ids can be numeric or string
           if (nodeObj[edge.toId] === undefined) {
             nodeList.push(edge.toId);
             nodeObj[edge.toId] = true;
@@ -482,15 +493,16 @@ class NodesHandler {
     if (this.body.nodes[nodeId] !== undefined) {
       let node = this.body.nodes[nodeId];
       for (let i = 0; i < node.edges.length; i++) {
-        edgeList.push(node.edges[i].id)
+        edgeList.push(node.edges[i].id);
       }
-    }
-    else {
-      console.log("NodeId provided for getConnectedEdges does not exist. Provided: ", nodeId);
+    } else {
+      console.log(
+        'NodeId provided for getConnectedEdges does not exist. Provided: ',
+        nodeId
+      );
     }
     return edgeList;
   }
-
 
   /**
    * Move a node.
@@ -503,10 +515,14 @@ class NodesHandler {
     if (this.body.nodes[nodeId] !== undefined) {
       this.body.nodes[nodeId].x = Number(x);
       this.body.nodes[nodeId].y = Number(y);
-      setTimeout(() => {this.body.emitter.emit("startSimulation")},0);
-    }
-    else {
-      console.log("Node id supplied to moveNode does not exist. Provided: ", nodeId);
+      setTimeout(() => {
+        this.body.emitter.emit('startSimulation');
+      }, 0);
+    } else {
+      console.log(
+        'Node id supplied to moveNode does not exist. Provided: ',
+        nodeId
+      );
     }
   }
 }

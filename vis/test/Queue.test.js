@@ -18,7 +18,7 @@ describe('Queue', function () {
   });
 
   it('queue actions with a delay', function (done) {
-    var queue = new Queue({delay: 25});
+    var queue = new Queue({ delay: 25 });
 
     var count = 0;
     function inc() {
@@ -36,7 +36,7 @@ describe('Queue', function () {
   });
 
   it('queue multiple actions with a delay', function (done) {
-    var queue = new Queue({delay: 100});
+    var queue = new Queue({ delay: 100 });
 
     var count = 0;
     function inc() {
@@ -64,7 +64,7 @@ describe('Queue', function () {
   });
 
   it('flush when the configured maximum is exceeded', function () {
-    var queue = new Queue({max: 4});
+    var queue = new Queue({ max: 4 });
 
     var count = 0;
     function inc() {
@@ -89,7 +89,7 @@ describe('Queue', function () {
       count += value;
     }
 
-    queue.queue({fn: add, args: [2]});
+    queue.queue({ fn: add, args: [2] });
     assert.equal(count, 0);
 
     queue.flush();
@@ -103,10 +103,10 @@ describe('Queue', function () {
       count: 0,
       add: function (value) {
         this.count += value;
-      }
+      },
     };
 
-    queue.queue({context: obj, fn: obj.add, args: [2]});
+    queue.queue({ context: obj, fn: obj.add, args: [2] });
     assert.equal(obj.count, 0);
 
     queue.flush();
@@ -120,7 +120,7 @@ describe('Queue', function () {
       count: 0,
       add: function (value) {
         this.count += value;
-      }
+      },
     };
 
     queue.replace(obj, 'add');
@@ -140,10 +140,10 @@ describe('Queue', function () {
       },
       subtract: function (value) {
         this.count -= value;
-      }
+      },
     };
 
-    Queue.extend(obj, {replace: ['add', 'subtract']});
+    Queue.extend(obj, { replace: ['add', 'subtract'] });
 
     obj.add(3);
     obj.subtract(1);
@@ -154,34 +154,34 @@ describe('Queue', function () {
   });
 
   it('set options in constructor', function () {
-    var queue = new Queue({delay: 3, max: 5});
+    var queue = new Queue({ delay: 3, max: 5 });
     assert.equal(queue.delay, 3);
     assert.equal(queue.max, 5);
   });
 
   it('set options explicitly', function () {
     var queue = new Queue();
-    queue.setOptions({delay: 3, max: 5});
+    queue.setOptions({ delay: 3, max: 5 });
     assert.equal(queue.delay, 3);
     assert.equal(queue.max, 5);
   });
 
   it('set option delay', function () {
     var queue = new Queue();
-    queue.setOptions({delay: 3});
+    queue.setOptions({ delay: 3 });
     assert.equal(queue.delay, 3);
     assert.equal(queue.max, Infinity);
   });
 
   it('set option max', function () {
     var queue = new Queue();
-    queue.setOptions({max: 5});
+    queue.setOptions({ max: 5 });
     assert.equal(queue.delay, null);
     assert.equal(queue.max, 5);
   });
 
   it('destroy flushes the queue', function () {
-    var queue = new Queue({max: 4});
+    var queue = new Queue({ max: 4 });
 
     var count = 0;
     function inc() {
@@ -189,7 +189,7 @@ describe('Queue', function () {
     }
     queue.queue(inc);
     queue.destroy();
-    assert.equal(count, 1)
+    assert.equal(count, 1);
   });
 
   it('destroy removes extensions', function () {
@@ -200,12 +200,11 @@ describe('Queue', function () {
       },
       subtract: function (value) {
         this.count -= value;
-      }
+      },
     };
 
-    var queue = Queue.extend(obj, {replace: ['add', 'subtract']});
+    var queue = Queue.extend(obj, { replace: ['add', 'subtract'] });
     queue.destroy();
     assert.equal(queue._extended, null);
   });
-
 });

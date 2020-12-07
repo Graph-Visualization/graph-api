@@ -3,11 +3,11 @@ var DataView = require('../DataView');
 /**
  * @class Filter
  *
- * @param {DataGroup} dataGroup the data group 
+ * @param {DataGroup} dataGroup the data group
  * @param {number}  column             The index of the column to be filtered
  * @param {Graph3d} graph              The graph
  */
-function Filter (dataGroup, column, graph) {
+function Filter(dataGroup, column, graph) {
   this.dataGroup = dataGroup;
   this.column = column;
   this.graph = graph; // the parent graph
@@ -31,27 +31,24 @@ function Filter (dataGroup, column, graph) {
   if (graph.animationPreload) {
     this.loaded = false;
     this.loadInBackground();
-  }
-  else {
+  } else {
     this.loaded = true;
   }
 }
-
 
 /**
  * Return the label
  * @return {string} label
  */
-Filter.prototype.isLoaded = function() {
+Filter.prototype.isLoaded = function () {
   return this.loaded;
 };
-
 
 /**
  * Return the loaded progress
  * @return {number} percentage between 0 and 100
  */
-Filter.prototype.getLoadedProgress = function() {
+Filter.prototype.getLoadedProgress = function () {
   var len = this.values.length;
 
   var i = 0;
@@ -59,24 +56,22 @@ Filter.prototype.getLoadedProgress = function() {
     i++;
   }
 
-  return Math.round(i / len * 100);
+  return Math.round((i / len) * 100);
 };
-
 
 /**
  * Return the label
  * @return {string} label
  */
-Filter.prototype.getLabel = function() {
+Filter.prototype.getLabel = function () {
   return this.graph.filterLabel;
 };
-
 
 /**
  * Return the columnIndex of the filter
  * @return {number} columnIndex
  */
-Filter.prototype.getColumn = function() {
+Filter.prototype.getColumn = function () {
   return this.column;
 };
 
@@ -84,9 +79,8 @@ Filter.prototype.getColumn = function() {
  * Return the currently selected value. Returns undefined if there is no selection
  * @return {*} value
  */
-Filter.prototype.getSelectedValue = function() {
-  if (this.index === undefined)
-    return undefined;
+Filter.prototype.getSelectedValue = function () {
+  if (this.index === undefined) return undefined;
 
   return this.values[this.index];
 };
@@ -95,7 +89,7 @@ Filter.prototype.getSelectedValue = function() {
  * Retrieve all values of the filter
  * @return {Array} values
  */
-Filter.prototype.getValues = function() {
+Filter.prototype.getValues = function () {
   return this.values;
 };
 
@@ -104,36 +98,35 @@ Filter.prototype.getValues = function() {
  * @param {number}  index
  * @return {*} value
  */
-Filter.prototype.getValue = function(index) {
-  if (index >= this.values.length)
-    throw new Error('Index out of range');
+Filter.prototype.getValue = function (index) {
+  if (index >= this.values.length) throw new Error('Index out of range');
 
   return this.values[index];
 };
-
 
 /**
  * Retrieve the (filtered) dataPoints for the currently selected filter index
  * @param {number} [index] (optional)
  * @return {Array} dataPoints
  */
-Filter.prototype._getDataPoints = function(index) {
-  if (index === undefined)
-    index = this.index;
+Filter.prototype._getDataPoints = function (index) {
+  if (index === undefined) index = this.index;
 
-  if (index === undefined)
-    return [];
+  if (index === undefined) return [];
 
   var dataPoints;
   if (this.dataPoints[index]) {
     dataPoints = this.dataPoints[index];
-  }
-  else {
+  } else {
     var f = {};
     f.column = this.column;
     f.value = this.values[index];
 
-    var dataView = new DataView(this.dataGroup.getDataSet(), {filter: function (item) {return (item[f.column] == f.value);}}).get();
+    var dataView = new DataView(this.dataGroup.getDataSet(), {
+      filter: function (item) {
+        return item[f.column] == f.value;
+      },
+    }).get();
     dataPoints = this.dataGroup._getDataPoints(dataView);
 
     this.dataPoints[index] = dataPoints;
@@ -142,26 +135,22 @@ Filter.prototype._getDataPoints = function(index) {
   return dataPoints;
 };
 
-
-
 /**
  * Set a callback function when the filter is fully loaded.
  *
  * @param {function} callback
  */
-Filter.prototype.setOnLoadCallback = function(callback) {
+Filter.prototype.setOnLoadCallback = function (callback) {
   this.onLoadCallback = callback;
 };
-
 
 /**
  * Add a value to the list with available values for this filter
  * No double entries will be created.
  * @param {number} index
  */
-Filter.prototype.selectValue = function(index) {
-  if (index >= this.values.length)
-    throw new Error('Index out of range');
+Filter.prototype.selectValue = function (index) {
+  if (index >= this.values.length) throw new Error('Index out of range');
 
   this.index = index;
   this.value = this.values[index];
@@ -173,9 +162,8 @@ Filter.prototype.selectValue = function(index) {
  *
  * @param {number} [index=0]
  */
-Filter.prototype.loadInBackground = function(index) {
-  if (index === undefined)
-    index = 0;
+Filter.prototype.loadInBackground = function (index) {
+  if (index === undefined) index = 0;
 
   var frame = this.graph.frame;
 
@@ -194,10 +182,11 @@ Filter.prototype.loadInBackground = function(index) {
     frame.progress.style.left = 10 + 'px';
 
     var me = this;
-    setTimeout(function() {me.loadInBackground(index+1);}, 10);
+    setTimeout(function () {
+      me.loadInBackground(index + 1);
+    }, 10);
     this.loaded = false;
-  }
-  else {
+  } else {
     this.loaded = true;
 
     // remove the progress box
@@ -206,8 +195,7 @@ Filter.prototype.loadInBackground = function(index) {
       frame.progress = undefined;
     }
 
-    if (this.onLoadCallback)
-      this.onLoadCallback();
+    if (this.onLoadCallback) this.onLoadCallback();
   }
 };
 

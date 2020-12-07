@@ -32,8 +32,10 @@
  */
 let util = require('../../util');
 var NetworkUtil = require('../NetworkUtil').default;
-var {HorizontalStrategy, VerticalStrategy} = require('./components/DirectionStrategy.js');
-
+var {
+  HorizontalStrategy,
+  VerticalStrategy,
+} = require('./components/DirectionStrategy.js');
 
 /**
  * Container for derived data on current network, relating to hierarchy.
@@ -45,16 +47,16 @@ class HierarchicalStatus {
    * @ignore
    */
   constructor() {
-    this.childrenReference = {};     // child id's per node id
-    this.parentReference = {};       // parent id's per node id
-    this.trees = {};                 // tree id per node id; i.e. to which tree does given node id belong
+    this.childrenReference = {}; // child id's per node id
+    this.parentReference = {}; // parent id's per node id
+    this.trees = {}; // tree id per node id; i.e. to which tree does given node id belong
 
-    this.distributionOrdering = {};  // The nodes per level, in the display order
-    this.levels = {};                // hierarchy level per node id
-    this.distributionIndex = {};     // The position of the node in the level sorting order, per node id.
+    this.distributionOrdering = {}; // The nodes per level, in the display order
+    this.levels = {}; // hierarchy level per node id
+    this.distributionIndex = {}; // The position of the node in the level sorting order, per node id.
 
-    this.isTree = false;             // True if current network is a formal tree 
-    this.treeIndex = -1;             // Highest tree id in current network.
+    this.isTree = false; // True if current network is a formal tree
+    this.treeIndex = -1; // Highest tree id in current network.
   }
 
   /**
@@ -75,7 +77,6 @@ class HierarchicalStatus {
     this.parentReference[childNodeId].push(parentNodeId);
   }
 
-
   /**
    * Check if the current state is for a formal tree or formal forest.
    *
@@ -94,15 +95,13 @@ class HierarchicalStatus {
     this.isTree = true;
   }
 
-
   /**
    * Return the number of separate trees in the current network.
    * @returns {number}
    */
   numTrees() {
-    return (this.treeIndex + 1);  // This assumes the indexes are assigned consecitively
+    return this.treeIndex + 1; // This assumes the indexes are assigned consecitively
   }
-
 
   /**
    * Assign a tree id to a node
@@ -110,14 +109,13 @@ class HierarchicalStatus {
    * @param {string|number} treeId
    */
   setTreeIndex(node, treeId) {
-    if (treeId === undefined) return;  // Don't bother
+    if (treeId === undefined) return; // Don't bother
 
     if (this.trees[node.id] === undefined) {
       this.trees[node.id] = treeId;
       this.treeIndex = Math.max(treeId, this.treeIndex);
     }
   }
-
 
   /**
    * Ensure level for given id is defined.
@@ -131,7 +129,6 @@ class HierarchicalStatus {
       this.levels[nodeId] = 0;
     }
   }
-
 
   /**
    * get the maximum level of a branch.
@@ -152,7 +149,7 @@ class HierarchicalStatus {
         let children = this.childrenReference[nodeId];
         if (children.length > 0) {
           for (let i = 0; i < children.length; i++) {
-            level = Math.max(level,_getMaxLevel(children[i]));
+            level = Math.max(level, _getMaxLevel(children[i]));
           }
         }
       }
@@ -162,7 +159,6 @@ class HierarchicalStatus {
 
     return _getMaxLevel(nodeId);
   }
-
 
   /**
    *
@@ -179,7 +175,6 @@ class HierarchicalStatus {
       this.levels[nodeB.id] = this.levels[nodeA.id] + 1;
     }
   }
-
 
   /**
    * Small util method to set the minimum levels of the nodes to zero.
@@ -206,7 +201,6 @@ class HierarchicalStatus {
       }
     }
   }
-
 
   /**
    * Get the min and max xy-coordinates of a given tree
@@ -237,10 +231,9 @@ class HierarchicalStatus {
       min_x: min_x,
       max_x: max_x,
       min_y: min_y,
-      max_y: max_y
+      max_y: max_y,
     };
   }
-
 
   /**
    * Check if two nodes have the same parent(s)
@@ -266,7 +259,6 @@ class HierarchicalStatus {
     return false;
   }
 
-
   /**
    * Check if two nodes are in the same tree.
    *
@@ -275,9 +267,8 @@ class HierarchicalStatus {
    * @return {Boolean} true if this is so, false otherwise
    */
   inSameSubNetwork(node1, node2) {
-    return (this.trees[node1.id] === this.trees[node2.id]);
+    return this.trees[node1.id] === this.trees[node2.id];
   }
-
 
   /**
    * Get a list of the distinct levels in the current network
@@ -287,7 +278,6 @@ class HierarchicalStatus {
   getLevels() {
     return Object.keys(this.distributionOrdering);
   }
-
 
   /**
    * Add a node to the ordering per level
@@ -312,7 +302,8 @@ class HierarchicalStatus {
 
     if (!isPresent) {
       this.distributionOrdering[level].push(node);
-      this.distributionIndex[node.id] = this.distributionOrdering[level].length - 1;
+      this.distributionIndex[node.id] =
+        this.distributionOrdering[level].length - 1;
     }
   }
 }
@@ -331,22 +322,22 @@ class LayoutEngine {
     this.randomSeed = this.initialRandomSeed;
     this.setPhysics = false;
     this.options = {};
-    this.optionsBackup = {physics:{}};
+    this.optionsBackup = { physics: {} };
 
     this.defaultOptions = {
       randomSeed: undefined,
       improvedLayout: true,
       hierarchical: {
-        enabled:false,
+        enabled: false,
         levelSeparation: 150,
         nodeSpacing: 100,
         treeSpacing: 200,
         blockShifting: true,
         edgeMinimization: true,
         parentCentralization: true,
-        direction: 'UD',   // UD, DU, LR, RL
-        sortMethod: 'hubsize' // hubsize, directed
-      }
+        direction: 'UD', // UD, DU, LR, RL
+        sortMethod: 'hubsize', // hubsize, directed
+      },
     };
     util.extend(this.options, this.defaultOptions);
     this.bindEventListeners();
@@ -387,9 +378,15 @@ class LayoutEngine {
     if (options !== undefined) {
       let hierarchical = this.options.hierarchical;
       let prevHierarchicalState = hierarchical.enabled;
-      util.selectiveDeepExtend(["randomSeed", "improvedLayout"],this.options, options);
+      util.selectiveDeepExtend(
+        ['randomSeed', 'improvedLayout'],
+        this.options,
+        options
+      );
       util.mergeOptions(this.options, options, 'hierarchical');
-      if (options.randomSeed !== undefined)     {this.initialRandomSeed = options.randomSeed;}
+      if (options.randomSeed !== undefined) {
+        this.initialRandomSeed = options.randomSeed;
+      }
 
       if (hierarchical.enabled === true) {
         if (prevHierarchicalState === true) {
@@ -398,12 +395,14 @@ class LayoutEngine {
         }
 
         // make sure the level separation is the right way up
-        if (hierarchical.direction === 'RL' || hierarchical.direction === 'DU') {
+        if (
+          hierarchical.direction === 'RL' ||
+          hierarchical.direction === 'DU'
+        ) {
           if (hierarchical.levelSeparation > 0) {
             hierarchical.levelSeparation *= -1;
           }
-        }
-        else {
+        } else {
           if (hierarchical.levelSeparation < 0) {
             hierarchical.levelSeparation *= -1;
           }
@@ -415,12 +414,11 @@ class LayoutEngine {
         // because the hierarchical system needs it's own physics and smooth curve settings,
         // we adapt the other options if needed.
         return this.adaptAllOptionsForHierarchicalLayout(allOptions);
-      }
-      else {
+      } else {
         if (prevHierarchicalState === true) {
           // refresh the overridden options for nodes and edges.
           this.body.emitter.emit('refresh');
-          return util.deepExtend(allOptions,this.optionsBackup);
+          return util.deepExtend(allOptions, this.optionsBackup);
         }
       }
     }
@@ -439,20 +437,23 @@ class LayoutEngine {
       // set the physics
       if (allOptions.physics === undefined || allOptions.physics === true) {
         allOptions.physics = {
-          enabled: backupPhysics.enabled === undefined ? true : backupPhysics.enabled,
-          solver :'hierarchicalRepulsion'
+          enabled:
+            backupPhysics.enabled === undefined ? true : backupPhysics.enabled,
+          solver: 'hierarchicalRepulsion',
         };
-        backupPhysics.enabled = backupPhysics.enabled === undefined ? true : backupPhysics.enabled;
+        backupPhysics.enabled =
+          backupPhysics.enabled === undefined ? true : backupPhysics.enabled;
         backupPhysics.solver = backupPhysics.solver || 'barnesHut';
-      }
-      else if (typeof allOptions.physics === 'object') {
-        backupPhysics.enabled = allOptions.physics.enabled === undefined ? true : allOptions.physics.enabled;
-        backupPhysics.solver  = allOptions.physics.solver  || 'barnesHut';
+      } else if (typeof allOptions.physics === 'object') {
+        backupPhysics.enabled =
+          allOptions.physics.enabled === undefined
+            ? true
+            : allOptions.physics.enabled;
+        backupPhysics.solver = allOptions.physics.solver || 'barnesHut';
         allOptions.physics.solver = 'hierarchicalRepulsion';
-      }
-      else if (allOptions.physics !== false) {
-        backupPhysics.solver ='barnesHut';
-        allOptions.physics = {solver:'hierarchicalRepulsion'};
+      } else if (allOptions.physics !== false) {
+        backupPhysics.solver = 'barnesHut';
+        allOptions.physics = { solver: 'hierarchicalRepulsion' };
       }
 
       // get the type of static smooth curve in case it is required
@@ -461,20 +462,24 @@ class LayoutEngine {
       // disable smooth curves if nothing is defined. If smooth curves have been turned on,
       // turn them into static smooth curves.
       if (allOptions.edges === undefined) {
-        this.optionsBackup.edges = {smooth:{enabled:true, type:'dynamic'}};
-        allOptions.edges = {smooth: false};
-      }
-      else if (allOptions.edges.smooth === undefined) {
-        this.optionsBackup.edges = {smooth:{enabled:true, type:'dynamic'}};
+        this.optionsBackup.edges = {
+          smooth: { enabled: true, type: 'dynamic' },
+        };
+        allOptions.edges = { smooth: false };
+      } else if (allOptions.edges.smooth === undefined) {
+        this.optionsBackup.edges = {
+          smooth: { enabled: true, type: 'dynamic' },
+        };
         allOptions.edges.smooth = false;
-      }
-      else {
+      } else {
         if (typeof allOptions.edges.smooth === 'boolean') {
-          this.optionsBackup.edges = {smooth:allOptions.edges.smooth};
-          allOptions.edges.smooth = {enabled: allOptions.edges.smooth, type:type}
-        }
-        else {
-          let smooth =  allOptions.edges.smooth;
+          this.optionsBackup.edges = { smooth: allOptions.edges.smooth };
+          allOptions.edges.smooth = {
+            enabled: allOptions.edges.smooth,
+            type: type,
+          };
+        } else {
+          let smooth = allOptions.edges.smooth;
 
           // allow custom types except for dynamic
           if (smooth.type !== undefined && smooth.type !== 'dynamic') {
@@ -483,20 +488,25 @@ class LayoutEngine {
 
           // TODO: this is options merging; see if the standard routines can be used here.
           this.optionsBackup.edges = {
-            smooth        : smooth.enabled        === undefined ? true     : smooth.enabled,
-            type          : smooth.type           === undefined ? 'dynamic': smooth.type,
-            roundness     : smooth.roundness      === undefined ? 0.5      : smooth.roundness,
-            forceDirection: smooth.forceDirection === undefined ? false    : smooth.forceDirection
+            smooth: smooth.enabled === undefined ? true : smooth.enabled,
+            type: smooth.type === undefined ? 'dynamic' : smooth.type,
+            roundness: smooth.roundness === undefined ? 0.5 : smooth.roundness,
+            forceDirection:
+              smooth.forceDirection === undefined
+                ? false
+                : smooth.forceDirection,
           };
-
 
           // NOTE: Copying an object to self; this is basically setting defaults for undefined variables
           allOptions.edges.smooth = {
-            enabled       : smooth.enabled        === undefined ? true : smooth.enabled,
-            type          : type,
-            roundness     : smooth.roundness      === undefined ? 0.5  : smooth.roundness,
-            forceDirection: smooth.forceDirection === undefined ? false: smooth.forceDirection
-          }
+            enabled: smooth.enabled === undefined ? true : smooth.enabled,
+            type: type,
+            roundness: smooth.roundness === undefined ? 0.5 : smooth.roundness,
+            forceDirection:
+              smooth.forceDirection === undefined
+                ? false
+                : smooth.forceDirection,
+          };
         }
       }
 
@@ -538,13 +548,15 @@ class LayoutEngine {
     }
   }
 
-
   /**
    * Use Kamada Kawai to position nodes. This is quite a heavy algorithm so if there are a lot of nodes we
    * cluster them first to reduce the amount.
    */
   layoutNetwork() {
-    if (this.options.hierarchical.enabled !== true && this.options.improvedLayout === true) {
+    if (
+      this.options.hierarchical.enabled !== true &&
+      this.options.improvedLayout === true
+    ) {
       let indices = this.body.nodeIndices;
 
       // first check if we should Kamada Kawai to layout. The threshold is if less than half of the visible
@@ -561,7 +573,7 @@ class LayoutEngine {
       if (positionDefined < 0.5 * indices.length) {
         let MAX_LEVELS = 10;
         let level = 0;
-        let clusterThreshold = 150;  // TODO add this to options
+        let clusterThreshold = 150; // TODO add this to options
 
         //
         // Define the options for the hidden cluster nodes
@@ -576,19 +588,19 @@ class LayoutEngine {
         // All settings here are performance related, except when noted otherwise.
         //
         let clusterOptions = {
-          clusterNodeProperties:{
-            shape: 'ellipse',       // Bugfix: avoid type 'image', no images supplied
-            label: '',              // avoid label handling
-            group: '',              // avoid group handling
-            font: {multi: false},   // avoid font propagation
+          clusterNodeProperties: {
+            shape: 'ellipse', // Bugfix: avoid type 'image', no images supplied
+            label: '', // avoid label handling
+            group: '', // avoid group handling
+            font: { multi: false }, // avoid font propagation
           },
-          clusterEdgeProperties:{
-            label: '',              // avoid label handling
-            font: {multi: false},   // avoid font propagation
+          clusterEdgeProperties: {
+            label: '', // avoid label handling
+            font: { multi: false }, // avoid font propagation
             smooth: {
-              enabled: false        // avoid drawing penalty for complex edges
-            }
-          }
+              enabled: false, // avoid drawing penalty for complex edges
+            },
+          },
         };
 
         // if there are a lot of nodes, we cluster before we run the algorithm.
@@ -604,31 +616,40 @@ class LayoutEngine {
             // if there are many nodes we do a hubsize cluster
             if (level % 3 === 0) {
               this.body.modules.clustering.clusterBridges(clusterOptions);
-            }
-            else {
+            } else {
               this.body.modules.clustering.clusterOutliers(clusterOptions);
             }
             let after = indices.length;
             if (before == after && level % 3 !== 0) {
               this._declusterAll();
-              this.body.emitter.emit("_layoutFailed");
-              console.info("This network could not be positioned by this version of the improved layout algorithm."
-                        +  " Please disable improvedLayout for better performance.");
+              this.body.emitter.emit('_layoutFailed');
+              console.info(
+                'This network could not be positioned by this version of the improved layout algorithm.' +
+                  ' Please disable improvedLayout for better performance.'
+              );
               return;
             }
             //console.timeEnd("clustering")
             //console.log(before,level,after);
           }
           // increase the size of the edges
-          this.body.modules.kamadaKawai.setOptions({springLength: Math.max(150, 2 * startLength)})
+          this.body.modules.kamadaKawai.setOptions({
+            springLength: Math.max(150, 2 * startLength),
+          });
         }
-        if (level > MAX_LEVELS){
-          console.info("The clustering didn't succeed within the amount of interations allowed,"
-                     + " progressing with partial result.");
+        if (level > MAX_LEVELS) {
+          console.info(
+            "The clustering didn't succeed within the amount of interations allowed," +
+              ' progressing with partial result.'
+          );
         }
 
         // position the system for these nodes and edges
-        this.body.modules.kamadaKawai.solve(indices, this.body.edgeIndices, true);
+        this.body.modules.kamadaKawai.solve(
+          indices,
+          this.body.edgeIndices,
+          true
+        );
 
         // shift to center point
         this._shiftToCenter();
@@ -639,8 +660,8 @@ class LayoutEngine {
           // Only perturb the nodes that aren't fixed
           let node = this.body.nodes[indices[i]];
           if (node.predefinedPosition === false) {
-            node.x += (0.5 - this.seededRandom())*offset;
-            node.y += (0.5 - this.seededRandom())*offset;
+            node.x += (0.5 - this.seededRandom()) * offset;
+            node.y += (0.5 - this.seededRandom()) * offset;
           }
         }
 
@@ -648,7 +669,7 @@ class LayoutEngine {
         this._declusterAll();
 
         // reposition all bezier nodes.
-        this.body.emitter.emit("_repositionBezierNodes");
+        this.body.emitter.emit('_repositionBezierNodes');
       }
     }
   }
@@ -658,7 +679,10 @@ class LayoutEngine {
    * @private
    */
   _shiftToCenter() {
-    let range = NetworkUtil.getRangeCore(this.body.nodes, this.body.nodeIndices);
+    let range = NetworkUtil.getRangeCore(
+      this.body.nodes,
+      this.body.nodeIndices
+    );
     let center = NetworkUtil.findCenter(range);
     for (let i = 0; i < this.body.nodeIndices.length; i++) {
       let node = this.body.nodes[this.body.nodeIndices[i]];
@@ -678,7 +702,11 @@ class LayoutEngine {
       for (let i = 0; i < this.body.nodeIndices.length; i++) {
         if (this.body.nodes[this.body.nodeIndices[i]].isCluster === true) {
           clustersPresent = true;
-          this.body.modules.clustering.openCluster(this.body.nodeIndices[i], {}, false);
+          this.body.modules.clustering.openCluster(
+            this.body.nodeIndices[i],
+            {},
+            false
+          );
         }
       }
       if (clustersPresent === true) {
@@ -702,7 +730,10 @@ class LayoutEngine {
    * @private
    */
   setupHierarchicalLayout() {
-    if (this.options.hierarchical.enabled === true && this.body.nodeIndices.length > 0) {
+    if (
+      this.options.hierarchical.enabled === true &&
+      this.body.nodeIndices.length > 0
+    ) {
       // get the size of the largest hubs and check if the user has defined a level for a node.
       let node, nodeId;
       let definedLevel = false;
@@ -716,8 +747,7 @@ class LayoutEngine {
           if (node.options.level !== undefined) {
             definedLevel = true;
             this.hierarchical.levels[nodeId] = node.options.level;
-          }
-          else {
+          } else {
             undefinedLevel = true;
           }
         }
@@ -725,24 +755,22 @@ class LayoutEngine {
 
       // if the user defined some levels but not all, alert and run without hierarchical layout
       if (undefinedLevel === true && definedLevel === true) {
-        throw new Error('To use the hierarchical layout, nodes require either no predefined levels'
-                      + ' or levels have to be defined for all nodes.');
-      }
-      else {
+        throw new Error(
+          'To use the hierarchical layout, nodes require either no predefined levels' +
+            ' or levels have to be defined for all nodes.'
+        );
+      } else {
         // define levels if undefined by the users. Based on hubsize.
         if (undefinedLevel === true) {
           let sortMethod = this.options.hierarchical.sortMethod;
           if (sortMethod === 'hubsize') {
             this._determineLevelsByHubsize();
-          }
-          else if (sortMethod === 'directed') {
+          } else if (sortMethod === 'directed') {
             this._determineLevelsDirected();
-          }
-          else if (sortMethod === 'custom') {
+          } else if (sortMethod === 'custom') {
             this._determineLevelsCustomCallback();
           }
         }
-
 
         // fallback for cases where there are nodes but no edges
         for (let nodeId in this.body.nodes) {
@@ -781,7 +809,7 @@ class LayoutEngine {
       let treeSizes = getTreeSizes();
       let shiftBy = 0;
       for (let i = 0; i < treeSizes.length - 1; i++) {
-        let diff = treeSizes[i].max - treeSizes[i+1].min;
+        let diff = treeSizes[i].max - treeSizes[i + 1].min;
         shiftBy += diff + this.options.hierarchical.treeSpacing;
         shiftTree(i + 1, shiftBy);
       }
@@ -808,7 +836,6 @@ class LayoutEngine {
       }
       return treeWidths;
     };
-
 
     // get a map of all nodes in this branch
     let getBranchNodes = (source, map) => {
@@ -840,7 +867,10 @@ class LayoutEngine {
           let position = this.direction.getPosition(node);
 
           // get the space around the node.
-          let [minSpaceNode, maxSpaceNode] = this._getSpaceAroundNode(node,branchMap);
+          let [minSpaceNode, maxSpaceNode] = this._getSpaceAroundNode(
+            node,
+            branchMap
+          );
           minSpace = Math.min(minSpaceNode, minSpace);
           maxSpace = Math.min(maxSpaceNode, maxSpace);
 
@@ -853,8 +883,7 @@ class LayoutEngine {
       }
 
       return [min, max, minSpace, maxSpace];
-    }
-
+    };
 
     // check what the maximum level is these nodes have in common.
     let getCollisionLevel = (node1, node2) => {
@@ -862,7 +891,6 @@ class LayoutEngine {
       let maxLevel2 = this.hierarchical.getMaxLevel(node2.id);
       return Math.min(maxLevel1, maxLevel2);
     };
-
 
     /**
      * Condense elements. These can be nodes or branches depending on the callback.
@@ -880,11 +908,14 @@ class LayoutEngine {
         if (levelNodes.length > 1) {
           for (let j = 0; j < levelNodes.length - 1; j++) {
             let node1 = levelNodes[j];
-            let node2 = levelNodes[j+1];
+            let node2 = levelNodes[j + 1];
 
             // NOTE: logic maintained as it was; if nodes have same ancestor,
             //       then of course they are in the same sub-network.
-            if (hier.hasSameParent(node1, node2) && hier.inSameSubNetwork(node1, node2) ) {
+            if (
+              hier.hasSameParent(node1, node2) &&
+              hier.inSameSubNetwork(node1, node2)
+            ) {
               callback(node1, node2, centerParents);
             }
           }
@@ -892,180 +923,191 @@ class LayoutEngine {
       }
     };
 
-
     // callback for shifting branches
     let branchShiftCallback = (node1, node2, centerParent = false) => {
       //window.CALLBACKS.push(() => {
-        let pos1 = this.direction.getPosition(node1);
-        let pos2 = this.direction.getPosition(node2);
-        let diffAbs = Math.abs(pos2 - pos1);
-        let nodeSpacing =  this.options.hierarchical.nodeSpacing;
-        //console.log("NOW CHECKING:", node1.id, node2.id, diffAbs);
-        if (diffAbs > nodeSpacing) {
-          let branchNodes1 = {};
-          let branchNodes2 = {};
+      let pos1 = this.direction.getPosition(node1);
+      let pos2 = this.direction.getPosition(node2);
+      let diffAbs = Math.abs(pos2 - pos1);
+      let nodeSpacing = this.options.hierarchical.nodeSpacing;
+      //console.log("NOW CHECKING:", node1.id, node2.id, diffAbs);
+      if (diffAbs > nodeSpacing) {
+        let branchNodes1 = {};
+        let branchNodes2 = {};
 
-          getBranchNodes(node1, branchNodes1);
-          getBranchNodes(node2, branchNodes2);
+        getBranchNodes(node1, branchNodes1);
+        getBranchNodes(node2, branchNodes2);
 
-          // check the largest distance between the branches
-          let maxLevel = getCollisionLevel(node1, node2);
-          let branchNodeBoundary1 = getBranchBoundary(branchNodes1, maxLevel);
-          let branchNodeBoundary2 = getBranchBoundary(branchNodes2, maxLevel);
-          let max1 = branchNodeBoundary1[1];
-          let min2 = branchNodeBoundary2[0];
-          let minSpace2 = branchNodeBoundary2[2];
+        // check the largest distance between the branches
+        let maxLevel = getCollisionLevel(node1, node2);
+        let branchNodeBoundary1 = getBranchBoundary(branchNodes1, maxLevel);
+        let branchNodeBoundary2 = getBranchBoundary(branchNodes2, maxLevel);
+        let max1 = branchNodeBoundary1[1];
+        let min2 = branchNodeBoundary2[0];
+        let minSpace2 = branchNodeBoundary2[2];
 
-          //console.log(node1.id, getBranchBoundary(branchNodes1, maxLevel), node2.id,
-          //            getBranchBoundary(branchNodes2, maxLevel), maxLevel);
-          let diffBranch = Math.abs(max1 - min2);
-          if (diffBranch > nodeSpacing) {
-            let offset = max1 - min2 + nodeSpacing;
-            if (offset < -minSpace2 + nodeSpacing) {
-              offset = -minSpace2 + nodeSpacing;
-              //console.log("RESETTING OFFSET", max1 - min2 + this.options.hierarchical.nodeSpacing, -minSpace2, offset);
-            }
-            if (offset < 0) {
-              //console.log("SHIFTING", node2.id, offset);
-              this._shiftBlock(node2.id, offset);
-              stillShifting = true;
-
-              if (centerParent === true)
-                this._centerParent(node2);
-            }
+        //console.log(node1.id, getBranchBoundary(branchNodes1, maxLevel), node2.id,
+        //            getBranchBoundary(branchNodes2, maxLevel), maxLevel);
+        let diffBranch = Math.abs(max1 - min2);
+        if (diffBranch > nodeSpacing) {
+          let offset = max1 - min2 + nodeSpacing;
+          if (offset < -minSpace2 + nodeSpacing) {
+            offset = -minSpace2 + nodeSpacing;
+            //console.log("RESETTING OFFSET", max1 - min2 + this.options.hierarchical.nodeSpacing, -minSpace2, offset);
           }
+          if (offset < 0) {
+            //console.log("SHIFTING", node2.id, offset);
+            this._shiftBlock(node2.id, offset);
+            stillShifting = true;
 
+            if (centerParent === true) this._centerParent(node2);
+          }
         }
-        //this.body.emitter.emit("_redraw");})
+      }
+      //this.body.emitter.emit("_redraw");})
     };
 
     let minimizeEdgeLength = (iterations, node) => {
       //window.CALLBACKS.push(() => {
       //  console.log("ts",node.id);
-        let nodeId = node.id;
-        let allEdges = node.edges;
-        let nodeLevel = this.hierarchical.levels[node.id];
+      let nodeId = node.id;
+      let allEdges = node.edges;
+      let nodeLevel = this.hierarchical.levels[node.id];
 
-        // gather constants
-        let C2 = this.options.hierarchical.levelSeparation * this.options.hierarchical.levelSeparation;
-        let referenceNodes = {};
-        let aboveEdges = [];
-        for (let i = 0; i < allEdges.length; i++) {
-          let edge = allEdges[i];
-          if (edge.toId != edge.fromId) {
-            let otherNode = edge.toId == nodeId ? edge.from : edge.to;
-            referenceNodes[allEdges[i].id] = otherNode;
-            if (this.hierarchical.levels[otherNode.id] < nodeLevel) {
-              aboveEdges.push(edge);
-            }
+      // gather constants
+      let C2 =
+        this.options.hierarchical.levelSeparation *
+        this.options.hierarchical.levelSeparation;
+      let referenceNodes = {};
+      let aboveEdges = [];
+      for (let i = 0; i < allEdges.length; i++) {
+        let edge = allEdges[i];
+        if (edge.toId != edge.fromId) {
+          let otherNode = edge.toId == nodeId ? edge.from : edge.to;
+          referenceNodes[allEdges[i].id] = otherNode;
+          if (this.hierarchical.levels[otherNode.id] < nodeLevel) {
+            aboveEdges.push(edge);
           }
         }
+      }
 
-        // differentiated sum of lengths based on only moving one node over one axis
-        let getFx = (point, edges) => {
-          let sum = 0;
-          for (let i = 0; i < edges.length; i++) {
-            if (referenceNodes[edges[i].id] !== undefined) {
-              let a = this.direction.getPosition(referenceNodes[edges[i].id]) - point;
-              sum += a / Math.sqrt(a * a + C2);
-            }
+      // differentiated sum of lengths based on only moving one node over one axis
+      let getFx = (point, edges) => {
+        let sum = 0;
+        for (let i = 0; i < edges.length; i++) {
+          if (referenceNodes[edges[i].id] !== undefined) {
+            let a =
+              this.direction.getPosition(referenceNodes[edges[i].id]) - point;
+            sum += a / Math.sqrt(a * a + C2);
           }
-          return sum;
-        };
+        }
+        return sum;
+      };
 
-        // doubly differentiated sum of lengths based on only moving one node over one axis
-        let getDFx = (point, edges) => {
-          let sum = 0;
-          for (let i = 0; i < edges.length; i++) {
-            if (referenceNodes[edges[i].id] !== undefined) {
-              let a = this.direction.getPosition(referenceNodes[edges[i].id]) - point;
-              sum -= (C2 * Math.pow(a * a + C2, -1.5));
-            }
+      // doubly differentiated sum of lengths based on only moving one node over one axis
+      let getDFx = (point, edges) => {
+        let sum = 0;
+        for (let i = 0; i < edges.length; i++) {
+          if (referenceNodes[edges[i].id] !== undefined) {
+            let a =
+              this.direction.getPosition(referenceNodes[edges[i].id]) - point;
+            sum -= C2 * Math.pow(a * a + C2, -1.5);
           }
-          return sum;
-        };
+        }
+        return sum;
+      };
 
-        let getGuess = (iterations, edges) => {
-          let guess = this.direction.getPosition(node);
-          // Newton's method for optimization
-          let guessMap = {};
-          for (let i = 0; i < iterations; i++) {
-            let fx = getFx(guess, edges);
-            let dfx = getDFx(guess, edges);
+      let getGuess = (iterations, edges) => {
+        let guess = this.direction.getPosition(node);
+        // Newton's method for optimization
+        let guessMap = {};
+        for (let i = 0; i < iterations; i++) {
+          let fx = getFx(guess, edges);
+          let dfx = getDFx(guess, edges);
 
-            // we limit the movement to avoid instability.
-            let limit = 40;
-            let ratio = Math.max(-limit, Math.min(limit, Math.round(fx/dfx)));
-            guess = guess - ratio;
-            // reduce duplicates
-            if (guessMap[guess] !== undefined) {
-              break;
-            }
-            guessMap[guess] = i;
+          // we limit the movement to avoid instability.
+          let limit = 40;
+          let ratio = Math.max(-limit, Math.min(limit, Math.round(fx / dfx)));
+          guess = guess - ratio;
+          // reduce duplicates
+          if (guessMap[guess] !== undefined) {
+            break;
           }
-          return guess;
-        };
+          guessMap[guess] = i;
+        }
+        return guess;
+      };
 
-        let moveBranch = (guess) => {
-          // position node if there is space
-          let nodePosition = this.direction.getPosition(node);
+      let moveBranch = (guess) => {
+        // position node if there is space
+        let nodePosition = this.direction.getPosition(node);
 
-          // check movable area of the branch
-          if (branches[node.id] === undefined) {
-            let branchNodes = {};
-            getBranchNodes(node, branchNodes);
-            branches[node.id] = branchNodes;
-          }
-          let branchBoundary = getBranchBoundary(branches[node.id]);
-          let minSpaceBranch = branchBoundary[2];
-          let maxSpaceBranch = branchBoundary[3];
+        // check movable area of the branch
+        if (branches[node.id] === undefined) {
+          let branchNodes = {};
+          getBranchNodes(node, branchNodes);
+          branches[node.id] = branchNodes;
+        }
+        let branchBoundary = getBranchBoundary(branches[node.id]);
+        let minSpaceBranch = branchBoundary[2];
+        let maxSpaceBranch = branchBoundary[3];
 
-          let diff = guess - nodePosition;
+        let diff = guess - nodePosition;
 
-          // check if we are allowed to move the node:
-          let branchOffset = 0;
-          if (diff > 0) {
-            branchOffset = Math.min(diff, maxSpaceBranch - this.options.hierarchical.nodeSpacing);
-          }
-          else if (diff < 0) {
-            branchOffset = -Math.min(-diff, minSpaceBranch - this.options.hierarchical.nodeSpacing);
-          }
+        // check if we are allowed to move the node:
+        let branchOffset = 0;
+        if (diff > 0) {
+          branchOffset = Math.min(
+            diff,
+            maxSpaceBranch - this.options.hierarchical.nodeSpacing
+          );
+        } else if (diff < 0) {
+          branchOffset = -Math.min(
+            -diff,
+            minSpaceBranch - this.options.hierarchical.nodeSpacing
+          );
+        }
 
-          if (branchOffset != 0) {
-            //console.log("moving branch:",branchOffset, maxSpaceBranch, minSpaceBranch)
-            this._shiftBlock(node.id, branchOffset);
-            //this.body.emitter.emit("_redraw");
-            stillShifting = true;
-          }
-        };
+        if (branchOffset != 0) {
+          //console.log("moving branch:",branchOffset, maxSpaceBranch, minSpaceBranch)
+          this._shiftBlock(node.id, branchOffset);
+          //this.body.emitter.emit("_redraw");
+          stillShifting = true;
+        }
+      };
 
-        let moveNode = (guess) => {
-          let nodePosition = this.direction.getPosition(node);
+      let moveNode = (guess) => {
+        let nodePosition = this.direction.getPosition(node);
 
-          // position node if there is space
-          let [minSpace, maxSpace] = this._getSpaceAroundNode(node);
-          let diff = guess - nodePosition;
-          // check if we are allowed to move the node:
-          let newPosition = nodePosition;
-          if (diff > 0) {
-            newPosition = Math.min(nodePosition + (maxSpace - this.options.hierarchical.nodeSpacing), guess);
-          }
-          else if (diff < 0) {
-            newPosition = Math.max(nodePosition - (minSpace - this.options.hierarchical.nodeSpacing), guess);
-          }
+        // position node if there is space
+        let [minSpace, maxSpace] = this._getSpaceAroundNode(node);
+        let diff = guess - nodePosition;
+        // check if we are allowed to move the node:
+        let newPosition = nodePosition;
+        if (diff > 0) {
+          newPosition = Math.min(
+            nodePosition + (maxSpace - this.options.hierarchical.nodeSpacing),
+            guess
+          );
+        } else if (diff < 0) {
+          newPosition = Math.max(
+            nodePosition - (minSpace - this.options.hierarchical.nodeSpacing),
+            guess
+          );
+        }
 
-          if (newPosition !== nodePosition) {
-            //console.log("moving Node:",diff, minSpace, maxSpace);
-            this.direction.setPosition(node, newPosition);
-            //this.body.emitter.emit("_redraw");
-            stillShifting = true;
-          }
-        };
+        if (newPosition !== nodePosition) {
+          //console.log("moving Node:",diff, minSpace, maxSpace);
+          this.direction.setPosition(node, newPosition);
+          //this.body.emitter.emit("_redraw");
+          stillShifting = true;
+        }
+      };
 
-        let guess = getGuess(iterations, aboveEdges);
-        moveBranch(guess);
-        guess = getGuess(iterations, allEdges);
-        moveNode(guess);
+      let guess = getGuess(iterations, aboveEdges);
+      moveBranch(guess);
+      guess = getGuess(iterations, allEdges);
+      moveNode(guess);
       //})
     };
 
@@ -1136,7 +1178,7 @@ class LayoutEngine {
     }
 
     if (this.options.hierarchical.parentCentralization === true) {
-      centerAllParentsBottomUp()
+      centerAllParentsBottomUp();
     }
 
     shiftTrees();
@@ -1164,7 +1206,10 @@ class LayoutEngine {
       let maxSpace = 1e9;
       if (index !== 0) {
         let prevNode = ordering[index - 1];
-        if ((useMap === true && map[prevNode.id] === undefined) || useMap === false) {
+        if (
+          (useMap === true && map[prevNode.id] === undefined) ||
+          useMap === false
+        ) {
           let prevPos = this.direction.getPosition(prevNode);
           minSpace = position - prevPos;
         }
@@ -1172,19 +1217,20 @@ class LayoutEngine {
 
       if (index != ordering.length - 1) {
         let nextNode = ordering[index + 1];
-        if ((useMap === true && map[nextNode.id] === undefined) || useMap === false) {
+        if (
+          (useMap === true && map[nextNode.id] === undefined) ||
+          useMap === false
+        ) {
           let nextPos = this.direction.getPosition(nextNode);
           maxSpace = Math.min(maxSpace, nextPos - position);
         }
       }
 
       return [minSpace, maxSpace];
-    }
-    else {
+    } else {
       return [0, 0];
     }
   }
-
 
   /**
    * We use this method to center a parent node and check if it does not cross other nodes when it does.
@@ -1206,15 +1252,19 @@ class LayoutEngine {
           let position = this.direction.getPosition(parentNode);
           let [minSpace, maxSpace] = this._getSpaceAroundNode(parentNode);
           let diff = position - newPosition;
-          if ((diff < 0 && Math.abs(diff) < maxSpace - this.options.hierarchical.nodeSpacing) ||
-              (diff > 0 && Math.abs(diff) < minSpace - this.options.hierarchical.nodeSpacing)) {
+          if (
+            (diff < 0 &&
+              Math.abs(diff) <
+                maxSpace - this.options.hierarchical.nodeSpacing) ||
+            (diff > 0 &&
+              Math.abs(diff) < minSpace - this.options.hierarchical.nodeSpacing)
+          ) {
             this.direction.setPosition(parentNode, newPosition);
           }
         }
       }
     }
   }
-
 
   /**
    * This function places the nodes on the canvas based on the hierarchial distribution.
@@ -1241,7 +1291,7 @@ class LayoutEngine {
             // We get the X or Y values we need and store them in pos and previousPos.
             // The get and set make sure we get X or Y
             if (handledNodeCount > 0) {
-              pos = this.direction.getPosition(nodeArray[i-1]) + spacing;
+              pos = this.direction.getPosition(nodeArray[i - 1]) + spacing;
             }
             this.direction.setPosition(node, pos, level);
             this._validatePositionAndContinue(node, level, pos);
@@ -1252,7 +1302,6 @@ class LayoutEngine {
       }
     }
   }
-
 
   /**
    * This is a recursively called function to enumerate the branches from the largest hubs and place the nodes
@@ -1284,7 +1333,10 @@ class LayoutEngine {
       let childNode = childNodes[i];
       let childNodeLevel = this.hierarchical.levels[childNode.id];
       // check if the child node is below the parent node and if it has already been positioned.
-      if (childNodeLevel > parentLevel && this.positionedNodes[childNode.id] === undefined) {
+      if (
+        childNodeLevel > parentLevel &&
+        this.positionedNodes[childNode.id] === undefined
+      ) {
         // get the amount of space required for this node. If parent the width is based on the amount of children.
         let spacing = this.options.hierarchical.nodeSpacing;
         let pos;
@@ -1294,12 +1346,11 @@ class LayoutEngine {
         if (i === 0) {
           pos = this.direction.getPosition(this.body.nodes[parentId]);
         } else {
-          pos = this.direction.getPosition(childNodes[i-1]) + spacing;
+          pos = this.direction.getPosition(childNodes[i - 1]) + spacing;
         }
         this.direction.setPosition(childNode, pos, childNodeLevel);
         this._validatePositionAndContinue(childNode, childNodeLevel, pos);
-      }
-      else {
+      } else {
         return;
       }
     }
@@ -1308,7 +1359,6 @@ class LayoutEngine {
     let center = this._getCenterPosition(childNodes);
     this.direction.setPosition(this.body.nodes[parentId], center, parentLevel);
   }
-
 
   /**
    * This method checks for overlap and if required shifts the branch. It also keeps records of positioned nodes.
@@ -1325,15 +1375,20 @@ class LayoutEngine {
 
     // if overlap has been detected, we shift the branch
     if (this.lastNodeOnLevel[level] !== undefined) {
-      let previousPos = this.direction.getPosition(this.body.nodes[this.lastNodeOnLevel[level]]);
+      let previousPos = this.direction.getPosition(
+        this.body.nodes[this.lastNodeOnLevel[level]]
+      );
       if (pos - previousPos < this.options.hierarchical.nodeSpacing) {
-        let diff = (previousPos + this.options.hierarchical.nodeSpacing) - pos;
-        let sharedParent = this._findCommonParent(this.lastNodeOnLevel[level], node.id);
+        let diff = previousPos + this.options.hierarchical.nodeSpacing - pos;
+        let sharedParent = this._findCommonParent(
+          this.lastNodeOnLevel[level],
+          node.id
+        );
         this._shiftBlock(sharedParent.withChild, diff);
       }
     }
 
-    this.lastNodeOnLevel[level] = node.id;  // store change in position.
+    this.lastNodeOnLevel[level] = node.id; // store change in position.
     this.positionedNodes[node.id] = true;
     this._placeBranchNodes(node.id, level);
   }
@@ -1347,7 +1402,7 @@ class LayoutEngine {
   _indexArrayToNodes(idArray) {
     let array = [];
     for (let i = 0; i < idArray.length; i++) {
-      array.push(this.body.nodes[idArray[i]])
+      array.push(this.body.nodes[idArray[i]]);
     }
     return array;
   }
@@ -1368,7 +1423,10 @@ class LayoutEngine {
     for (nodeId in this.body.nodes) {
       if (this.body.nodes.hasOwnProperty(nodeId)) {
         node = this.body.nodes[nodeId];
-        let level = this.hierarchical.levels[nodeId] === undefined ? 0 : this.hierarchical.levels[nodeId];
+        let level =
+          this.hierarchical.levels[nodeId] === undefined
+            ? 0
+            : this.hierarchical.levels[nodeId];
         this.direction.fix(node, level);
         if (distribution[level] === undefined) {
           distribution[level] = {};
@@ -1378,7 +1436,6 @@ class LayoutEngine {
     }
     return distribution;
   }
-
 
   /**
    * Return the active (i.e. visible) edges for this node
@@ -1390,7 +1447,7 @@ class LayoutEngine {
   _getActiveEdges(node) {
     let result = [];
 
-    util.forEach(node.edges, (edge) => { 
+    util.forEach(node.edges, (edge) => {
       if (this.body.edgeIndices.indexOf(edge.id) !== -1) {
         result.push(edge);
       }
@@ -1398,7 +1455,6 @@ class LayoutEngine {
 
     return result;
   }
-
 
   /**
    * Get the hubsizes for all active nodes.
@@ -1410,7 +1466,7 @@ class LayoutEngine {
     let hubSizes = {};
     let nodeIds = this.body.nodeIndices;
 
-    util.forEach(nodeIds, (nodeId) => { 
+    util.forEach(nodeIds, (nodeId) => {
       let node = this.body.nodes[nodeId];
       let hubSize = this._getActiveEdges(node).length;
       hubSizes[hubSize] = true;
@@ -1418,17 +1474,16 @@ class LayoutEngine {
 
     // Make an array of the size sorted descending
     let result = [];
-    util.forEach(hubSizes, (size) => { 
+    util.forEach(hubSizes, (size) => {
       result.push(Number(size));
     });
 
-    result.sort(function(a, b) {
+    result.sort(function (a, b) {
       return b - a;
     });
 
     return result;
   }
-
 
   /**
    * this function allocates nodes in levels based on the recursive branching from the largest hubs.
@@ -1438,15 +1493,15 @@ class LayoutEngine {
   _determineLevelsByHubsize() {
     let levelDownstream = (nodeA, nodeB) => {
       this.hierarchical.levelDownstream(nodeA, nodeB);
-    }
+    };
 
     let hubSizes = this._getHubSizes();
 
-    for (let i = 0; i < hubSizes.length; ++i ) {
+    for (let i = 0; i < hubSizes.length; ++i) {
       let hubSize = hubSizes[i];
       if (hubSize === 0) break;
 
-      util.forEach(this.body.nodeIndices, (nodeId) => { 
+      util.forEach(this.body.nodeIndices, (nodeId) => {
         let node = this.body.nodes[nodeId];
 
         if (hubSize === this._getActiveEdges(node).length) {
@@ -1455,7 +1510,6 @@ class LayoutEngine {
       });
     }
   }
-
 
   /**
    * TODO: release feature
@@ -1467,8 +1521,8 @@ class LayoutEngine {
     let minLevel = 100000;
 
     // TODO: this should come from options.
-    let customCallback = function(nodeA, nodeB, edge) {  // eslint-disable-line no-unused-vars
-
+    let customCallback = function (nodeA, nodeB, edge) {
+      // eslint-disable-line no-unused-vars
     };
 
     // TODO: perhaps move to HierarchicalStatus.
@@ -1476,12 +1530,14 @@ class LayoutEngine {
     let levelByDirection = (nodeA, nodeB, edge) => {
       let levelA = this.hierarchical.levels[nodeA.id];
       // set initial level
-      if (levelA === undefined) { levelA = this.hierarchical.levels[nodeA.id] = minLevel;}
+      if (levelA === undefined) {
+        levelA = this.hierarchical.levels[nodeA.id] = minLevel;
+      }
 
       let diff = customCallback(
-        NetworkUtil.cloneOptions(nodeA,'node'),
-        NetworkUtil.cloneOptions(nodeB,'node'),
-        NetworkUtil.cloneOptions(edge,'edge')
+        NetworkUtil.cloneOptions(nodeA, 'node'),
+        NetworkUtil.cloneOptions(nodeB, 'node'),
+        NetworkUtil.cloneOptions(edge, 'edge')
       );
 
       this.hierarchical.levels[nodeB.id] = levelA + diff;
@@ -1515,22 +1571,26 @@ class LayoutEngine {
       return false;
     };
 
-
     let levelByDirection = (nodeA, nodeB, edge) => {
       let levelA = this.hierarchical.levels[nodeA.id];
       let levelB = this.hierarchical.levels[nodeB.id];
 
-      if (isBidirectional(edge) && levelA !== undefined && levelB !== undefined) {
+      if (
+        isBidirectional(edge) &&
+        levelA !== undefined &&
+        levelB !== undefined
+      ) {
         // Don't redo the level determination if already done in this case.
         return;
       }
 
       // set initial level
-      if (levelA === undefined) { levelA = this.hierarchical.levels[nodeA.id] = minLevel;}
+      if (levelA === undefined) {
+        levelA = this.hierarchical.levels[nodeA.id] = minLevel;
+      }
       if (edge.toId == nodeB.id) {
         this.hierarchical.levels[nodeB.id] = levelA + 1;
-      }
-      else {
+      } else {
         this.hierarchical.levels[nodeB.id] = levelA - 1;
       }
     };
@@ -1539,14 +1599,16 @@ class LayoutEngine {
     this.hierarchical.setMinLevelToZero(this.body.nodes);
   }
 
-
   /**
    * Update the bookkeeping of parent and child.
    * @private
    */
   _generateMap() {
     let fillInRelations = (parentNode, childNode) => {
-      if (this.hierarchical.levels[childNode.id] > this.hierarchical.levels[parentNode.id]) {
+      if (
+        this.hierarchical.levels[childNode.id] >
+        this.hierarchical.levels[parentNode.id]
+      ) {
         this.hierarchical.addRelation(parentNode.id, childNode.id);
       }
     };
@@ -1555,14 +1617,13 @@ class LayoutEngine {
     this.hierarchical.checkIfTree();
   }
 
-
   /**
    * Crawl over the entire network and use a callback on each node couple that is connected to each other.
    * @param {function} [callback=function(){}]          | will receive nodeA, nodeB and the connecting edge. A and B are distinct.
    * @param {Node.id} startingNodeId
    * @private
    */
-  _crawlNetwork(callback = function() {}, startingNodeId) {
+  _crawlNetwork(callback = function () {}, startingNodeId) {
     let progress = {};
 
     let crawler = (node, tree) => {
@@ -1575,14 +1636,15 @@ class LayoutEngine {
         for (let i = 0; i < edges.length; i++) {
           let edge = edges[i];
           if (edge.connected === true) {
-            if (edge.toId == node.id) {         // Not '===' because id's can be string and numeric
+            if (edge.toId == node.id) {
+              // Not '===' because id's can be string and numeric
               childNode = edge.from;
-            }
-            else {
+            } else {
               childNode = edge.to;
             }
 
-            if (node.id != childNode.id) {      // Not '!==' because id's can be string and numeric
+            if (node.id != childNode.id) {
+              // Not '!==' because id's can be string and numeric
               callback(node, childNode, edge);
               crawler(childNode, tree);
             }
@@ -1591,10 +1653,9 @@ class LayoutEngine {
       }
     };
 
-
     if (startingNodeId === undefined) {
       // Crawl over all nodes
-      let treeIndex = 0;      // Serves to pass a unique id for the current distinct tree
+      let treeIndex = 0; // Serves to pass a unique id for the current distinct tree
 
       for (let i = 0; i < this.body.nodeIndices.length; i++) {
         let nodeId = this.body.nodeIndices[i];
@@ -1605,18 +1666,16 @@ class LayoutEngine {
           treeIndex += 1;
         }
       }
-    }
-    else {
+    } else {
       // Crawl from the given starting node
       let node = this.body.nodes[startingNodeId];
       if (node === undefined) {
-        console.error("Node not found:", startingNodeId);
+        console.error('Node not found:', startingNodeId);
         return;
       }
       crawler(node);
     }
   }
-
 
   /**
    * Shift a branch a certain distance
@@ -1643,7 +1702,6 @@ class LayoutEngine {
     shifter(parentId);
   }
 
-
   /**
    * Find a common parent between branches.
    * @param {Node.id} childA
@@ -1651,25 +1709,25 @@ class LayoutEngine {
    * @returns {{foundParent, withChild}}
    * @private
    */
-  _findCommonParent(childA,childB) {
+  _findCommonParent(childA, childB) {
     let parents = {};
-    let iterateParents = (parents,child) => {
-      let parentRef =  this.hierarchical.parentReference[child];
+    let iterateParents = (parents, child) => {
+      let parentRef = this.hierarchical.parentReference[child];
       if (parentRef !== undefined) {
         for (let i = 0; i < parentRef.length; i++) {
           let parent = parentRef[i];
           parents[parent] = true;
-          iterateParents(parents, parent)
+          iterateParents(parents, parent);
         }
       }
     };
     let findParent = (parents, child) => {
-      let parentRef =  this.hierarchical.parentReference[child];
+      let parentRef = this.hierarchical.parentReference[child];
       if (parentRef !== undefined) {
         for (let i = 0; i < parentRef.length; i++) {
           let parent = parentRef[i];
           if (parents[parent] !== undefined) {
-            return {foundParent:parent, withChild:child};
+            return { foundParent: parent, withChild: child };
           }
           let branch = findParent(parents, parent);
           if (branch.foundParent !== null) {
@@ -1677,13 +1735,12 @@ class LayoutEngine {
           }
         }
       }
-      return {foundParent:null, withChild:child};
+      return { foundParent: null, withChild: child };
     };
 
     iterateParents(parents, childA);
     return findParent(parents, childB);
   }
-
 
   /**
    * Set the strategy pattern for handling the coordinates given the current direction.
@@ -1697,16 +1754,16 @@ class LayoutEngine {
    * @private
    */
   setDirectionStrategy() {
-    var isVertical = (this.options.hierarchical.direction === 'UD'
-                   || this.options.hierarchical.direction === 'DU');
+    var isVertical =
+      this.options.hierarchical.direction === 'UD' ||
+      this.options.hierarchical.direction === 'DU';
 
-    if(isVertical) {
-      this.direction = new VerticalStrategy(this); 
+    if (isVertical) {
+      this.direction = new VerticalStrategy(this);
     } else {
-      this.direction = new HorizontalStrategy(this); 
+      this.direction = new HorizontalStrategy(this);
     }
   }
-
 
   /**
    * Determine the center position of a branch from the passed list of child nodes

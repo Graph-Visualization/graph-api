@@ -9,18 +9,24 @@ function parseGephi(gephiJSON, optionsObj) {
   var nodes = [];
   var options = {
     edges: {
-      inheritColor: false
+      inheritColor: false,
     },
     nodes: {
       fixed: false,
-      parseColor: false
-    }
+      parseColor: false,
+    },
   };
 
   if (optionsObj !== undefined) {
-    if (optionsObj.fixed !== undefined)        {options.nodes.fixed = optionsObj.fixed}
-    if (optionsObj.parseColor !== undefined)   {options.nodes.parseColor = optionsObj.parseColor}
-    if (optionsObj.inheritColor !== undefined) {options.edges.inheritColor = optionsObj.inheritColor}
+    if (optionsObj.fixed !== undefined) {
+      options.nodes.fixed = optionsObj.fixed;
+    }
+    if (optionsObj.parseColor !== undefined) {
+      options.nodes.parseColor = optionsObj.parseColor;
+    }
+    if (optionsObj.inheritColor !== undefined) {
+      options.edges.inheritColor = optionsObj.inheritColor;
+    }
   }
 
   var gEdges = gephiJSON.edges;
@@ -33,12 +39,13 @@ function parseGephi(gephiJSON, optionsObj) {
     edge['to'] = gEdge.target;
     edge['attributes'] = gEdge.attributes;
     edge['label'] = gEdge.label;
-    edge['title'] = gEdge.attributes !== undefined ? gEdge.attributes.title : undefined;
+    edge['title'] =
+      gEdge.attributes !== undefined ? gEdge.attributes.title : undefined;
     if (gEdge['type'] === 'Directed') {
       edge['arrows'] = 'to';
     }
-//    edge['value'] = gEdge.attributes !== undefined ? gEdge.attributes.Weight : undefined;
-//    edge['width'] = edge['value'] !== undefined ? undefined : edgegEdge.size;
+    //    edge['value'] = gEdge.attributes !== undefined ? gEdge.attributes.Weight : undefined;
+    //    edge['width'] = edge['value'] !== undefined ? undefined : edgegEdge.size;
     if (gEdge.color && options.inheritColor === false) {
       edge['color'] = gEdge.color;
     }
@@ -53,19 +60,28 @@ function parseGephi(gephiJSON, optionsObj) {
     node['x'] = gNode.x;
     node['y'] = gNode.y;
     node['label'] = gNode.label;
-    node['title'] = gNode.attributes !== undefined ? gNode.attributes.title : gNode.title;
+    node['title'] =
+      gNode.attributes !== undefined ? gNode.attributes.title : gNode.title;
     if (options.nodes.parseColor === true) {
       node['color'] = gNode.color;
-    }
-    else {
-      node['color'] = gNode.color !== undefined ? {background:gNode.color, border:gNode.color, highlight: {background:gNode.color, border:gNode.color}, hover:{background:gNode.color, border:gNode.color}} : undefined;
+    } else {
+      node['color'] =
+        gNode.color !== undefined
+          ? {
+              background: gNode.color,
+              border: gNode.color,
+              highlight: { background: gNode.color, border: gNode.color },
+              hover: { background: gNode.color, border: gNode.color },
+            }
+          : undefined;
     }
     node['size'] = gNode.size;
-    node['fixed'] = options.nodes.fixed && gNode.x !== undefined && gNode.y !== undefined;
+    node['fixed'] =
+      options.nodes.fixed && gNode.x !== undefined && gNode.y !== undefined;
     nodes.push(node);
   }
 
-  return {nodes:nodes, edges:edges};
+  return { nodes: nodes, edges: edges };
 }
 
 exports.parseGephi = parseGephi;

@@ -1,6 +1,6 @@
 'use strict';
 
-import ShapeBase from '../util/ShapeBase'
+import ShapeBase from '../util/ShapeBase';
 
 /**
  * A Dot Node/Cluster shape.
@@ -14,7 +14,7 @@ class Dot extends ShapeBase {
    * @param {Label} labelModule
    */
   constructor(options, body, labelModule) {
-    super(options, body, labelModule)
+    super(options, body, labelModule);
   }
 
   /**
@@ -36,7 +36,8 @@ class Dot extends ShapeBase {
    * @param {number} angle
    * @returns {number}
    */
-  distanceToBorder(ctx, angle) {  // eslint-disable-line no-unused-vars
+  distanceToBorder(ctx, angle) {
+    // eslint-disable-line no-unused-vars
     this.resize(ctx);
     return this.options.size;
   }

@@ -1,50 +1,44 @@
-const GraphBase = require('./graph-base')
-const Queue = require('./ds/queue')
+const GraphBase = require('./graph-base');
+const Queue = require('./ds/queue');
 
+class BFS extends GraphBase {
+  constructor(numVertices = 0, numEdges = 0, startingPoint = 0) {
+    super(numVertices, numEdges);
+    this.startingPoint = startingPoint;
+  }
 
-class BFS extends GraphBase{
+  bfs() {
+    let queue = new Queue();
+    let Adj = this.getSimpleAdj();
 
-    constructor(numVertices=0, numEdges=0, startingPoint=0){
-        super(numVertices, numEdges)
-        this.startingPoint = startingPoint
-    }
+    let visited = [];
+    let vertex = [];
 
-    bfs(){
-        let queue = new Queue()
-        let Adj = this.getSimpleAdj()
+    Adj.forEach((value, key) => {
+      visited[key] = false;
+      vertex.push(key);
+    });
 
-        let visited = []
-        let vertex = []
+    let root = vertex[0];
+    queue.enqueue(root);
+    let bfs_order = [];
 
-        Adj.forEach((value,key) => {
-            visited[key] = false
-            vertex.push(key)
-        })
+    while (!queue.isEmpty()) {
+      let node = queue.dequeue();
+      if (!visited[node]) {
+        bfs_order.push(node);
+        visited[node] = true;
+      }
 
-        let root = vertex[0]
-        queue.enqueue(root)
-        let bfs_order = []
-
-        while(!queue.isEmpty())
-        {
-            let node = queue.dequeue()
-            if(!visited[node])
-            {
-                bfs_order.push(node)
-                visited[node] = true
-            }
-
-            for(let i=0;i<Adj.get(node).length;i++)
-            {
-                if(!visited[Adj.get(node)[i]])
-                {
-                    queue.enqueue(Adj.get(node)[i])
-                }
-            }
+      for (let i = 0; i < Adj.get(node).length; i++) {
+        if (!visited[Adj.get(node)[i]]) {
+          queue.enqueue(Adj.get(node)[i]);
         }
-
-        return bfs_order
+      }
     }
+
+    return bfs_order;
+  }
 }
 
 // const g = new BFS(5)
@@ -53,13 +47,13 @@ class BFS extends GraphBase{
 // {
 //     g.addVertex(vertices[i])
 // }
-// g.addEdge(0,1); 
-// g.addEdge(0, 2); 
-// g.addEdge(1,2); 
-// g.addEdge(2,0); 
+// g.addEdge(0,1);
+// g.addEdge(0, 2);
+// g.addEdge(1,2);
+// g.addEdge(2,0);
 // g.addEdge(2,3);
 // g.addEdge(3,3);
 // console.log(g.getSimpleAdj())
 // console.log(g.bfs())
 
-module.exports = BFS
+module.exports = BFS;

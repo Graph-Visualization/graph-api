@@ -10,8 +10,7 @@ class Validator {
   /**
    * @ignore
    */
-  constructor() {
-  }
+  constructor() {}
 
   /**
    * Main function to be called
@@ -32,7 +31,6 @@ class Validator {
     return errorFound;
   }
 
-
   /**
    * Will traverse an object recursively and check every value
    * @param {Object} options
@@ -48,7 +46,6 @@ class Validator {
     }
   }
 
-
   /**
    * Check every value. If the value is an object, call the parse function on that object.
    * @param {string} option
@@ -58,7 +55,10 @@ class Validator {
    * @static
    */
   static check(option, options, referenceOptions, path) {
-    if (referenceOptions[option] === undefined && referenceOptions.__any__ === undefined) {
+    if (
+      referenceOptions[option] === undefined &&
+      referenceOptions.__any__ === undefined
+    ) {
       Validator.getSuggestion(option, referenceOptions, path);
       return;
     }
@@ -66,7 +66,10 @@ class Validator {
     let referenceOption = option;
     let is_object = true;
 
-    if (referenceOptions[option] === undefined && referenceOptions.__any__ !== undefined) {
+    if (
+      referenceOptions[option] === undefined &&
+      referenceOptions.__any__ !== undefined
+    ) {
       // NOTE: This only triggers if the __any__ is in the top level of the options object.
       //       THAT'S A REALLY BAD PLACE TO ALLOW IT!!!!
       // TODO: Examine if needed, remove if possible
@@ -76,10 +79,9 @@ class Validator {
 
       // if the any-subgroup is not a predefined object in the configurator,
       // we do not look deeper into the object.
-      is_object = (Validator.getType(options[option]) === 'object');
-    }
-    else {
-      // Since all options in the reference are objects, we can check whether 
+      is_object = Validator.getType(options[option]) === 'object';
+    } else {
+      // Since all options in the reference are objects, we can check whether
       // they are supposed to be the object to look for the __type__ field.
       // if this is an object, we check if the correct type has been supplied to account for shorthand options.
     }
@@ -89,7 +91,14 @@ class Validator {
       refOptionObj = refOptionObj.__type__;
     }
 
-    Validator.checkFields(option, options, referenceOptions, referenceOption, refOptionObj, path);
+    Validator.checkFields(
+      option,
+      options,
+      referenceOptions,
+      referenceOption,
+      refOptionObj,
+      path
+    );
   }
 
   /**
@@ -102,9 +111,19 @@ class Validator {
    * @param {Array}   path             | where in the object is the option
    * @static
    */
-  static checkFields(option, options, referenceOptions, referenceOption, refOptionObj, path) {
-    let log = function(message) {
-      console.log('%c' + message + Validator.printLocation(path, option), printStyle);
+  static checkFields(
+    option,
+    options,
+    referenceOptions,
+    referenceOption,
+    refOptionObj,
+    path
+  ) {
+    let log = function (message) {
+      console.log(
+        '%c' + message + Validator.printLocation(path, option),
+        printStyle
+      );
     };
 
     let optionType = Validator.getType(options[option]);
@@ -112,22 +131,42 @@ class Validator {
 
     if (refOptionType !== undefined) {
       // if the type is correct, we check if it is supposed to be one of a few select values
-      if (Validator.getType(refOptionType) === 'array' && refOptionType.indexOf(options[option]) === -1) {
-        log('Invalid option detected in "' + option + '".' +
-          ' Allowed values are:' + Validator.print(refOptionType) +
-          ' not "' + options[option] + '". ');
+      if (
+        Validator.getType(refOptionType) === 'array' &&
+        refOptionType.indexOf(options[option]) === -1
+      ) {
+        log(
+          'Invalid option detected in "' +
+            option +
+            '".' +
+            ' Allowed values are:' +
+            Validator.print(refOptionType) +
+            ' not "' +
+            options[option] +
+            '". '
+        );
         errorFound = true;
-      }
-      else if (optionType === 'object' && referenceOption !== "__any__") {
+      } else if (optionType === 'object' && referenceOption !== '__any__') {
         path = util.copyAndExtendArray(path, option);
-        Validator.parse(options[option], referenceOptions[referenceOption], path);
+        Validator.parse(
+          options[option],
+          referenceOptions[referenceOption],
+          path
+        );
       }
-    }
-    else if (refOptionObj['any'] === undefined) {
+    } else if (refOptionObj['any'] === undefined) {
       // type of the field is incorrect and the field cannot be any
-      log('Invalid type received for "' + option +
-        '". Expected: ' + Validator.print(Object.keys(refOptionObj)) +
-        '. Received ['  + optionType + '] "' + options[option] + '"');
+      log(
+        'Invalid type received for "' +
+          option +
+          '". Expected: ' +
+          Validator.print(Object.keys(refOptionObj)) +
+          '. Received [' +
+          optionType +
+          '] "' +
+          options[option] +
+          '"'
+      );
       errorFound = true;
     }
   }
@@ -167,17 +206,13 @@ class Validator {
         return 'moment';
       }
       return 'object';
-    }
-    else if (type === 'number') {
+    } else if (type === 'number') {
       return 'number';
-    }
-    else if (type === 'boolean') {
+    } else if (type === 'boolean') {
       return 'boolean';
-    }
-    else if (type === 'string') {
+    } else if (type === 'string') {
       return 'string';
-    }
-    else if (type === undefined) {
+    } else if (type === undefined) {
       return 'undefined';
     }
     return type;
@@ -190,32 +225,50 @@ class Validator {
    * @static
    */
   static getSuggestion(option, options, path) {
-    let localSearch = Validator.findInOptions(option,options,path,false);
-    let globalSearch = Validator.findInOptions(option,allOptions,[],true);
+    let localSearch = Validator.findInOptions(option, options, path, false);
+    let globalSearch = Validator.findInOptions(option, allOptions, [], true);
 
     let localSearchThreshold = 8;
     let globalSearchThreshold = 4;
 
     let msg;
     if (localSearch.indexMatch !== undefined) {
-      msg = ' in ' + Validator.printLocation(localSearch.path, option,'') +
-        'Perhaps it was incomplete? Did you mean: "' + localSearch.indexMatch + '"?\n\n';
-    }
-    else if (globalSearch.distance <= globalSearchThreshold && localSearch.distance > globalSearch.distance) {
-      msg = ' in ' + Validator.printLocation(localSearch.path, option,'') +
+      msg =
+        ' in ' +
+        Validator.printLocation(localSearch.path, option, '') +
+        'Perhaps it was incomplete? Did you mean: "' +
+        localSearch.indexMatch +
+        '"?\n\n';
+    } else if (
+      globalSearch.distance <= globalSearchThreshold &&
+      localSearch.distance > globalSearch.distance
+    ) {
+      msg =
+        ' in ' +
+        Validator.printLocation(localSearch.path, option, '') +
         'Perhaps it was misplaced? Matching option found at: ' +
-        Validator.printLocation(globalSearch.path, globalSearch.closestMatch,'');
-    }
-    else if (localSearch.distance <= localSearchThreshold) {
-      msg = '. Did you mean "' + localSearch.closestMatch + '"?' +
+        Validator.printLocation(
+          globalSearch.path,
+          globalSearch.closestMatch,
+          ''
+        );
+    } else if (localSearch.distance <= localSearchThreshold) {
+      msg =
+        '. Did you mean "' +
+        localSearch.closestMatch +
+        '"?' +
         Validator.printLocation(localSearch.path, option);
-    }
-    else {
-      msg = '. Did you mean one of these: ' + Validator.print(Object.keys(options)) +
-      Validator.printLocation(path, option);
+    } else {
+      msg =
+        '. Did you mean one of these: ' +
+        Validator.print(Object.keys(options)) +
+        Validator.printLocation(path, option);
     }
 
-    console.log('%cUnknown option detected: "' + option + '"' + msg, printStyle);
+    console.log(
+      '%cUnknown option detected: "' + option + '"' + msg,
+      printStyle
+    );
     errorFound = true;
   }
 
@@ -234,18 +287,22 @@ class Validator {
     let closestMatchPath = [];
     let lowerCaseOption = option.toLowerCase();
     let indexMatch = undefined;
-    for (let op in options) {  // eslint-disable-line guard-for-in
+    for (let op in options) {
+      // eslint-disable-line guard-for-in
       let distance;
       if (options[op].__type__ !== undefined && recursive === true) {
-        let result = Validator.findInOptions(option, options[op], util.copyAndExtendArray(path,op));
+        let result = Validator.findInOptions(
+          option,
+          options[op],
+          util.copyAndExtendArray(path, op)
+        );
         if (min > result.distance) {
           closestMatch = result.closestMatch;
           closestMatchPath = result.path;
           min = result.distance;
           indexMatch = result.indexMatch;
         }
-      }
-      else {
+      } else {
         if (op.toLowerCase().indexOf(lowerCaseOption) !== -1) {
           indexMatch = op;
         }
@@ -257,7 +314,12 @@ class Validator {
         }
       }
     }
-    return {closestMatch:closestMatch, path:closestMatchPath, distance:min, indexMatch: indexMatch};
+    return {
+      closestMatch: closestMatch,
+      path: closestMatchPath,
+      distance: min,
+      indexMatch: indexMatch,
+    };
   }
 
   /**
@@ -273,7 +335,7 @@ class Validator {
       for (let j = 0; j < i + 1; j++) {
         str += '  ';
       }
-      str += path[i] + ': {\n'
+      str += path[i] + ': {\n';
     }
     for (let j = 0; j < path.length + 1; j++) {
       str += '  ';
@@ -283,7 +345,7 @@ class Validator {
       for (let j = 0; j < path.length - i; j++) {
         str += '  ';
       }
-      str += '}\n'
+      str += '}\n';
     }
     return str + '\n\n';
   }
@@ -294,9 +356,10 @@ class Validator {
    * @static
    */
   static print(options) {
-    return JSON.stringify(options).replace(/(\")|(\[)|(\])|(,"__type__")/g, "").replace(/(\,)/g, ', ')
+    return JSON.stringify(options)
+      .replace(/(\")|(\[)|(\])|(,"__type__")/g, '')
+      .replace(/(\,)/g, ', ');
   }
-
 
   /**
    *  Compute the edit distance between the two given strings
@@ -339,9 +402,13 @@ class Validator {
         if (b.charAt(i - 1) == a.charAt(j - 1)) {
           matrix[i][j] = matrix[i - 1][j - 1];
         } else {
-          matrix[i][j] = Math.min(matrix[i - 1][j - 1] + 1, // substitution
-            Math.min(matrix[i][j - 1] + 1, // insertion
-              matrix[i - 1][j] + 1)); // deletion
+          matrix[i][j] = Math.min(
+            matrix[i - 1][j - 1] + 1, // substitution
+            Math.min(
+              matrix[i][j - 1] + 1, // insertion
+              matrix[i - 1][j] + 1
+            )
+          ); // deletion
         }
       }
     }
@@ -350,6 +417,5 @@ class Validator {
   }
 }
 
-
 export default Validator;
-export {printStyle}
+export { printStyle };

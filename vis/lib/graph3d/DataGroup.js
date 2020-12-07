@@ -1,10 +1,9 @@
-var DataSet  = require('../DataSet');
+var DataSet = require('../DataSet');
 var DataView = require('../DataView');
-var Range    = require('./Range');
+var Range = require('./Range');
 var Filter = require('./Filter');
 var Settings = require('./Settings');
 var Point3d = require('./Point3d');
-
 
 /**
  * Creates a container for all data of one specific 3D-graph.
@@ -19,9 +18,8 @@ var Point3d = require('./Point3d');
  * @constructor DataGroup
  */
 function DataGroup() {
-  this.dataTable = null;  // The original data table
+  this.dataTable = null; // The original data table
 }
-
 
 /**
  * Initializes the instance from the passed data.
@@ -38,7 +36,7 @@ function DataGroup() {
  * @param {number}   style   Style Number
  * @returns {Array.<Object>}
  */
-DataGroup.prototype.initializeData = function(graph3d, rawData, style) {
+DataGroup.prototype.initializeData = function (graph3d, rawData, style) {
   if (rawData === undefined) return;
 
   if (Array.isArray(rawData)) {
@@ -48,8 +46,7 @@ DataGroup.prototype.initializeData = function(graph3d, rawData, style) {
   var data;
   if (rawData instanceof DataSet || rawData instanceof DataView) {
     data = rawData.get();
-  }
-  else {
+  } else {
     throw new Error('Array, DataSet, or DataView expected');
   }
 
@@ -77,22 +74,19 @@ DataGroup.prototype.initializeData = function(graph3d, rawData, style) {
   this.colY = 'y';
   this.colZ = 'z';
 
-
   var withBars = graph3d.hasBars(style);
 
   // determine barWidth from data
   if (withBars) {
     if (graph3d.defaultXBarWidth !== undefined) {
       this.xBarWidth = graph3d.defaultXBarWidth;
-    }
-    else {
+    } else {
       this.xBarWidth = this.getSmallestDifference(data, this.colX) || 1;
     }
 
     if (graph3d.defaultYBarWidth !== undefined) {
       this.yBarWidth = graph3d.defaultYBarWidth;
-    }
-    else {
+    } else {
       this.yBarWidth = this.getSmallestDifference(data, this.colY) || 1;
     }
   }
@@ -105,7 +99,11 @@ DataGroup.prototype.initializeData = function(graph3d, rawData, style) {
   if (data[0].hasOwnProperty('style')) {
     this.colValue = 'style';
     var valueRange = this.getColumnRange(data, this.colValue);
-    this._setRangeDefaults(valueRange, graph3d.defaultValueMin, graph3d.defaultValueMax);
+    this._setRangeDefaults(
+      valueRange,
+      graph3d.defaultValueMin,
+      graph3d.defaultValueMax
+    );
     this.valueRange = valueRange;
   }
 
@@ -114,28 +112,27 @@ DataGroup.prototype.initializeData = function(graph3d, rawData, style) {
   if (table[0].hasOwnProperty('filter')) {
     if (this.dataFilter === undefined) {
       this.dataFilter = new Filter(this, 'filter', graph3d);
-      this.dataFilter.setOnLoadCallback(function() { graph3d.redraw(); });
+      this.dataFilter.setOnLoadCallback(function () {
+        graph3d.redraw();
+      });
     }
   }
-
 
   var dataPoints;
   if (this.dataFilter) {
     // apply filtering
     dataPoints = this.dataFilter._getDataPoints();
-  }
-  else {
+  } else {
     // no filtering. load all data
     dataPoints = this._getDataPoints(this.getDataTable());
   }
   return dataPoints;
 };
 
-
 /**
  * Collect the range settings for the given data column.
  *
- * This internal method is intended to make the range 
+ * This internal method is intended to make the range
  * initalization more generic.
  *
  * TODO: if/when combined settings per axis defined, get rid of this.
@@ -147,25 +144,24 @@ DataGroup.prototype.initializeData = function(graph3d, rawData, style) {
  *                              required for access to settings
  * @returns {Object}
  */
-DataGroup.prototype._collectRangeSettings = function(column, graph3d) {
+DataGroup.prototype._collectRangeSettings = function (column, graph3d) {
   var index = ['x', 'y', 'z'].indexOf(column);
 
   if (index == -1) {
-    throw new Error('Column \'' + column + '\' invalid');
+    throw new Error("Column '" + column + "' invalid");
   }
 
   var upper = column.toUpperCase();
 
   return {
-    barWidth   : this[column + 'BarWidth'],
-    min        : graph3d['default' + upper + 'Min'],
-    max        : graph3d['default' + upper + 'Max'],
-    step       : graph3d['default' + upper + 'Step'],
+    barWidth: this[column + 'BarWidth'],
+    min: graph3d['default' + upper + 'Min'],
+    max: graph3d['default' + upper + 'Max'],
+    step: graph3d['default' + upper + 'Step'],
     range_label: column + 'Range', // Name of instance field to write to
-    step_label : column + 'Step'   // Name of instance field to write to
+    step_label: column + 'Step', // Name of instance field to write to
   };
 };
-
 
 /**
  * Initializes the settings per given column.
@@ -180,20 +176,26 @@ DataGroup.prototype._collectRangeSettings = function(column, graph3d) {
  *                                      required for access to settings
  * @param {boolean}            withBars True if initializing for bar graph
  */
-DataGroup.prototype._initializeRange = function(data, column, graph3d, withBars) {
+DataGroup.prototype._initializeRange = function (
+  data,
+  column,
+  graph3d,
+  withBars
+) {
   var NUMSTEPS = 5;
   var settings = this._collectRangeSettings(column, graph3d);
 
   var range = this.getColumnRange(data, column);
-  if (withBars && column != 'z') {          // Safeguard for 'z'; it doesn't have a bar width
+  if (withBars && column != 'z') {
+    // Safeguard for 'z'; it doesn't have a bar width
     range.expand(settings.barWidth / 2);
   }
 
   this._setRangeDefaults(range, settings.min, settings.max);
   this[settings.range_label] = range;
-  this[settings.step_label ] = (settings.step !== undefined) ? settings.step : range.range()/NUMSTEPS;
-}
-
+  this[settings.step_label] =
+    settings.step !== undefined ? settings.step : range.range() / NUMSTEPS;
+};
 
 /**
  * Creates a list with all the different values in the data for the given column.
@@ -205,7 +207,7 @@ DataGroup.prototype._initializeRange = function(data, column, graph3d, withBars)
  *
  * @returns {Array} All distinct values in the given column data, sorted ascending.
  */
-DataGroup.prototype.getDistinctValues = function(column, data) {
+DataGroup.prototype.getDistinctValues = function (column, data) {
   if (data === undefined) {
     data = this.dataTable;
   }
@@ -219,9 +221,10 @@ DataGroup.prototype.getDistinctValues = function(column, data) {
     }
   }
 
-  return values.sort(function(a,b) { return a - b; });
+  return values.sort(function (a, b) {
+    return a - b;
+  });
 };
-
 
 /**
  * Determine the smallest difference between the values for given
@@ -233,7 +236,7 @@ DataGroup.prototype.getDistinctValues = function(column, data) {
  * @returns {number|null} Smallest difference value or
  *                        null, if it can't be determined.
  */
-DataGroup.prototype.getSmallestDifference = function(data, column) {
+DataGroup.prototype.getSmallestDifference = function (data, column) {
   var values = this.getDistinctValues(data, column);
 
   // Get all the distinct diffs
@@ -243,14 +246,13 @@ DataGroup.prototype.getSmallestDifference = function(data, column) {
   for (var i = 1; i < values.length; i++) {
     var diff = values[i] - values[i - 1];
 
-    if (smallest_diff == null || smallest_diff > diff ) {
+    if (smallest_diff == null || smallest_diff > diff) {
       smallest_diff = diff;
     }
   }
 
   return smallest_diff;
-}
-
+};
 
 /**
  * Get the absolute min/max values for the passed data column.
@@ -260,8 +262,8 @@ DataGroup.prototype.getSmallestDifference = function(data, column) {
  *
  * @returns {Range} A Range instance with min/max members properly set.
  */
-DataGroup.prototype.getColumnRange = function(data, column) {
-  var range  = new Range();
+DataGroup.prototype.getColumnRange = function (data, column) {
+  var range = new Range();
 
   // Adjust the range so that it covers all values in the passed data elements.
   for (var i = 0; i < data.length; i++) {
@@ -272,16 +274,14 @@ DataGroup.prototype.getColumnRange = function(data, column) {
   return range;
 };
 
-
 /**
  * Determines the number of rows in the current data.
  *
  * @returns {number}
  */
-DataGroup.prototype.getNumberOfRows = function() {
+DataGroup.prototype.getNumberOfRows = function () {
   return this.dataTable.length;
 };
-
 
 /**
  * Set default values for range
@@ -297,7 +297,11 @@ DataGroup.prototype.getNumberOfRows = function() {
  * @param {number} [defaultMax=range.max]
  * @private
  */
-DataGroup.prototype._setRangeDefaults = function (range, defaultMin, defaultMax) {
+DataGroup.prototype._setRangeDefaults = function (
+  range,
+  defaultMin,
+  defaultMax
+) {
   if (defaultMin !== undefined) {
     range.min = defaultMin;
   }
@@ -312,23 +316,20 @@ DataGroup.prototype._setRangeDefaults = function (range, defaultMin, defaultMax)
   if (range.max <= range.min) range.max = range.min + 1;
 };
 
-
-DataGroup.prototype.getDataTable = function() {
+DataGroup.prototype.getDataTable = function () {
   return this.dataTable;
 };
 
-
-DataGroup.prototype.getDataSet = function() {
+DataGroup.prototype.getDataSet = function () {
   return this.dataSet;
 };
-
 
 /**
  * Return all data values as a list of Point3d objects
  * @param {Array.<Object>} data
  * @returns {Array.<Object>}
  */
-DataGroup.prototype.getDataPoints = function(data) {
+DataGroup.prototype.getDataPoints = function (data) {
   var dataPoints = [];
 
   for (var i = 0; i < data.length; i++) {
@@ -354,7 +355,6 @@ DataGroup.prototype.getDataPoints = function(data) {
   return dataPoints;
 };
 
-
 /**
  * Copy all values from the data table to a matrix.
  *
@@ -363,7 +363,7 @@ DataGroup.prototype.getDataPoints = function(data) {
  * @returns {Array.<Object>}
  * @private
  */
-DataGroup.prototype.initDataAsMatrix = function(data) {
+DataGroup.prototype.initDataAsMatrix = function (data) {
   // TODO: store the created matrix dataPoints in the filters instead of
   //       reloading each time.
   var x, y, i, obj;
@@ -375,7 +375,7 @@ DataGroup.prototype.initDataAsMatrix = function(data) {
   var dataPoints = this.getDataPoints(data);
 
   // create a grid, a 2d matrix, with all values.
-  var dataMatrix = [];   // temporary data matrix
+  var dataMatrix = []; // temporary data matrix
   for (i = 0; i < dataPoints.length; i++) {
     obj = dataPoints[i];
 
@@ -394,12 +394,14 @@ DataGroup.prototype.initDataAsMatrix = function(data) {
   for (x = 0; x < dataMatrix.length; x++) {
     for (y = 0; y < dataMatrix[x].length; y++) {
       if (dataMatrix[x][y]) {
-        dataMatrix[x][y].pointRight = (x < dataMatrix.length-1) ? dataMatrix[x+1][y] : undefined;
-        dataMatrix[x][y].pointTop   = (y < dataMatrix[x].length-1) ? dataMatrix[x][y+1] : undefined;
+        dataMatrix[x][y].pointRight =
+          x < dataMatrix.length - 1 ? dataMatrix[x + 1][y] : undefined;
+        dataMatrix[x][y].pointTop =
+          y < dataMatrix[x].length - 1 ? dataMatrix[x][y + 1] : undefined;
         dataMatrix[x][y].pointCross =
-          (x < dataMatrix.length-1 && y < dataMatrix[x].length-1) ?
-            dataMatrix[x+1][y+1] :
-            undefined;
+          x < dataMatrix.length - 1 && y < dataMatrix[x].length - 1
+            ? dataMatrix[x + 1][y + 1]
+            : undefined;
       }
     }
   }
@@ -407,29 +409,26 @@ DataGroup.prototype.initDataAsMatrix = function(data) {
   return dataPoints;
 };
 
-
 /**
  * Return common information, if present
  *
  * @returns {string}
  */
-DataGroup.prototype.getInfo = function() {
+DataGroup.prototype.getInfo = function () {
   var dataFilter = this.dataFilter;
   if (!dataFilter) return undefined;
 
   return dataFilter.getLabel() + ': ' + dataFilter.getSelectedValue();
 };
 
-
 /**
  * Reload the data
  */
-DataGroup.prototype.reload = function() {
+DataGroup.prototype.reload = function () {
   if (this.dataTable) {
     this.setData(this.dataTable);
   }
 };
-
 
 /**
  * Filter the data based on the current filter
@@ -441,10 +440,13 @@ DataGroup.prototype.reload = function() {
 DataGroup.prototype._getDataPoints = function (data) {
   var dataPoints = [];
 
-  if (this.style === Settings.STYLE.GRID || this.style === Settings.STYLE.SURFACE) {
+  if (
+    this.style === Settings.STYLE.GRID ||
+    this.style === Settings.STYLE.SURFACE
+  ) {
     dataPoints = this.initDataAsMatrix(data);
-  }
-  else {  // 'dot', 'dot-line', etc.
+  } else {
+    // 'dot', 'dot-line', etc.
     this._checkValueField(data);
     dataPoints = this.getDataPoints(data);
 
@@ -461,7 +463,6 @@ DataGroup.prototype._getDataPoints = function (data) {
   return dataPoints;
 };
 
-
 /**
  * Check if the state is consistent for the use of the value field.
  *
@@ -471,34 +472,40 @@ DataGroup.prototype._getDataPoints = function (data) {
  * @private
  */
 DataGroup.prototype._checkValueField = function (data) {
-
-  var hasValueField = this.style === Settings.STYLE.BARCOLOR
-                   || this.style === Settings.STYLE.BARSIZE
-                   || this.style === Settings.STYLE.DOTCOLOR
-                   || this.style === Settings.STYLE.DOTSIZE;
+  var hasValueField =
+    this.style === Settings.STYLE.BARCOLOR ||
+    this.style === Settings.STYLE.BARSIZE ||
+    this.style === Settings.STYLE.DOTCOLOR ||
+    this.style === Settings.STYLE.DOTSIZE;
 
   if (!hasValueField) {
-    return;   // No need to check further
+    return; // No need to check further
   }
-
 
   // Following field must be present for the current graph style
   if (this.colValue === undefined) {
-    throw new Error('Expected data to have '
-      + ' field \'style\' '
-      + ' for graph style \'' + this.style + '\''
+    throw new Error(
+      'Expected data to have ' +
+        " field 'style' " +
+        " for graph style '" +
+        this.style +
+        "'"
     );
   }
 
   // The data must also contain this field.
   // Note that only first data element is checked.
   if (data[0][this.colValue] === undefined) {
-    throw new Error('Expected data to have '
-      + ' field \'' + this.colValue + '\' '
-      + ' for graph style \'' + this.style + '\''
+    throw new Error(
+      'Expected data to have ' +
+        " field '" +
+        this.colValue +
+        "' " +
+        " for graph style '" +
+        this.style +
+        "'"
     );
   }
 };
-
 
 module.exports = DataGroup;

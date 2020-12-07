@@ -1,4 +1,3 @@
-
 .vis-itemset {
   position: relative;
   padding: 0;
@@ -42,15 +41,15 @@
 }
 
 .vis-label.vis-nesting-group.expanded:before {
-  content: "\25BC";
+  content: '\25BC';
 }
 
 .vis-label.vis-nesting-group.collapsed-rtl:before {
-  content: "\25C0";
+  content: '\25C0';
 }
 
 .vis-label.vis-nesting-group.collapsed:before {
-  content: "\25B6";
+  content: '\25B6';
 }
 
 .vis-overlay {

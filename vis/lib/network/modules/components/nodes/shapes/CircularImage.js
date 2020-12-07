@@ -1,6 +1,6 @@
 'use strict';
 
-import CircleImageBase from '../util/CircleImageBase'
+import CircleImageBase from '../util/CircleImageBase';
 
 /**
  * A CircularImage Node/Cluster shape.
@@ -15,7 +15,7 @@ class CircularImage extends CircleImageBase {
    * @param {Image} imageObj
    * @param {Image} imageObjAlt
    */
-  constructor (options, body, labelModule, imageObj, imageObjAlt) {
+  constructor(options, body, labelModule, imageObj, imageObjAlt) {
     super(options, body, labelModule);
 
     this.setImages(imageObj, imageObjAlt);
@@ -28,16 +28,17 @@ class CircularImage extends CircleImageBase {
    * @param {boolean} [hover]
    */
   resize(ctx, selected = this.selected, hover = this.hover) {
-    var imageAbsent = (this.imageObj.src === undefined) ||
-        (this.imageObj.width === undefined) ||
-        (this.imageObj.height === undefined);
+    var imageAbsent =
+      this.imageObj.src === undefined ||
+      this.imageObj.width === undefined ||
+      this.imageObj.height === undefined;
 
     if (imageAbsent) {
       var diameter = this.options.size * 2;
       this.width = diameter;
       this.height = diameter;
-      this.radius = 0.5*this.width;
-			return;
+      this.radius = 0.5 * this.width;
+      return;
     }
 
     // At this point, an image is present, i.e. this.imageObj is valid.
@@ -75,7 +76,7 @@ class CircularImage extends CircleImageBase {
 
     this._drawImageLabel(ctx, x, y, selected, hover);
 
-    this.updateBoundingBox(x,y);
+    this.updateBoundingBox(x, y);
   }
 
   // TODO: compare with Circle.updateBoundingBox(), consolidate? More stuff is happening here
@@ -84,18 +85,26 @@ class CircularImage extends CircleImageBase {
    * @param {number} x width
    * @param {number} y height
    */
-  updateBoundingBox(x,y) {
+  updateBoundingBox(x, y) {
     this.boundingBox.top = y - this.options.size;
     this.boundingBox.left = x - this.options.size;
     this.boundingBox.right = x + this.options.size;
     this.boundingBox.bottom = y + this.options.size;
 
     // TODO: compare with Image.updateBoundingBox(), consolidate?
-    this.boundingBox.left = Math.min(this.boundingBox.left, this.labelModule.size.left);
-    this.boundingBox.right = Math.max(this.boundingBox.right, this.labelModule.size.left + this.labelModule.size.width);
-    this.boundingBox.bottom = Math.max(this.boundingBox.bottom, this.boundingBox.bottom + this.labelOffset);
+    this.boundingBox.left = Math.min(
+      this.boundingBox.left,
+      this.labelModule.size.left
+    );
+    this.boundingBox.right = Math.max(
+      this.boundingBox.right,
+      this.labelModule.size.left + this.labelModule.size.width
+    );
+    this.boundingBox.bottom = Math.max(
+      this.boundingBox.bottom,
+      this.boundingBox.bottom + this.labelOffset
+    );
   }
-
 
   /**
    *
@@ -103,7 +112,8 @@ class CircularImage extends CircleImageBase {
    * @param {number} angle - Unused
    * @returns {number}
    */
-  distanceToBorder(ctx, angle) {  // eslint-disable-line no-unused-vars
+  distanceToBorder(ctx, angle) {
+    // eslint-disable-line no-unused-vars
     this.resize(ctx);
     return this.width * 0.5;
   }

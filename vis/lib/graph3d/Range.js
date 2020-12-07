@@ -12,7 +12,6 @@ function Range() {
   this.max = undefined;
 }
 
-
 /**
  * Adjust the range so that the passed value fits in it.
  *
@@ -21,10 +20,10 @@ function Range() {
  *
  * @param {number} value Numeric value to fit in range
  */
-Range.prototype.adjust = function(value) {
+Range.prototype.adjust = function (value) {
   if (value === undefined) return;
 
-  if (this.min === undefined || this.min > value ) {
+  if (this.min === undefined || this.min > value) {
     this.min = value;
   }
 
@@ -33,17 +32,15 @@ Range.prototype.adjust = function(value) {
   }
 };
 
-
 /**
  * Adjust the current range so that the passed range fits in it.
  *
  * @param {Range} range Range instance to fit in current instance
  */
-Range.prototype.combine = function(range) {
-   this.add(range.min);
-   this.add(range.max);
+Range.prototype.combine = function (range) {
+  this.add(range.min);
+  this.add(range.max);
 };
-
 
 /**
  * Expand the range by the given value
@@ -55,7 +52,7 @@ Range.prototype.combine = function(range) {
  *
  * @param {number} val Amount by which to expand or shrink current range with
  */
-Range.prototype.expand = function(val) {
+Range.prototype.expand = function (val) {
   if (val === undefined) {
     return;
   }
@@ -73,25 +70,22 @@ Range.prototype.expand = function(val) {
   this.max = newMax;
 };
 
-
 /**
  * Determine the full range width of current instance.
  *
  * @returns {num} The calculated width of this range
  */
-Range.prototype.range = function() {
+Range.prototype.range = function () {
   return this.max - this.min;
 };
-
 
 /**
  * Determine the central point of current instance.
  *
  * @returns {number} the value in the middle of min and max
  */
-Range.prototype.center = function() {
- return (this.min + this.max) / 2;
+Range.prototype.center = function () {
+  return (this.min + this.max) / 2;
 };
-
 
 module.exports = Range;

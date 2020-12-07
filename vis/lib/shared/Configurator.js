@@ -18,7 +18,12 @@ class Configurator {
    * @param {Object} configureOptions    | the fully configured and predefined options set found in allOptions.js
    * @param {number} pixelRatio          | canvas pixel ratio
    */
-  constructor(parentModule, defaultContainer, configureOptions, pixelRatio = 1) {
+  constructor(
+    parentModule,
+    defaultContainer,
+    configureOptions,
+    pixelRatio = 1
+  ) {
     this.parent = parentModule;
     this.changedOptions = [];
     this.container = defaultContainer;
@@ -31,7 +36,7 @@ class Configurator {
       enabled: false,
       filter: true,
       container: undefined,
-      showButton: true
+      showButton: true,
     };
     util.extend(this.options, this.defaultOptions);
 
@@ -44,7 +49,6 @@ class Configurator {
     this.colorPicker = new ColorPicker(pixelRatio);
     this.wrapper = undefined;
   }
-
 
   /**
    * refresh all options.
@@ -61,11 +65,9 @@ class Configurator {
       let enabled = true;
       if (typeof options === 'string') {
         this.options.filter = options;
-      }
-      else if (options instanceof Array) {
+      } else if (options instanceof Array) {
         this.options.filter = options.join();
-      }
-      else if (typeof options === 'object') {
+      } else if (typeof options === 'object') {
         if (options.container !== undefined) {
           this.options.container = options.container;
         }
@@ -78,12 +80,10 @@ class Configurator {
         if (options.enabled !== undefined) {
           enabled = options.enabled;
         }
-      }
-      else if (typeof options === 'boolean') {
+      } else if (typeof options === 'boolean') {
         this.options.filter = true;
         enabled = options;
-      }
-      else if (typeof options === 'function') {
+      } else if (typeof options === 'function') {
         this.options.filter = options;
         enabled = true;
       }
@@ -127,10 +127,11 @@ class Configurator {
         this.allowCreation = false;
         show = false;
         if (typeof filter === 'function') {
-          show = filter(option,[]);
-          show = show || this._handleObject(this.configureOptions[option], [option], true);
-        }
-        else if (filter === true || filter.indexOf(option) !== -1) {
+          show = filter(option, []);
+          show =
+            show ||
+            this._handleObject(this.configureOptions[option], [option], true);
+        } else if (filter === true || filter.indexOf(option) !== -1) {
           show = true;
         }
 
@@ -155,12 +156,19 @@ class Configurator {
       let generateButton = document.createElement('div');
       generateButton.className = 'vis-configuration vis-config-button';
       generateButton.innerHTML = 'generate options';
-      generateButton.onclick =     () => {this._printOptions();};
-      generateButton.onmouseover = () => {generateButton.className = 'vis-configuration vis-config-button hover';};
-      generateButton.onmouseout =  () => {generateButton.className = 'vis-configuration vis-config-button';};
+      generateButton.onclick = () => {
+        this._printOptions();
+      };
+      generateButton.onmouseover = () => {
+        generateButton.className = 'vis-configuration vis-config-button hover';
+      };
+      generateButton.onmouseout = () => {
+        generateButton.className = 'vis-configuration vis-config-button';
+      };
 
       this.optionsContainer = document.createElement('div');
-      this.optionsContainer.className = 'vis-configuration vis-config-option-container';
+      this.optionsContainer.className =
+        'vis-configuration vis-config-option-container';
 
       this.domElements.push(this.optionsContainer);
       this.domElements.push(generateButton);
@@ -169,7 +177,6 @@ class Configurator {
     this._push();
     //~ this.colorPicker.insertTo(this.container);
   }
-
 
   /**
    * draw all DOM elements on the screen
@@ -183,9 +190,8 @@ class Configurator {
       this.wrapper.appendChild(this.domElements[i]);
     }
 
-    this._showPopupIfNeeded()
+    this._showPopupIfNeeded();
   }
-
 
   /**
    * delete all DOM elements
@@ -205,7 +211,6 @@ class Configurator {
     this._removePopup();
   }
 
-
   /**
    * get the value from the actualOptions if it exists
    * @param {array} path    | where to look for the actual option
@@ -217,15 +222,13 @@ class Configurator {
     for (let i = 0; i < path.length; i++) {
       if (base[path[i]] !== undefined) {
         base = base[path[i]];
-      }
-      else {
+      } else {
         base = undefined;
         break;
       }
     }
     return base;
   }
-
 
   /**
    * all option elements are wrapped in an item
@@ -237,7 +240,8 @@ class Configurator {
   _makeItem(path, ...domElements) {
     if (this.allowCreation === true) {
       let item = document.createElement('div');
-      item.className = 'vis-configuration vis-config-item vis-config-s' + path.length;
+      item.className =
+        'vis-configuration vis-config-item vis-config-s' + path.length;
       domElements.forEach((element) => {
         item.appendChild(element);
       });
@@ -246,7 +250,6 @@ class Configurator {
     }
     return 0;
   }
-
 
   /**
    * header for major subjects
@@ -257,9 +260,8 @@ class Configurator {
     let div = document.createElement('div');
     div.className = 'vis-configuration vis-config-header';
     div.innerHTML = name;
-    this._makeItem([],div);
+    this._makeItem([], div);
   }
-
 
   /**
    * make a label, if it is an object label, it gets different styling.
@@ -271,16 +273,15 @@ class Configurator {
    */
   _makeLabel(name, path, objectLabel = false) {
     let div = document.createElement('div');
-    div.className = 'vis-configuration vis-config-label vis-config-s' + path.length;
+    div.className =
+      'vis-configuration vis-config-label vis-config-s' + path.length;
     if (objectLabel === true) {
       div.innerHTML = '<i><b>' + name + ':</b></i>';
-    }
-    else {
+    } else {
       div.innerHTML = name + ':';
     }
     return div;
   }
-
 
   /**
    * make a dropdown list for multiple possible string optoins
@@ -310,12 +311,13 @@ class Configurator {
     }
 
     let me = this;
-    select.onchange = function () {me._update(this.value, path);};
+    select.onchange = function () {
+      me._update(this.value, path);
+    };
 
-    let label = this._makeLabel(path[path.length-1], path);
+    let label = this._makeLabel(path[path.length - 1], path);
     this._makeItem(path, label, select);
   }
-
 
   /**
    * make a range object for numeric options
@@ -335,9 +337,9 @@ class Configurator {
       range.type = 'range'; // not supported on IE9
       range.min = min;
       range.max = max;
-    }
-    // TODO: Add some error handling and remove this lint exception
-    catch (err) {}  // eslint-disable-line no-empty
+    } catch (err) {
+      // TODO: Add some error handling and remove this lint exception
+    } // eslint-disable-line no-empty
     range.step = step;
 
     // set up the popup settings in case they are needed.
@@ -345,13 +347,12 @@ class Configurator {
     let popupValue = 0;
 
     if (value !== undefined) {
-      let factor = 1.20;
+      let factor = 1.2;
       if (value < 0 && value * factor < min) {
         range.min = Math.ceil(value * factor);
         popupValue = range.min;
         popupString = 'range increased';
-      }
-      else if (value / factor < min) {
+      } else if (value / factor < min) {
         range.min = Math.ceil(value / factor);
         popupValue = range.min;
         popupString = 'range increased';
@@ -362,8 +363,7 @@ class Configurator {
         popupString = 'range increased';
       }
       range.value = value;
-    }
-    else {
+    } else {
       range.value = defaultValue;
     }
 
@@ -372,10 +372,15 @@ class Configurator {
     input.value = range.value;
 
     var me = this;
-    range.onchange = function () {input.value = this.value; me._update(Number(this.value), path);};
-    range.oninput  = function () {input.value = this.value; };
+    range.onchange = function () {
+      input.value = this.value;
+      me._update(Number(this.value), path);
+    };
+    range.oninput = function () {
+      input.value = this.value;
+    };
 
-    let label = this._makeLabel(path[path.length-1], path);
+    let label = this._makeLabel(path[path.length - 1], path);
     let itemIndex = this._makeItem(path, label, range, input);
 
     // if a popup is needed AND it has not been shown for this value, show it.
@@ -383,9 +388,7 @@ class Configurator {
       this.popupHistory[itemIndex] = popupValue;
       this._setupPopup(popupString, itemIndex);
     }
-
   }
-
 
   /**
    * prepare the popup
@@ -394,17 +397,22 @@ class Configurator {
    * @private
    */
   _setupPopup(string, index) {
-    if (this.initialized === true && this.allowCreation === true && this.popupCounter < this.popupLimit) {
-      let div = document.createElement("div");
-      div.id = "vis-configuration-popup";
-      div.className = "vis-configuration-popup";
+    if (
+      this.initialized === true &&
+      this.allowCreation === true &&
+      this.popupCounter < this.popupLimit
+    ) {
+      let div = document.createElement('div');
+      div.id = 'vis-configuration-popup';
+      div.className = 'vis-configuration-popup';
       div.innerHTML = string;
-      div.onclick = () => {this._removePopup()};
+      div.onclick = () => {
+        this._removePopup();
+      };
       this.popupCounter += 1;
-      this.popupDiv = {html:div, index:index};
+      this.popupDiv = { html: div, index: index };
     }
   }
-
 
   /**
    * remove the popup from the dom
@@ -419,7 +427,6 @@ class Configurator {
     }
   }
 
-
   /**
    * Show the popup if it is needed.
    * @private
@@ -428,15 +435,15 @@ class Configurator {
     if (this.popupDiv.html !== undefined) {
       let correspondingElement = this.domElements[this.popupDiv.index];
       let rect = correspondingElement.getBoundingClientRect();
-      this.popupDiv.html.style.left = rect.left + "px";
-      this.popupDiv.html.style.top = rect.top - 30 + "px"; // 30 is the height;
-      document.body.appendChild(this.popupDiv.html)
+      this.popupDiv.html.style.left = rect.left + 'px';
+      this.popupDiv.html.style.top = rect.top - 30 + 'px'; // 30 is the height;
+      document.body.appendChild(this.popupDiv.html);
       this.popupDiv.hideTimeout = setTimeout(() => {
         this.popupDiv.html.style.opacity = 0;
-      },1500);
+      }, 1500);
       this.popupDiv.deleteTimeout = setTimeout(() => {
         this._removePopup();
-      },1800)
+      }, 1800);
     }
   }
 
@@ -457,19 +464,20 @@ class Configurator {
       if (value !== defaultValue) {
         if (typeof defaultValue === 'object') {
           if (value !== defaultValue.enabled) {
-            this.changedOptions.push({path:path, value:value});
+            this.changedOptions.push({ path: path, value: value });
           }
-        }
-        else {
-          this.changedOptions.push({path:path, value:value});
+        } else {
+          this.changedOptions.push({ path: path, value: value });
         }
       }
     }
 
     let me = this;
-    checkbox.onchange = function() {me._update(this.checked, path)};
+    checkbox.onchange = function () {
+      me._update(this.checked, path);
+    };
 
-    let label = this._makeLabel(path[path.length-1], path);
+    let label = this._makeLabel(path[path.length - 1], path);
     this._makeItem(path, label, checkbox);
   }
 
@@ -486,16 +494,17 @@ class Configurator {
     checkbox.className = 'vis-configuration vis-config-text';
     checkbox.value = value;
     if (value !== defaultValue) {
-      this.changedOptions.push({path:path, value:value});
+      this.changedOptions.push({ path: path, value: value });
     }
 
     let me = this;
-    checkbox.onchange = function() {me._update(this.value, path)};
+    checkbox.onchange = function () {
+      me._update(this.value, path);
+    };
 
-    let label = this._makeLabel(path[path.length-1], path);
+    let label = this._makeLabel(path[path.length - 1], path);
     this._makeItem(path, label, checkbox);
   }
-
 
   /**
    * make a color field with a color picker for color fields
@@ -512,20 +521,18 @@ class Configurator {
     if (value !== 'none') {
       div.className = 'vis-configuration vis-config-colorBlock';
       div.style.backgroundColor = value;
-    }
-    else {
+    } else {
       div.className = 'vis-configuration vis-config-colorBlock none';
     }
 
     value = value === undefined ? defaultColor : value;
     div.onclick = () => {
-      this._showColorPicker(value,div,path);
+      this._showColorPicker(value, div, path);
     };
 
-    let label = this._makeLabel(path[path.length-1], path);
-    this._makeItem(path,label, div);
+    let label = this._makeLabel(path[path.length - 1], path);
+    this._makeItem(path, label, div);
   }
-
 
   /**
    * used by the color buttons to call the color picker.
@@ -536,26 +543,26 @@ class Configurator {
    */
   _showColorPicker(value, div, path) {
     // clear the callback from this div
-    div.onclick = function() {};
+    div.onclick = function () {};
 
     this.colorPicker.insertTo(div);
     this.colorPicker.show();
 
     this.colorPicker.setColor(value);
     this.colorPicker.setUpdateCallback((color) => {
-      let colorString = 'rgba(' + color.r + ',' + color.g + ',' + color.b + ',' + color.a + ')';
+      let colorString =
+        'rgba(' + color.r + ',' + color.g + ',' + color.b + ',' + color.a + ')';
       div.style.backgroundColor = colorString;
-      this._update(colorString,path);
+      this._update(colorString, path);
     });
 
     // on close of the colorpicker, restore the callback.
     this.colorPicker.setCloseCallback(() => {
       div.onclick = () => {
-        this._showColorPicker(value,div,path);
+        this._showColorPicker(value, div, path);
       };
     });
   }
-
 
   /**
    * parse an object and draw the correct items
@@ -575,11 +582,16 @@ class Configurator {
         let item = obj[subObj];
         let newPath = util.copyAndExtendArray(path, subObj);
         if (typeof filter === 'function') {
-          show = filter(subObj,path);
+          show = filter(subObj, path);
 
           // if needed we must go deeper into the object.
           if (show === false) {
-            if (!(item instanceof Array) && typeof item !== 'string' && typeof item !== 'boolean' && item instanceof Object) {
+            if (
+              !(item instanceof Array) &&
+              typeof item !== 'string' &&
+              typeof item !== 'boolean' &&
+              item instanceof Object
+            ) {
               this.allowCreation = false;
               show = this._handleObject(item, newPath, true);
               this.allowCreation = checkOnly === false;
@@ -593,14 +605,11 @@ class Configurator {
 
           if (item instanceof Array) {
             this._handleArray(item, value, newPath);
-          }
-          else if (typeof item === 'string') {
+          } else if (typeof item === 'string') {
             this._makeTextInput(item, value, newPath);
-          }
-          else if (typeof item === 'boolean') {
+          } else if (typeof item === 'boolean') {
             this._makeCheckbox(item, value, newPath);
-          }
-          else if (item instanceof Object) {
+          } else if (item instanceof Object) {
             // collapse the physics options that are not enabled
             let draw = true;
             if (path.indexOf('physics') !== -1) {
@@ -617,20 +626,19 @@ class Configurator {
                 if (enabledValue === true) {
                   let label = this._makeLabel(subObj, newPath, true);
                   this._makeItem(newPath, label);
-                  visibleInSet = this._handleObject(item, newPath) || visibleInSet;
-                }
-                else {
+                  visibleInSet =
+                    this._handleObject(item, newPath) || visibleInSet;
+                } else {
                   this._makeCheckbox(item, enabledValue, newPath);
                 }
-              }
-              else {
+              } else {
                 let label = this._makeLabel(subObj, newPath, true);
                 this._makeItem(newPath, label);
-                visibleInSet = this._handleObject(item, newPath) || visibleInSet;
+                visibleInSet =
+                  this._handleObject(item, newPath) || visibleInSet;
               }
             }
-          }
-          else {
+          } else {
             console.error('dont know how to handle', item, subObj, newPath);
           }
         }
@@ -638,7 +646,6 @@ class Configurator {
     }
     return visibleInSet;
   }
-
 
   /**
    * handle the array type of option
@@ -650,19 +657,21 @@ class Configurator {
   _handleArray(arr, value, path) {
     if (typeof arr[0] === 'string' && arr[0] === 'color') {
       this._makeColorField(arr, value, path);
-      if (arr[1] !== value) {this.changedOptions.push({path:path, value:value});}
-    }
-    else if (typeof arr[0] === 'string') {
+      if (arr[1] !== value) {
+        this.changedOptions.push({ path: path, value: value });
+      }
+    } else if (typeof arr[0] === 'string') {
       this._makeDropdown(arr, value, path);
-      if (arr[0] !== value) {this.changedOptions.push({path:path, value:value});}
-    }
-    else if (typeof arr[0] === 'number') {
+      if (arr[0] !== value) {
+        this.changedOptions.push({ path: path, value: value });
+      }
+    } else if (typeof arr[0] === 'number') {
       this._makeRange(arr, value, path);
-      if (arr[0] !== value) {this.changedOptions.push({path:path, value:Number(value)});}
+      if (arr[0] !== value) {
+        this.changedOptions.push({ path: path, value: Number(value) });
+      }
     }
   }
-
-
 
   /**
    * called to update the network with the new settings.
@@ -671,15 +680,18 @@ class Configurator {
    * @private
    */
   _update(value, path) {
-    let options = this._constructOptions(value,path);
+    let options = this._constructOptions(value, path);
 
-    if (this.parent.body && this.parent.body.emitter && this.parent.body.emitter.emit) {
-      this.parent.body.emitter.emit("configChange", options);
+    if (
+      this.parent.body &&
+      this.parent.body.emitter &&
+      this.parent.body.emitter.emit
+    ) {
+      this.parent.body.emitter.emit('configChange', options);
     }
     this.initialized = true;
     this.parent.setOptions(options);
   }
-
 
   /**
    *
@@ -693,7 +705,7 @@ class Configurator {
     let pointer = optionsObj;
 
     // when dropdown boxes can be string or boolean, we typecast it into correct types
-    value = value === 'true'  ? true  : value;
+    value = value === 'true' ? true : value;
     value = value === 'false' ? false : value;
 
     for (let i = 0; i < path.length; i++) {
@@ -703,8 +715,7 @@ class Configurator {
         }
         if (i !== path.length - 1) {
           pointer = pointer[path[i]];
-        }
-        else {
+        } else {
           pointer[path[i]] = value;
         }
       }
@@ -717,7 +728,8 @@ class Configurator {
    */
   _printOptions() {
     let options = this.getOptions();
-    this.optionsContainer.innerHTML = '<pre>var options = ' + JSON.stringify(options, null, 2) + '</pre>';
+    this.optionsContainer.innerHTML =
+      '<pre>var options = ' + JSON.stringify(options, null, 2) + '</pre>';
   }
 
   /**
@@ -727,11 +739,14 @@ class Configurator {
   getOptions() {
     let options = {};
     for (var i = 0; i < this.changedOptions.length; i++) {
-      this._constructOptions(this.changedOptions[i].value, this.changedOptions[i].path, options)
+      this._constructOptions(
+        this.changedOptions[i].value,
+        this.changedOptions[i].path,
+        options
+      );
     }
     return options;
   }
 }
-
 
 export default Configurator;

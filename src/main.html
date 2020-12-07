@@ -1,73 +1,127 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <link rel="shortcut icon" type="image/png" href="public/graph-api.png"/>
-        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
-        <link rel="stylesheet" href="public/style.css">
-        <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.16.2/build/styles/default.min.css">
-        <title>Graph-API</title>
-        
-    </head>
+  <head>
+    <link rel="shortcut icon" type="image/png" href="public/graph-api.png" />
+    <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+      integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"
+      crossorigin="anonymous"
+    />
+    <link rel="stylesheet" href="public/style.css" />
+    <link
+      rel="stylesheet"
+      href="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.16.2/build/styles/default.min.css"
+    />
+    <title>Graph-API</title>
+  </head>
 
-    <body>
-        <nav class="navbar navbar-dark bg-dark shadow-lg">
-            <a class="navbar-brand" href="#">
-                <img src="public/graph-api.png" width="30" height="30" class="d-inline-block align-top" alt="">
-                Graph-API
-                
-            </a>
-            <button type="button" onclick="location.href='https://github.com/Graph-Visualization/graph-api#using-the-graph-api'" class="btn btn-outline-warning">Documentation</button>
-            <button type="button" onclick="location.href='https://github.com/Graph-Visualization/graph-api'" class="btn btn-outline-warning pull-right">GitHub</button>
-        </nav>
-        <div class="jumbotron shadow-lg" style="font-family:'Courier New', Courier, monospace">
-        <h1> Graph-API</h1>
-        <p> You can use it as an API service 
-            to provide input of Graphs and 
-            get response of algorithms when applied to
-        it!</p>
+  <body>
+    <nav class="navbar navbar-dark bg-dark shadow-lg">
+      <a class="navbar-brand" href="#">
+        <img
+          src="public/graph-api.png"
+          width="30"
+          height="30"
+          class="d-inline-block align-top"
+          alt=""
+        />
+        Graph-API
+      </a>
+      <button
+        type="button"
+        onclick="location.href='https://github.com/Graph-Visualization/graph-api#using-the-graph-api'"
+        class="btn btn-outline-warning"
+      >
+        Documentation
+      </button>
+      <button
+        type="button"
+        onclick="location.href='https://github.com/Graph-Visualization/graph-api'"
+        class="btn btn-outline-warning pull-right"
+      >
+        GitHub
+      </button>
+    </nav>
+    <div
+      class="jumbotron shadow-lg"
+      style="font-family: 'Courier New', Courier, monospace"
+    >
+      <h1>Graph-API</h1>
+      <p>
+        You can use it as an API service to provide input of Graphs and get
+        response of algorithms when applied to it!
+      </p>
+    </div>
+    <div id="website-container" class="border ml-3 mr-3">
+      <div class="d-flex align-items-start flex-row bd-highlight mb-3 p-3">
+        <form id="vertices">
+          <div class="form-group flex-fill">
+            <!-- <label >Vertices</label> -->
+            <input
+              type="number"
+              class="form-control"
+              id="verval"
+              aria-describedby="boxhelp"
+              placeholder="Enter a number"
+            />
+            <small id="boxhelp" class="form-text text-muted"
+              >Enter the total number of vertices!</small
+            >
+            <button
+              id="add"
+              type="button"
+              class="btn btn-primary btn-block mb-3"
+            >
+              Add
+            </button>
+            <small id="boxhelp" class="form-text text-muted"
+              >Choose an algorithm</small
+            >
+            <select id="algorithm" class="custom-select" required>
+              <option value="dfs" selected>DFS</option>
+              <option value="bfs">BFS</option>
+              <option value="mst">MST</option>
+              <option value="cycle">Check Cycle</option>
+            </select>
+          </div>
+        </form>
+        <div id="input-param" class="ml-3 d-flex flex-row invisible">
+          <div id="submit" class="bd-highlight mr-5"></div>
+          <div
+            id="containerJ"
+            class="d-flex flex-column bd-highlight flex-fill"
+          ></div>
         </div>
-        <div id="website-container" class="border ml-3 mr-3 ">
-        <div class="d-flex align-items-start flex-row  bd-highlight mb-3 p-3">
-            <form id="vertices">
-                <div class="form-group  flex-fill">
-                    <!-- <label >Vertices</label> -->
-                    <input type="number" class="form-control" id="verval" aria-describedby="boxhelp" placeholder="Enter a number">
-                    <small id="boxhelp" class="form-text text-muted">Enter the total number of vertices!</small>
-                    <button id="add" type="button" class="btn btn-primary btn-block mb-3"> Add </button>
-                    <small id="boxhelp" class="form-text text-muted">Choose an algorithm</small>
-                    <select id="algorithm" class="custom-select" required>
-                            
-                            <option value="dfs" selected>DFS</option>
-                            <option value="bfs">BFS</option>
-                            <option value="mst">MST</option>
-                            <option value="cycle">Check Cycle</option>
-                    </select>
-                </div>               
-            </form>
-            <div id="input-param" class="ml-3 d-flex flex-row invisible">
-                    <div id="submit" class="bd-highlight mr-5"></div>
-                    <div id="containerJ" class="d-flex flex-column bd-highlight flex-fill"></div>
+      </div>
+      <br />
+      <div class="hl border-bottom"></div>
+      <div
+        id="showval"
+        class="justify-content-start shadow-lg bg-white rounded invisible"
+      >
+        <div id="result" class="jumbotron jumbotron-fluid mb-0">
+          <div class="container d-flex flex-row">
+            <div
+              id="output"
+              class="text-center flex-shrink-1 text-monospace mr-3"
+            >
+              <h2>Output :</h2>
             </div>
-            
-        </div>
-        <br>
-        <div class="hl border-bottom"></div>
-        <div id="showval" class="justify-content-start shadow-lg bg-white rounded invisible">
-            <div id="result" class="jumbotron jumbotron-fluid mb-0">
-                <div class="container d-flex flex-row">
-                    <div id="output" class="text-center flex-shrink-1 text-monospace mr-3"><h2>Output : </h2></div>
-                    <div id="result-node" class="mr-3"> <h2 id="plaintext" class="text-align-right text-center ml-3 mr-3"></h2></div>
-                    <!-- <div id="visual" class="mr-3"></div>
+            <div id="result-node" class="mr-3">
+              <h2
+                id="plaintext"
+                class="text-align-right text-center ml-3 mr-3"
+              ></h2>
+            </div>
+            <!-- <div id="visual" class="mr-3"></div>
                     <div id="getJSON" class="mr-3"></div> -->
-                       
-                </div>
-            </div>
+          </div>
         </div>
-        </div>
-        <script src="public/frontend.js"></script>
+      </div>
+    </div>
+    <script src="public/frontend.js"></script>
 
-        <script src="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.16.2/build/highlight.min.js"></script>
-    </body>
-    
-    
+    <script src="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.16.2/build/highlight.min.js"></script>
+  </body>
 </html>

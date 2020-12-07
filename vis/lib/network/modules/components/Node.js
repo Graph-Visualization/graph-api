@@ -17,8 +17,7 @@ var Star = require('./nodes/shapes/Star').default;
 var Text = require('./nodes/shapes/Text').default;
 var Triangle = require('./nodes/shapes/Triangle').default;
 var TriangleDown = require('./nodes/shapes/TriangleDown').default;
-var { printStyle } = require("../../../shared/Validator");
-
+var { printStyle } = require('../../../shared/Validator');
 
 /**
  * A node. A node can be connected to other nodes via one or multiple edges.
@@ -44,7 +43,14 @@ class Node {
    * @param {Object} defaultOptions     Global default options for nodes; note that this is also the prototype
    *                                    for parameter `globalOptions`.
    */
-  constructor(options, body, imagelist, grouplist, globalOptions, defaultOptions) {
+  constructor(
+    options,
+    body,
+    imagelist,
+    grouplist,
+    globalOptions,
+    defaultOptions
+  ) {
     this.options = util.bridgeObject(globalOptions);
     this.globalOptions = globalOptions;
     this.defaultOptions = defaultOptions;
@@ -66,10 +72,13 @@ class Node {
     this.selected = false;
     this.hover = false;
 
-    this.labelModule = new Label(this.body, this.options, false /* Not edge label */);
+    this.labelModule = new Label(
+      this.body,
+      this.options,
+      false /* Not edge label */
+    );
     this.setOptions(options);
   }
-
 
   /**
    * Attach a edge to the node
@@ -80,7 +89,6 @@ class Node {
       this.edges.push(edge);
     }
   }
-
 
   /**
    * Detach a edge from the node
@@ -94,7 +102,6 @@ class Node {
     }
   }
 
-
   /**
    * Set or overwrite options for the node
    *
@@ -104,14 +111,16 @@ class Node {
   setOptions(options) {
     let currentShape = this.options.shape;
     if (!options) {
-      return;  // Note that the return value will be 'undefined'! This is OK.
+      return; // Note that the return value will be 'undefined'! This is OK.
     }
 
     // basic options
-    if (options.id !== undefined)    {this.id = options.id;}
+    if (options.id !== undefined) {
+      this.id = options.id;
+    }
 
     if (this.id === undefined) {
-      throw new Error("Node must have an id");
+      throw new Error('Node must have an id');
     }
 
     Node.checkMass(options, this.id);
@@ -119,18 +128,38 @@ class Node {
     // set these options locally
     // clear x and y positions
     if (options.x !== undefined) {
-      if (options.x === null) {this.x = undefined; this.predefinedPosition = false;}
-      else                    {this.x = parseInt(options.x); this.predefinedPosition = true;}
+      if (options.x === null) {
+        this.x = undefined;
+        this.predefinedPosition = false;
+      } else {
+        this.x = parseInt(options.x);
+        this.predefinedPosition = true;
+      }
     }
     if (options.y !== undefined) {
-      if (options.y === null) {this.y = undefined; this.predefinedPosition = false;}
-      else                    {this.y = parseInt(options.y); this.predefinedPosition = true;}
+      if (options.y === null) {
+        this.y = undefined;
+        this.predefinedPosition = false;
+      } else {
+        this.y = parseInt(options.y);
+        this.predefinedPosition = true;
+      }
     }
-    if (options.size !== undefined)  {this.baseSize = options.size;}
-    if (options.value !== undefined) {options.value = parseFloat(options.value);}
+    if (options.size !== undefined) {
+      this.baseSize = options.size;
+    }
+    if (options.value !== undefined) {
+      options.value = parseFloat(options.value);
+    }
 
     // this transforms all shorthands into fully defined options
-    Node.parseOptions(this.options, options, true, this.globalOptions, this.grouplist);
+    Node.parseOptions(
+      this.options,
+      options,
+      true,
+      this.globalOptions,
+      this.grouplist
+    );
 
     let pile = [options, this.options, this.defaultOptions];
     this.chooser = ComponentUtil.choosify('node', pile);
@@ -139,9 +168,8 @@ class Node {
     this.updateLabelModule(options);
     this.updateShape(currentShape);
 
-    return (options.hidden !== undefined || options.physics !== undefined);
+    return options.hidden !== undefined || options.physics !== undefined;
   }
-
 
   /**
    * Load the images from the options, for the nodes that need them.
@@ -153,35 +181,53 @@ class Node {
    */
   _load_images() {
     // Don't bother loading for nodes without images
-    if (this.options.shape !== 'circularImage' && this.options.shape !== 'image') {
+    if (
+      this.options.shape !== 'circularImage' &&
+      this.options.shape !== 'image'
+    ) {
       return;
     }
 
     if (this.options.image === undefined) {
-      throw new Error("Option image must be defined for node type '" + this.options.shape + "'");
+      throw new Error(
+        "Option image must be defined for node type '" +
+          this.options.shape +
+          "'"
+      );
     }
 
     if (this.imagelist === undefined) {
-      throw new Error("Internal Error: No images provided");
+      throw new Error('Internal Error: No images provided');
     }
 
     if (typeof this.options.image === 'string') {
-      this.imageObj = this.imagelist.load(this.options.image, this.options.brokenImage, this.id);
+      this.imageObj = this.imagelist.load(
+        this.options.image,
+        this.options.brokenImage,
+        this.id
+      );
     } else {
       if (this.options.image.unselected === undefined) {
-        throw new Error("No unselected image provided");
+        throw new Error('No unselected image provided');
       }
 
-      this.imageObj = this.imagelist.load(this.options.image.unselected, this.options.brokenImage, this.id);
+      this.imageObj = this.imagelist.load(
+        this.options.image.unselected,
+        this.options.brokenImage,
+        this.id
+      );
 
       if (this.options.image.selected !== undefined) {
-        this.imageObjAlt = this.imagelist.load(this.options.image.selected, this.options.brokenImage, this.id);
+        this.imageObjAlt = this.imagelist.load(
+          this.options.image.selected,
+          this.options.brokenImage,
+          this.id
+        );
       } else {
         this.imageObjAlt = undefined;
       }
     }
   }
-
 
   /**
    * Copy group option values into the node options.
@@ -196,29 +242,35 @@ class Node {
    * @param {Object} groupList
    */
   static updateGroupOptions(parentOptions, newOptions, groupList) {
-    if (groupList === undefined) return;  // No groups, nothing to do
+    if (groupList === undefined) return; // No groups, nothing to do
 
     var group = parentOptions.group;
 
     // paranoia: the selected group is already merged into node options, check.
-    if (newOptions !== undefined && newOptions.group !== undefined && group !== newOptions.group) {
-      throw new Error("updateGroupOptions: group values in options don't match.");
+    if (
+      newOptions !== undefined &&
+      newOptions.group !== undefined &&
+      group !== newOptions.group
+    ) {
+      throw new Error(
+        "updateGroupOptions: group values in options don't match."
+      );
     }
 
-    var hasGroup = (typeof group === 'number' || (typeof group === 'string' && group != ''));
-    if (!hasGroup) return;  // current node has no group, no need to merge
+    var hasGroup =
+      typeof group === 'number' || (typeof group === 'string' && group != '');
+    if (!hasGroup) return; // current node has no group, no need to merge
 
     var groupObj = groupList.get(group);
 
     // Skip merging of group font options into parent; these are required to be distinct for labels
-    // TODO: It might not be a good idea either to merge the rest of the options, investigate this. 
+    // TODO: It might not be a good idea either to merge the rest of the options, investigate this.
     util.selectiveNotDeepExtend(['font'], parentOptions, groupObj);
 
     // the color object needs to be completely defined.
     // Since groups can partially overwrite the colors, we parse it again, just in case.
     parentOptions.color = util.parseColor(parentOptions.color);
   }
-
 
   /**
    * This process all possible shorthands in the new options and makes sure that the parentOptions are fully defined.
@@ -231,14 +283,20 @@ class Node {
    * @param {Object} [groupList]
    * @static
    */
-  static parseOptions(parentOptions, newOptions, allowDeletion = false, globalOptions = {}, groupList) {
-
-    var fields = [
-      'color',
-      'fixed',
-      'shadow'
-    ];
-    util.selectiveNotDeepExtend(fields, parentOptions, newOptions, allowDeletion);
+  static parseOptions(
+    parentOptions,
+    newOptions,
+    allowDeletion = false,
+    globalOptions = {},
+    groupList
+  ) {
+    var fields = ['color', 'fixed', 'shadow'];
+    util.selectiveNotDeepExtend(
+      fields,
+      parentOptions,
+      newOptions,
+      allowDeletion
+    );
 
     Node.checkMass(newOptions);
 
@@ -249,8 +307,7 @@ class Node {
     if (newOptions.color !== undefined && newOptions.color !== null) {
       let parsedColor = util.parseColor(newOptions.color);
       util.fillIfDefined(parentOptions.color, parsedColor);
-    }
-    else if (allowDeletion === true && newOptions.color === null) {
+    } else if (allowDeletion === true && newOptions.color === null) {
       parentOptions.color = util.bridgeObject(globalOptions.color); // set the object back to the global options
     }
 
@@ -259,29 +316,38 @@ class Node {
       if (typeof newOptions.fixed === 'boolean') {
         parentOptions.fixed.x = newOptions.fixed;
         parentOptions.fixed.y = newOptions.fixed;
-      }
-      else {
-        if (newOptions.fixed.x !== undefined && typeof newOptions.fixed.x === 'boolean') {
+      } else {
+        if (
+          newOptions.fixed.x !== undefined &&
+          typeof newOptions.fixed.x === 'boolean'
+        ) {
           parentOptions.fixed.x = newOptions.fixed.x;
         }
-        if (newOptions.fixed.y !== undefined && typeof newOptions.fixed.y === 'boolean') {
+        if (
+          newOptions.fixed.y !== undefined &&
+          typeof newOptions.fixed.y === 'boolean'
+        ) {
           parentOptions.fixed.y = newOptions.fixed.y;
         }
       }
     }
 
     if (allowDeletion === true && newOptions.font === null) {
-      parentOptions.font =  util.bridgeObject(globalOptions.font); // set the object back to the global options
+      parentOptions.font = util.bridgeObject(globalOptions.font); // set the object back to the global options
     }
 
     Node.updateGroupOptions(parentOptions, newOptions, groupList);
 
     // handle the scaling options, specifically the label part
     if (newOptions.scaling !== undefined) {
-      util.mergeOptions(parentOptions.scaling, newOptions.scaling, 'label', globalOptions.scaling);
+      util.mergeOptions(
+        parentOptions.scaling,
+        newOptions.scaling,
+        'label',
+        globalOptions.scaling
+      );
     }
   }
-
 
   /**
    *
@@ -299,7 +365,7 @@ class Node {
       shadowColor: this.options.shadow.color,
       shadowSize: this.options.shadow.size,
       shadowX: this.options.shadow.x,
-      shadowY: this.options.shadow.y
+      shadowY: this.options.shadow.y,
     };
     if (this.selected || this.hover) {
       if (this.chooser === true) {
@@ -316,10 +382,12 @@ class Node {
       } else if (typeof this.chooser === 'function') {
         this.chooser(values, this.options.id, this.selected, this.hover);
         if (values.shadow === false) {
-          if ((values.shadowColor !== this.options.shadow.color) ||
-              (values.shadowSize !== this.options.shadow.size) ||
-              (values.shadowX !== this.options.shadow.x) ||
-              (values.shadowY !== this.options.shadow.y)) {
+          if (
+            values.shadowColor !== this.options.shadow.color ||
+            values.shadowSize !== this.options.shadow.size ||
+            values.shadowX !== this.options.shadow.x ||
+            values.shadowY !== this.options.shadow.y
+          ) {
             values.shadow = true;
           }
         }
@@ -329,7 +397,6 @@ class Node {
     }
     return values;
   }
-
 
   /**
    *
@@ -354,11 +421,11 @@ class Node {
     //
     var currentGroup = this.grouplist.get(this.options.group, false);
     let pile = [
-      options,             // new options
-      this.options,        // current node options, see comment above for prototype
-      currentGroup,        // group options, if any
-      this.globalOptions,  // Currently set global node options
-      this.defaultOptions  // Default global node options
+      options, // new options
+      this.options, // current node options, see comment above for prototype
+      currentGroup, // group options, if any
+      this.globalOptions, // Currently set global node options
+      this.defaultOptions, // Default global node options
     ];
     this.labelModule.update(this.options, pile);
 
@@ -367,7 +434,6 @@ class Node {
     }
   }
 
-
   /**
    *
    * @param {string} currentShape
@@ -375,8 +441,7 @@ class Node {
   updateShape(currentShape) {
     if (currentShape === this.options.shape && this.shape) {
       this.shape.setOptions(this.options, this.imageObj, this.imageObjAlt);
-    }
-    else {
+    } else {
       // choose draw method depending on the shape
       switch (this.options.shape) {
         case 'box':
@@ -386,7 +451,13 @@ class Node {
           this.shape = new Circle(this.options, this.body, this.labelModule);
           break;
         case 'circularImage':
-          this.shape = new CircularImage(this.options, this.body, this.labelModule, this.imageObj, this.imageObjAlt);
+          this.shape = new CircularImage(
+            this.options,
+            this.body,
+            this.labelModule,
+            this.imageObj,
+            this.imageObjAlt
+          );
           break;
         case 'database':
           this.shape = new Database(this.options, this.body, this.labelModule);
@@ -404,7 +475,13 @@ class Node {
           this.shape = new Icon(this.options, this.body, this.labelModule);
           break;
         case 'image':
-          this.shape = new Image(this.options, this.body, this.labelModule, this.imageObj, this.imageObjAlt);
+          this.shape = new Image(
+            this.options,
+            this.body,
+            this.labelModule,
+            this.imageObj,
+            this.imageObjAlt
+          );
           break;
         case 'square':
           this.shape = new Square(this.options, this.body, this.labelModule);
@@ -422,7 +499,11 @@ class Node {
           this.shape = new Triangle(this.options, this.body, this.labelModule);
           break;
         case 'triangleDown':
-          this.shape = new TriangleDown(this.options, this.body, this.labelModule);
+          this.shape = new TriangleDown(
+            this.options,
+            this.body,
+            this.labelModule
+          );
           break;
         default:
           this.shape = new Ellipse(this.options, this.body, this.labelModule);
@@ -432,7 +513,6 @@ class Node {
     this.needsRefresh();
   }
 
-
   /**
    * select this node
    */
@@ -440,7 +520,6 @@ class Node {
     this.selected = true;
     this.needsRefresh();
   }
-
 
   /**
    * unselect this node
@@ -450,15 +529,12 @@ class Node {
     this.needsRefresh();
   }
 
-
-
   /**
    * Reset the calculated size of the node, forces it to recalculate its size
    */
   needsRefresh() {
     this.shape.refreshNeeded = true;
   }
-
 
   /**
    * get the title of this node.
@@ -469,7 +545,6 @@ class Node {
     return this.options.title;
   }
 
-
   /**
    * Calculate the distance to the border of the Node
    * @param {CanvasRenderingContext2D}   ctx
@@ -477,18 +552,16 @@ class Node {
    * @returns {number} distance   Distance to the border in pixels
    */
   distanceToBorder(ctx, angle) {
-    return this.shape.distanceToBorder(ctx,angle);
+    return this.shape.distanceToBorder(ctx, angle);
   }
-
 
   /**
    * Check if this node has a fixed x and y position
    * @return {boolean}      true if fixed, false if not
    */
   isFixed() {
-    return (this.options.fixed.x && this.options.fixed.y);
+    return this.options.fixed.x && this.options.fixed.y;
   }
-
 
   /**
    * check if this node is selecte
@@ -498,7 +571,6 @@ class Node {
     return this.selected;
   }
 
-
   /**
    * Retrieve the value of the node. Can be undefined
    * @return {number} value
@@ -506,7 +578,6 @@ class Node {
   getValue() {
     return this.options.value;
   }
-
 
   /**
    * Get the current dimensions of the label
@@ -517,7 +588,6 @@ class Node {
     return this.labelModule.size();
   }
 
-
   /**
    * Adjust the value range of the node. The node will adjust it's size
    * based on its value.
@@ -527,22 +597,27 @@ class Node {
    */
   setValueRange(min, max, total) {
     if (this.options.value !== undefined) {
-      var scale = this.options.scaling.customScalingFunction(min, max, total, this.options.value);
+      var scale = this.options.scaling.customScalingFunction(
+        min,
+        max,
+        total,
+        this.options.value
+      );
       var sizeDiff = this.options.scaling.max - this.options.scaling.min;
       if (this.options.scaling.label.enabled === true) {
-        var fontDiff = this.options.scaling.label.max - this.options.scaling.label.min;
-        this.options.font.size = this.options.scaling.label.min + scale * fontDiff;
+        var fontDiff =
+          this.options.scaling.label.max - this.options.scaling.label.min;
+        this.options.font.size =
+          this.options.scaling.label.min + scale * fontDiff;
       }
       this.options.size = this.options.scaling.min + scale * sizeDiff;
-    }
-    else {
+    } else {
       this.options.size = this.baseSize;
       this.options.font.size = this.baseFontSize;
     }
 
     this.updateLabelModule();
   }
-
 
   /**
    * Draw this node in the given canvas
@@ -554,15 +629,13 @@ class Node {
     this.shape.draw(ctx, this.x, this.y, this.selected, this.hover, values);
   }
 
-
   /**
    * Update the bounding box of the shape
    * @param {CanvasRenderingContext2D}   ctx
    */
   updateBoundingBox(ctx) {
-    this.shape.updateBoundingBox(this.x,this.y,ctx);
+    this.shape.updateBoundingBox(this.x, this.y, ctx);
   }
-
 
   /**
    * Recalculate the size of this node in the given canvas
@@ -573,7 +646,6 @@ class Node {
     let values = this.getFormattingValues();
     this.shape.resize(ctx, this.selected, this.hover, values);
   }
-
 
   /**
    * Determine all visual elements of this node instance, in which the given
@@ -587,17 +659,16 @@ class Node {
 
     if (this.labelModule.visible()) {
       if (ComponentUtil.pointInRect(this.labelModule.getSize(), point)) {
-        ret.push({nodeId:this.id, labelId:0});
+        ret.push({ nodeId: this.id, labelId: 0 });
       }
     }
 
     if (ComponentUtil.pointInRect(this.shape.boundingBox, point)) {
-      ret.push({nodeId:this.id});
+      ret.push({ nodeId: this.id });
     }
 
     return ret;
   }
-
 
   /**
    * Check if this object is overlapping with the provided object
@@ -613,7 +684,6 @@ class Node {
     );
   }
 
-
   /**
    * Check if this object is overlapping with the provided object
    * @param {Object} obj   an object with parameters left, top, right, bottom
@@ -628,24 +698,25 @@ class Node {
     );
   }
 
-
   /**
-  * Check valid values for mass
-  *
-  * The mass may not be negative or zero. If it is, reset to 1
-  *
-  * @param {object} options
-  * @param {Node.id} id
+   * Check valid values for mass
+   *
+   * The mass may not be negative or zero. If it is, reset to 1
+   *
+   * @param {object} options
+   * @param {Node.id} id
    * @static
-  */
+   */
   static checkMass(options, id) {
     if (options.mass !== undefined && options.mass <= 0) {
       let strId = '';
       if (id !== undefined) {
         strId = ' in node id: ' + id;
       }
-      console.log('%cNegative or zero mass disallowed' + strId +
-                  ', setting mass to 1.' , printStyle);
+      console.log(
+        '%cNegative or zero mass disallowed' + strId + ', setting mass to 1.',
+        printStyle
+      );
       options.mass = 1;
     }
   }

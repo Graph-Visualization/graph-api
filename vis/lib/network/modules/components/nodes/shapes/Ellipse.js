@@ -1,6 +1,6 @@
 'use strict';
 
-import NodeBase from '../util/NodeBase'
+import NodeBase from '../util/NodeBase';
 
 /**
  * Am Ellipse Node/Cluster shape.
@@ -28,8 +28,8 @@ class Ellipse extends NodeBase {
       var dimensions = this.getDimensionsFromLabel(ctx, selected, hover);
 
       this.height = dimensions.height * 2;
-      this.width  = dimensions.width + dimensions.height;
-      this.radius = 0.5*this.width;
+      this.width = dimensions.width + dimensions.height;
+      this.radius = 0.5 * this.width;
     }
   }
 
@@ -65,9 +65,9 @@ class Ellipse extends NodeBase {
     this.resize(ctx);
     var a = this.width * 0.5;
     var b = this.height * 0.5;
-    var w = (Math.sin(angle) * a);
-    var h = (Math.cos(angle) * b);
-    return a * b / Math.sqrt(w * w + h * h);
+    var w = Math.sin(angle) * a;
+    var h = Math.cos(angle) * b;
+    return (a * b) / Math.sqrt(w * w + h * h);
   }
 }
 

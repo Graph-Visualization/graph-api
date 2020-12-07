@@ -1,6 +1,5 @@
 // distance finding algorithm
-import FloydWarshall from "./components/algorithms/FloydWarshall.js"
-
+import FloydWarshall from './components/algorithms/FloydWarshall.js';
 
 /**
  * KamadaKawai positions the nodes initially based on
@@ -38,7 +37,6 @@ class KamadaKawai {
     }
   }
 
-
   /**
    * Position the system
    * @param {Array.<Node>} nodesArray
@@ -47,7 +45,11 @@ class KamadaKawai {
    */
   solve(nodesArray, edgesArray, ignoreClusters = false) {
     // get distance matrix
-    let D_matrix = this.distanceSolver.getDistances(this.body, nodesArray, edgesArray); // distance matrix
+    let D_matrix = this.distanceSolver.getDistances(
+      this.body,
+      nodesArray,
+      edgesArray
+    ); // distance matrix
 
     // get the L Matrix
     this._createL_matrix(D_matrix);
@@ -62,15 +64,24 @@ class KamadaKawai {
     let threshold = 0.01;
     let innerThreshold = 1;
     let iterations = 0;
-    let maxIterations = Math.max(1000, Math.min(10 * this.body.nodeIndices.length, 6000));
+    let maxIterations = Math.max(
+      1000,
+      Math.min(10 * this.body.nodeIndices.length, 6000)
+    );
     let maxInnerIterations = 5;
 
     let maxEnergy = 1e9;
-    let highE_nodeId = 0, dE_dx = 0, dE_dy = 0, delta_m = 0, subIterations = 0;
+    let highE_nodeId = 0,
+      dE_dx = 0,
+      dE_dy = 0,
+      delta_m = 0,
+      subIterations = 0;
 
     while (maxEnergy > threshold && iterations < maxIterations) {
       iterations += 1;
-      [highE_nodeId, maxEnergy, dE_dx, dE_dy] = this._getHighestEnergyNode(ignoreClusters);
+      [highE_nodeId, maxEnergy, dE_dx, dE_dy] = this._getHighestEnergyNode(
+        ignoreClusters
+      );
       delta_m = maxEnergy;
       subIterations = 0;
       while (delta_m > innerThreshold && subIterations < maxInnerIterations) {
@@ -92,13 +103,19 @@ class KamadaKawai {
     let nodes = this.body.nodes;
     let maxEnergy = 0;
     let maxEnergyNodeId = nodesArray[0];
-    let dE_dx_max = 0, dE_dy_max = 0;
+    let dE_dx_max = 0,
+      dE_dy_max = 0;
 
     for (let nodeIdx = 0; nodeIdx < nodesArray.length; nodeIdx++) {
       let m = nodesArray[nodeIdx];
       // by not evaluating nodes with predefined positions we should only move nodes that have no positions.
-      if ((nodes[m].predefinedPosition === false || nodes[m].isCluster === true && ignoreClusters === true) || nodes[m].options.fixed.x === true || nodes[m].options.fixed.y === true) {
-        let [delta_m,dE_dx,dE_dy] = this._getEnergy(m);
+      if (
+        nodes[m].predefinedPosition === false ||
+        (nodes[m].isCluster === true && ignoreClusters === true) ||
+        nodes[m].options.fixed.x === true ||
+        nodes[m].options.fixed.y === true
+      ) {
+        let [delta_m, dE_dx, dE_dy] = this._getEnergy(m);
         if (maxEnergy < delta_m) {
           maxEnergy = delta_m;
           maxEnergyNodeId = m;
@@ -118,7 +135,7 @@ class KamadaKawai {
    * @private
    */
   _getEnergy(m) {
-    let [dE_dx,dE_dy] = this.E_sums[m];
+    let [dE_dx, dE_dy] = this.E_sums[m];
     let delta_m = Math.sqrt(Math.pow(dE_dx, 2) + Math.pow(dE_dy, 2));
     return [delta_m, dE_dx, dE_dy];
   }
@@ -150,14 +167,19 @@ class KamadaKawai {
         let y_i = nodes[i].y;
         let kmat = km[i];
         let lmat = lm[i];
-        let denominator = 1.0 / Math.pow(Math.pow(x_m - x_i, 2) + Math.pow(y_m - y_i, 2), 1.5);
+        let denominator =
+          1.0 / Math.pow(Math.pow(x_m - x_i, 2) + Math.pow(y_m - y_i, 2), 1.5);
         d2E_dx2 += kmat * (1 - lmat * Math.pow(y_m - y_i, 2) * denominator);
         d2E_dxdy += kmat * (lmat * (x_m - x_i) * (y_m - y_i) * denominator);
         d2E_dy2 += kmat * (1 - lmat * Math.pow(x_m - x_i, 2) * denominator);
       }
     }
     // make the variable names easier to make the solving of the linear system easier to read
-    let A = d2E_dx2, B = d2E_dxdy, C = dE_dx, D = d2E_dy2, E = dE_dy;
+    let A = d2E_dx2,
+      B = d2E_dxdy,
+      C = dE_dx,
+      D = d2E_dy2,
+      E = dE_dy;
 
     // solve the linear system for dx and dy
     let dy = (C / A + E / B) / (B / A - D / B);
@@ -170,7 +192,6 @@ class KamadaKawai {
     // Recalculate E_matrix (should be incremental)
     this._updateE_matrix(m);
   }
-
 
   /**
    * Create the L matrix: edge length times shortest path
@@ -185,11 +206,11 @@ class KamadaKawai {
     for (let i = 0; i < nodesArray.length; i++) {
       this.L_matrix[nodesArray[i]] = {};
       for (let j = 0; j < nodesArray.length; j++) {
-        this.L_matrix[nodesArray[i]][nodesArray[j]] = edgeLength * D_matrix[nodesArray[i]][nodesArray[j]];
+        this.L_matrix[nodesArray[i]][nodesArray[j]] =
+          edgeLength * D_matrix[nodesArray[i]][nodesArray[j]];
       }
     }
   }
-
 
   /**
    * Create the K matrix: spring constants times shortest path
@@ -204,7 +225,8 @@ class KamadaKawai {
     for (let i = 0; i < nodesArray.length; i++) {
       this.K_matrix[nodesArray[i]] = {};
       for (let j = 0; j < nodesArray.length; j++) {
-        this.K_matrix[nodesArray[i]][nodesArray[j]] = edgeStrength * Math.pow(D_matrix[nodesArray[i]][nodesArray[j]], -2);
+        this.K_matrix[nodesArray[i]][nodesArray[j]] =
+          edgeStrength * Math.pow(D_matrix[nodesArray[i]][nodesArray[j]], -2);
       }
     }
   }
@@ -232,10 +254,13 @@ class KamadaKawai {
         if (i !== m) {
           let x_i = nodes[i].x;
           let y_i = nodes[i].y;
-          let denominator = 1.0 / Math.sqrt(Math.pow(x_m - x_i, 2) + Math.pow(y_m - y_i, 2));
+          let denominator =
+            1.0 / Math.sqrt(Math.pow(x_m - x_i, 2) + Math.pow(y_m - y_i, 2));
           this.E_matrix[m][iIdx] = [
-            this.K_matrix[m][i] * ((x_m - x_i) - this.L_matrix[m][i] * (x_m - x_i) * denominator),
-            this.K_matrix[m][i] * ((y_m - y_i) - this.L_matrix[m][i] * (y_m - y_i) * denominator)
+            this.K_matrix[m][i] *
+              (x_m - x_i - this.L_matrix[m][i] * (x_m - x_i) * denominator),
+            this.K_matrix[m][i] *
+              (y_m - y_i - this.L_matrix[m][i] * (y_m - y_i) * denominator),
           ];
           this.E_matrix[i][mIdx] = this.E_matrix[m][iIdx];
           dE_dx += this.E_matrix[m][iIdx][0];
@@ -274,17 +299,18 @@ class KamadaKawai {
         //Calc new energy:
         let x_i = nodes[i].x;
         let y_i = nodes[i].y;
-        let denominator = 1.0 / Math.sqrt(Math.pow(x_m - x_i, 2) + Math.pow(y_m - y_i, 2));
-        let dx = kcolm[i] * ((x_m - x_i) - lcolm[i] * (x_m - x_i) * denominator);
-        let dy = kcolm[i] * ((y_m - y_i) - lcolm[i] * (y_m - y_i) * denominator);
+        let denominator =
+          1.0 / Math.sqrt(Math.pow(x_m - x_i, 2) + Math.pow(y_m - y_i, 2));
+        let dx = kcolm[i] * (x_m - x_i - lcolm[i] * (x_m - x_i) * denominator);
+        let dy = kcolm[i] * (y_m - y_i - lcolm[i] * (y_m - y_i) * denominator);
         colm[iIdx] = [dx, dy];
         dE_dx += dx;
         dE_dy += dy;
 
         //add new energy to sum of each column
         let sum = this.E_sums[i];
-        sum[0] += (dx-oldDx);
-        sum[1] += (dy-oldDy);
+        sum[0] += dx - oldDx;
+        sum[1] += dy - oldDy;
       }
     }
     //Store sum at -1 index

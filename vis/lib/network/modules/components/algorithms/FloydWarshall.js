@@ -7,8 +7,7 @@ class FloydWarshall {
   /**
    * @ignore
    */
-  constructor() {
-  }
+  constructor() {}
 
   /**
    *
@@ -27,7 +26,7 @@ class FloydWarshall {
       let cell = {};
       D_matrix[node] = cell;
       for (let j = 0; j < nodesArray.length; j++) {
-        cell[nodesArray[j]] = (i == j ? 0 : 1e9);
+        cell[nodesArray[j]] = i == j ? 0 : 1e9;
       }
     }
 
@@ -35,7 +34,11 @@ class FloydWarshall {
     for (let i = 0; i < edgesArray.length; i++) {
       let edge = edges[edgesArray[i]];
       // edge has to be connected if it counts to the distances. If it is connected to inner clusters it will crash so we also check if it is in the D_matrix
-      if (edge.connected === true && D_matrix[edge.fromId] !== undefined && D_matrix[edge.toId] !== undefined) {
+      if (
+        edge.connected === true &&
+        D_matrix[edge.fromId] !== undefined &&
+        D_matrix[edge.toId] !== undefined
+      ) {
         D_matrix[edge.fromId][edge.toId] = 1;
         D_matrix[edge.toId][edge.fromId] = 1;
       }

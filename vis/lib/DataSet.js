@@ -44,7 +44,7 @@ var Queue = require('./Queue');
  *                                              - {number} max    Maximum number of entries in the queue, Infinity by default
  * @constructor DataSet
  */
-function DataSet (data, options) {
+function DataSet(data, options) {
   // correctly read optional arguments
   if (data && !Array.isArray(data)) {
     options = data;
@@ -52,10 +52,10 @@ function DataSet (data, options) {
   }
 
   this._options = options || {};
-  this._data = {};                                 // map with data indexed by id
-  this.length = 0;                                 // number of items in the DataSet
-  this._fieldId = this._options.fieldId || 'id';   // name of the field containing id
-  this._type = {};                                 // internal field types (NOTE: this can differ from this._options.type)
+  this._data = {}; // map with data indexed by id
+  this.length = 0; // number of items in the DataSet
+  this._fieldId = this._options.fieldId || 'id'; // name of the field containing id
+  this._type = {}; // internal field types (NOTE: this can differ from this._options.type)
 
   // all variants of a Date are internally stored as Date, so we can convert
   // from everything to everything (also from ISODate to Number for example)
@@ -66,14 +66,13 @@ function DataSet (data, options) {
       var value = this._options.type[field];
       if (value == 'Date' || value == 'ISODate' || value == 'ASPDate') {
         this._type[field] = 'Date';
-      }
-      else {
+      } else {
         this._type[field] = value;
       }
     }
   }
 
-  this._subscribers = {};  // event subscribers
+  this._subscribers = {}; // event subscribers
 
   // add initial data when provided
   if (data) {
@@ -91,7 +90,7 @@ function DataSet (data, options) {
  *                                              - {number} delay  Delay in ms, null by default
  *                                              - {number} max    Maximum number of entries in the queue, Infinity by default
  */
-DataSet.prototype.setOptions = function(options) {
+DataSet.prototype.setOptions = function (options) {
   if (options && options.queue !== undefined) {
     if (options.queue === false) {
       // delete queue if loaded
@@ -99,12 +98,11 @@ DataSet.prototype.setOptions = function(options) {
         this._queue.destroy();
         delete this._queue;
       }
-    }
-    else {
+    } else {
       // create queue and update its options
       if (!this._queue) {
         this._queue = Queue.extend(this, {
-          replace: ['add', 'update', 'remove']
+          replace: ['add', 'update', 'remove'],
         });
       }
 
@@ -124,7 +122,7 @@ DataSet.prototype.setOptions = function(options) {
  *                                  {Object | null} params
  *                                  {string | number} senderId
  */
-DataSet.prototype.on = function(event, callback) {
+DataSet.prototype.on = function (event, callback) {
   var subscribers = this._subscribers[event];
   if (!subscribers) {
     subscribers = [];
@@ -132,7 +130,7 @@ DataSet.prototype.on = function(event, callback) {
   }
 
   subscribers.push({
-    callback: callback
+    callback: callback,
   });
 };
 
@@ -141,10 +139,12 @@ DataSet.prototype.on = function(event, callback) {
  * @param {string} event
  * @param {function} callback
  */
-DataSet.prototype.off = function(event, callback) {
+DataSet.prototype.off = function (event, callback) {
   var subscribers = this._subscribers[event];
   if (subscribers) {
-    this._subscribers[event] = subscribers.filter(listener => listener.callback != callback);
+    this._subscribers[event] = subscribers.filter(
+      (listener) => listener.callback != callback
+    );
   }
 };
 
@@ -185,8 +185,8 @@ DataSet.prototype._trigger = function (event, params, senderId) {
  */
 DataSet.prototype.add = function (data, senderId) {
   var addedIds = [],
-      id,
-      me = this;
+    id,
+    me = this;
 
   if (Array.isArray(data)) {
     // Array
@@ -194,18 +194,16 @@ DataSet.prototype.add = function (data, senderId) {
       id = me._addItem(data[i]);
       addedIds.push(id);
     }
-  }
-  else if (data && typeof data === 'object') {
+  } else if (data && typeof data === 'object') {
     // Single item
     id = me._addItem(data);
     addedIds.push(id);
-  }
-  else {
+  } else {
     throw new Error('Unknown dataType');
   }
 
   if (addedIds.length) {
-    this._trigger('add', {items: addedIds}, senderId);
+    this._trigger('add', { items: addedIds }, senderId);
   }
 
   return addedIds;
@@ -235,8 +233,7 @@ DataSet.prototype.update = function (data, senderId) {
       updatedIds.push(id);
       updatedData.push(item);
       oldData.push(oldItem);
-    }
-    else {
+    } else {
       // add new item
       id = me._addItem(item);
       addedIds.push(id);
@@ -246,23 +243,23 @@ DataSet.prototype.update = function (data, senderId) {
   if (Array.isArray(data)) {
     // Array
     for (var i = 0, len = data.length; i < len; i++) {
-      if (data[i] && typeof data[i] === 'object'){
+      if (data[i] && typeof data[i] === 'object') {
         addOrUpdate(data[i]);
       } else {
-        console.warn('Ignoring input item, which is not an object at index ' + i);
+        console.warn(
+          'Ignoring input item, which is not an object at index ' + i
+        );
       }
     }
-  }
-  else if (data && typeof data === 'object') {
+  } else if (data && typeof data === 'object') {
     // Single item
     addOrUpdate(data);
-  }
-  else {
+  } else {
     throw new Error('Unknown dataType');
   }
 
   if (addedIds.length) {
-    this._trigger('add', {items: addedIds}, senderId);
+    this._trigger('add', { items: addedIds }, senderId);
   }
   if (updatedIds.length) {
     var props = { items: updatedIds, oldData: oldData, data: updatedData };
@@ -308,7 +305,8 @@ DataSet.prototype.update = function (data, senderId) {
  * @returns {DataSet}
  * @throws Error
  */
-DataSet.prototype.get = function (args) {  // eslint-disable-line no-unused-vars
+DataSet.prototype.get = function (args) {
+  // eslint-disable-line no-unused-vars
   var me = this;
 
   // parse the arguments
@@ -318,13 +316,11 @@ DataSet.prototype.get = function (args) {  // eslint-disable-line no-unused-vars
     // get(id [, options])
     id = arguments[0];
     options = arguments[1];
-  }
-  else if (firstType == 'Array') {
+  } else if (firstType == 'Array') {
     // get(ids [, options])
     ids = arguments[0];
     options = arguments[1];
-  }
-  else {
+  } else {
     // get([, options])
     options = arguments[0];
   }
@@ -333,16 +329,23 @@ DataSet.prototype.get = function (args) {  // eslint-disable-line no-unused-vars
   var returnType;
   if (options && options.returnType) {
     var allowedValues = ['Array', 'Object'];
-    returnType = allowedValues.indexOf(options.returnType) == -1 ? 'Array' : options.returnType;
-  }
-  else {
+    returnType =
+      allowedValues.indexOf(options.returnType) == -1
+        ? 'Array'
+        : options.returnType;
+  } else {
     returnType = 'Array';
   }
 
   // build options
-  var type = options && options.type || this._options.type;
+  var type = (options && options.type) || this._options.type;
   var filter = options && options.filter;
-  var items = [], item, itemIds, itemId, i, len;
+  var items = [],
+    item,
+    itemIds,
+    itemId,
+    i,
+    len;
 
   // convert items
   if (id != undefined) {
@@ -351,8 +354,7 @@ DataSet.prototype.get = function (args) {  // eslint-disable-line no-unused-vars
     if (item && filter && !filter(item)) {
       item = null;
     }
-  }
-  else if (ids != undefined) {
+  } else if (ids != undefined) {
     // return a subset of items
     for (i = 0, len = ids.length; i < len; i++) {
       item = me._getItem(ids[i], type);
@@ -360,8 +362,7 @@ DataSet.prototype.get = function (args) {  // eslint-disable-line no-unused-vars
         items.push(item);
       }
     }
-  }
-  else {
+  } else {
     // return all items
     itemIds = Object.keys(this._data);
     for (i = 0, len = itemIds.length; i < len; i++) {
@@ -383,8 +384,7 @@ DataSet.prototype.get = function (args) {  // eslint-disable-line no-unused-vars
     var fields = options.fields;
     if (id != undefined) {
       item = this._filterFields(item, fields);
-    }
-    else {
+    } else {
       for (i = 0, len = items.length; i < len; i++) {
         items[i] = this._filterFields(items[i], fields);
       }
@@ -394,19 +394,17 @@ DataSet.prototype.get = function (args) {  // eslint-disable-line no-unused-vars
   // return the results
   if (returnType == 'Object') {
     var result = {},
-        resultant;
+      resultant;
     for (i = 0, len = items.length; i < len; i++) {
       resultant = items[i];
       result[resultant.id] = resultant;
     }
     return result;
-  }
-  else {
+  } else {
     if (id != undefined) {
       // a single item
       return item;
-    }
-    else {
+    } else {
       // just return our array
       return items;
     }
@@ -423,16 +421,16 @@ DataSet.prototype.get = function (args) {  // eslint-disable-line no-unused-vars
  */
 DataSet.prototype.getIds = function (options) {
   var data = this._data,
-      filter = options && options.filter,
-      order = options && options.order,
-      type = options && options.type || this._options.type,
-      itemIds = Object.keys(data),
-      i,
-      len,
-      id,
-      item,
-      items,
-      ids = [];
+    filter = options && options.filter,
+    order = options && options.order,
+    type = (options && options.type) || this._options.type,
+    itemIds = Object.keys(data),
+    i,
+    len,
+    id,
+    item,
+    items,
+    ids = [];
 
   if (filter) {
     // get filtered items
@@ -452,8 +450,7 @@ DataSet.prototype.getIds = function (options) {
       for (i = 0, len = items.length; i < len; i++) {
         ids.push(items[i][this._fieldId]);
       }
-    }
-    else {
+    } else {
       // create unordered list
       for (i = 0, len = itemIds.length; i < len; i++) {
         id = itemIds[i];
@@ -463,8 +460,7 @@ DataSet.prototype.getIds = function (options) {
         }
       }
     }
-  }
-  else {
+  } else {
     // get all items
     if (order) {
       // create an ordered list
@@ -479,8 +475,7 @@ DataSet.prototype.getIds = function (options) {
       for (i = 0, len = items.length; i < len; i++) {
         ids.push(items[i][this._fieldId]);
       }
-    }
-    else {
+    } else {
       // create unordered list
       for (i = 0, len = itemIds.length; i < len; i++) {
         id = itemIds[i];
@@ -514,13 +509,13 @@ DataSet.prototype.getDataSet = function () {
  */
 DataSet.prototype.forEach = function (callback, options) {
   var filter = options && options.filter,
-      type = options && options.type || this._options.type,
-      data = this._data,
-      itemIds = Object.keys(data),
-      i,
-      len,
-      item,
-      id;
+    type = (options && options.type) || this._options.type,
+    data = this._data,
+    itemIds = Object.keys(data),
+    i,
+    len,
+    item,
+    id;
 
   if (options && options.order) {
     // execute forEach on ordered list
@@ -531,8 +526,7 @@ DataSet.prototype.forEach = function (callback, options) {
       id = item[this._fieldId];
       callback(item, id);
     }
-  }
-  else {
+  } else {
     // unordered
     for (i = 0, len = itemIds.length; i < len; i++) {
       id = itemIds[i];
@@ -557,14 +551,14 @@ DataSet.prototype.forEach = function (callback, options) {
  */
 DataSet.prototype.map = function (callback, options) {
   var filter = options && options.filter,
-      type = options && options.type || this._options.type,
-      mappedItems = [],
-      data = this._data,
-      itemIds = Object.keys(data),
-      i,
-      len,
-      id,
-      item;
+    type = (options && options.type) || this._options.type,
+    mappedItems = [],
+    data = this._data,
+    itemIds = Object.keys(data),
+    i,
+    len,
+    id,
+    item;
 
   // convert and filter items
   for (i = 0, len = itemIds.length; i < len; i++) {
@@ -591,24 +585,25 @@ DataSet.prototype.map = function (callback, options) {
  * @private
  */
 DataSet.prototype._filterFields = function (item, fields) {
-  if (!item) { // item is null
+  if (!item) {
+    // item is null
     return item;
   }
 
   var filteredItem = {},
-      itemFields = Object.keys(item),
-      len = itemFields.length,
-      i,
-      field;
+    itemFields = Object.keys(item),
+    len = itemFields.length,
+    i,
+    field;
 
-  if(Array.isArray(fields)){
+  if (Array.isArray(fields)) {
     for (i = 0; i < len; i++) {
       field = itemFields[i];
       if (fields.indexOf(field) != -1) {
         filteredItem[field] = item[field];
       }
     }
-  }else{
+  } else {
     for (i = 0; i < len; i++) {
       field = itemFields[i];
       if (fields.hasOwnProperty(field)) {
@@ -633,10 +628,9 @@ DataSet.prototype._sort = function (items, order) {
     items.sort(function (a, b) {
       var av = a[name];
       var bv = b[name];
-      return (av > bv) ? 1 : ((av < bv) ? -1 : 0);
+      return av > bv ? 1 : av < bv ? -1 : 0;
     });
-  }
-  else if (typeof order === 'function') {
+  } else if (typeof order === 'function') {
     // order by sort function
     items.sort(order);
   }
@@ -656,9 +650,12 @@ DataSet.prototype._sort = function (items, order) {
  */
 DataSet.prototype.remove = function (id, senderId) {
   var removedIds = [],
-      removedItems = [],
-      ids = [],
-      i, len, itemId, item;
+    removedItems = [],
+    ids = [],
+    i,
+    len,
+    itemId,
+    item;
 
   // force everything to be an array for simplicity
   ids = Array.isArray(id) ? id : [id];
@@ -675,7 +672,11 @@ DataSet.prototype.remove = function (id, senderId) {
   }
 
   if (removedIds.length) {
-    this._trigger('remove', {items: removedIds, oldData: removedItems}, senderId);
+    this._trigger(
+      'remove',
+      { items: removedIds, oldData: removedItems },
+      senderId
+    );
   }
 
   return removedIds;
@@ -688,14 +689,12 @@ DataSet.prototype.remove = function (id, senderId) {
  * @private
  */
 DataSet.prototype._remove = function (id) {
-  var item,
-      ident;
+  var item, ident;
 
   // confirm the id to use based on the args type
   if (util.isNumber(id) || util.isString(id)) {
     ident = id;
-  }
-  else if (id && typeof id === 'object') {
+  } else if (id && typeof id === 'object') {
     ident = id[this._fieldId]; // look for the identifier field using _fieldId
   }
 
@@ -726,7 +725,7 @@ DataSet.prototype.clear = function (senderId) {
   this._data = {};
   this.length = 0;
 
-  this._trigger('remove', {items: ids, oldData: items}, senderId);
+  this._trigger('remove', { items: ids, oldData: items }, senderId);
 
   return ids;
 };
@@ -738,11 +737,11 @@ DataSet.prototype.clear = function (senderId) {
  */
 DataSet.prototype.max = function (field) {
   var data = this._data,
-      itemIds = Object.keys(data),
-      max = null,
-      maxField = null,
-      i,
-      len;
+    itemIds = Object.keys(data),
+    max = null,
+    maxField = null,
+    i,
+    len;
 
   for (i = 0, len = itemIds.length; i < len; i++) {
     var id = itemIds[i];
@@ -764,11 +763,11 @@ DataSet.prototype.max = function (field) {
  */
 DataSet.prototype.min = function (field) {
   var data = this._data,
-      itemIds = Object.keys(data),
-      min = null,
-      minField = null,
-      i,
-      len;
+    itemIds = Object.keys(data),
+    min = null,
+    minField = null,
+    i,
+    len;
 
   for (i = 0, len = itemIds.length; i < len; i++) {
     var id = itemIds[i];
@@ -794,11 +793,9 @@ DataSet.prototype.distinct = function (field) {
   var data = this._data;
   var itemIds = Object.keys(data);
   var values = [];
-  var fieldType = this._options.type && this._options.type[field] || null;
+  var fieldType = (this._options.type && this._options.type[field]) || null;
   var count = 0;
-  var i,
-      j,
-      len;
+  var i, j, len;
 
   for (i = 0, len = itemIds.length; i < len; i++) {
     var id = itemIds[i];
@@ -811,7 +808,7 @@ DataSet.prototype.distinct = function (field) {
         break;
       }
     }
-    if (!exists && (value !== undefined)) {
+    if (!exists && value !== undefined) {
       values[count] = value;
       count++;
     }
@@ -839,22 +836,23 @@ DataSet.prototype._addItem = function (item) {
     // check whether this id is already taken
     if (this._data[id]) {
       // item already exists
-      throw new Error('Cannot add item: item with id ' + id + ' already exists');
+      throw new Error(
+        'Cannot add item: item with id ' + id + ' already exists'
+      );
     }
-  }
-  else {
+  } else {
     // generate an id
     id = util.randomUUID();
     item[this._fieldId] = id;
   }
 
   var d = {},
-      fields = Object.keys(item),
-      i,
-      len;
+    fields = Object.keys(item),
+    i,
+    len;
   for (i = 0, len = fields.length; i < len; i++) {
     var field = fields[i];
-    var fieldType = this._type[field];  // type may be undefined
+    var fieldType = this._type[field]; // type may be undefined
     d[field] = util.convert(item[field], fieldType);
   }
   this._data[id] = d;
@@ -881,7 +879,7 @@ DataSet.prototype._getItem = function (id, types) {
 
   // convert the items field types
   var converted = {},
-      fields = Object.keys(raw);
+    fields = Object.keys(raw);
 
   if (types) {
     for (i = 0, len = fields.length; i < len; i++) {
@@ -889,8 +887,7 @@ DataSet.prototype._getItem = function (id, types) {
       value = raw[field];
       converted[field] = util.convert(value, types[field]);
     }
-  }
-  else {
+  } else {
     // no field types specified, no converting needed
     for (i = 0, len = fields.length; i < len; i++) {
       field = fields[i];
@@ -917,7 +914,9 @@ DataSet.prototype._getItem = function (id, types) {
 DataSet.prototype._updateItem = function (item) {
   var id = item[this._fieldId];
   if (id == undefined) {
-    throw new Error('Cannot update item: item has no id (item: ' + JSON.stringify(item) + ')');
+    throw new Error(
+      'Cannot update item: item has no id (item: ' + JSON.stringify(item) + ')'
+    );
   }
   var d = this._data[id];
   if (!d) {
@@ -929,7 +928,7 @@ DataSet.prototype._updateItem = function (item) {
   var fields = Object.keys(item);
   for (var i = 0, len = fields.length; i < len; i++) {
     var field = fields[i];
-    var fieldType = this._type[field];  // type may be undefined
+    var fieldType = this._type[field]; // type may be undefined
     d[field] = util.convert(item[field], fieldType);
   }
 

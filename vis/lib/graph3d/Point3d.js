@@ -16,7 +16,7 @@ function Point3d(x, y, z) {
  * @param {Point3d} b
  * @return {Point3d} a-b
  */
-Point3d.subtract = function(a, b) {
+Point3d.subtract = function (a, b) {
   var sub = new Point3d();
   sub.x = a.x - b.x;
   sub.y = a.y - b.y;
@@ -30,7 +30,7 @@ Point3d.subtract = function(a, b) {
  * @param {Point3d} b
  * @return {Point3d} a+b
  */
-Point3d.add = function(a, b) {
+Point3d.add = function (a, b) {
   var sum = new Point3d();
   sum.x = a.x + b.x;
   sum.y = a.y + b.y;
@@ -44,12 +44,8 @@ Point3d.add = function(a, b) {
  * @param {Point3d} b
  * @return {Point3d} The average, (a+b)/2
  */
-Point3d.avg = function(a, b) {
-  return new Point3d(
-          (a.x + b.x) / 2,
-          (a.y + b.y) / 2,
-          (a.z + b.z) / 2
-  );
+Point3d.avg = function (a, b) {
+  return new Point3d((a.x + b.x) / 2, (a.y + b.y) / 2, (a.z + b.z) / 2);
 };
 
 /**
@@ -59,7 +55,7 @@ Point3d.avg = function(a, b) {
  * @param {Point3d} b
  * @return {Point3d} cross product axb
  */
-Point3d.crossProduct = function(a, b) {
+Point3d.crossProduct = function (a, b) {
   var crossproduct = new Point3d();
 
   crossproduct.x = a.y * b.z - a.z * b.y;
@@ -69,17 +65,12 @@ Point3d.crossProduct = function(a, b) {
   return crossproduct;
 };
 
-
 /**
  * Rtrieve the length of the vector (or the distance from this point to the origin
  * @return {number}  length
  */
-Point3d.prototype.length = function() {
-  return Math.sqrt(
-          this.x * this.x +
-          this.y * this.y +
-          this.z * this.z
-  );
+Point3d.prototype.length = function () {
+  return Math.sqrt(this.x * this.x + this.y * this.y + this.z * this.z);
 };
 
 module.exports = Point3d;

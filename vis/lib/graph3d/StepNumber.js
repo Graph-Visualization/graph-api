@@ -35,7 +35,6 @@ function StepNumber(start, end, step, prettyStep) {
   this.setRange(start, end, step, prettyStep);
 }
 
-
 /**
  * Check for input values, to prevent disasters from happening
  *
@@ -44,10 +43,9 @@ function StepNumber(start, end, step, prettyStep) {
  * @param {string} n
  * @returns {boolean}
  */
-StepNumber.prototype.isNumeric = function(n) {
+StepNumber.prototype.isNumeric = function (n) {
   return !isNaN(parseFloat(n)) && isFinite(n);
 };
-
 
 /**
  * Set a new range: start, end and step.
@@ -58,15 +56,15 @@ StepNumber.prototype.isNumeric = function(n) {
  * @param {boolean} prettyStep Optional. If true, the step size is rounded
  *               To a pretty step size (like 1, 2, 5, 10, 20, 50, ...)
  */
-StepNumber.prototype.setRange = function(start, end, step, prettyStep) {
+StepNumber.prototype.setRange = function (start, end, step, prettyStep) {
   if (!this.isNumeric(start)) {
-    throw new Error('Parameter \'start\' is not numeric; value: ' + start);
+    throw new Error("Parameter 'start' is not numeric; value: " + start);
   }
   if (!this.isNumeric(end)) {
-    throw new Error('Parameter \'end\' is not numeric; value: ' + start);
+    throw new Error("Parameter 'end' is not numeric; value: " + start);
   }
   if (!this.isNumeric(step)) {
-    throw new Error('Parameter \'step\' is not numeric; value: ' + start);
+    throw new Error("Parameter 'step' is not numeric; value: " + start);
   }
 
   this._start = start ? start : 0;
@@ -81,17 +79,14 @@ StepNumber.prototype.setRange = function(start, end, step, prettyStep) {
  * @param {boolean} prettyStep Optional. If true, the provided step is rounded
  *               to a pretty step size (like 1, 2, 5, 10, 20, 50, ...)
  */
-StepNumber.prototype.setStep = function(step, prettyStep) {
-  if (step === undefined || step <= 0)
-    return;
+StepNumber.prototype.setStep = function (step, prettyStep) {
+  if (step === undefined || step <= 0) return;
 
-  if (prettyStep !== undefined)
-    this.prettyStep = prettyStep;
+  if (prettyStep !== undefined) this.prettyStep = prettyStep;
 
   if (this.prettyStep === true)
     this._step = StepNumber.calculatePrettyStep(step);
-  else
-    this._step = step;
+  else this._step = step;
 };
 
 /**
@@ -102,12 +97,14 @@ StepNumber.prototype.setStep = function(step, prettyStep) {
  * @return {number}     Nice step size
  */
 StepNumber.calculatePrettyStep = function (step) {
-  var log10 = function (x) {return Math.log(x) / Math.LN10;};
+  var log10 = function (x) {
+    return Math.log(x) / Math.LN10;
+  };
 
   // try three steps (multiple of 1, 2, or 5
   var step1 = Math.pow(10, Math.round(log10(step))),
-      step2 = 2 * Math.pow(10, Math.round(log10(step / 2))),
-      step5 = 5 * Math.pow(10, Math.round(log10(step / 5)));
+    step2 = 2 * Math.pow(10, Math.round(log10(step / 2))),
+    step5 = 5 * Math.pow(10, Math.round(log10(step / 5)));
 
   // choose the best step (closest to minimum step)
   var prettyStep = step1;
@@ -149,12 +146,12 @@ StepNumber.prototype.getStep = function () {
  *
  * @param {boolean} [checkFirst=false]
  */
-StepNumber.prototype.start = function(checkFirst) {
+StepNumber.prototype.start = function (checkFirst) {
   if (checkFirst === undefined) {
     checkFirst = false;
   }
 
-  this._current = this._start - this._start % this._step;
+  this._current = this._start - (this._start % this._step);
 
   if (checkFirst) {
     if (this.getCurrent() < this._start) {
@@ -162,7 +159,6 @@ StepNumber.prototype.start = function(checkFirst) {
     }
   }
 };
-
 
 /**
  * Do a step, add the step size to the current value
@@ -176,7 +172,7 @@ StepNumber.prototype.next = function () {
  * @return {boolean}  True if the current value has passed the end value.
  */
 StepNumber.prototype.end = function () {
-  return (this._current > this._end);
+  return this._current > this._end;
 };
 
 module.exports = StepNumber;

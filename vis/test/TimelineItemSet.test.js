@@ -2,29 +2,45 @@ var assert = require('assert');
 
 describe('Timeline ItemSet', function () {
   before(function () {
-    delete require.cache[require.resolve('../dist/vis')]
+    delete require.cache[require.resolve('../dist/vis')];
     this.jsdom = require('jsdom-global')();
     this.vis = require('../dist/vis');
     var TestSupport = require('./TestSupport');
     var rangeBody = TestSupport.buildSimpleTimelineRangeBody();
     this.testrange = new this.vis.timeline.Range(rangeBody);
-    this.testrange.setRange(new Date(2017, 1, 26, 13, 26, 3, 320), new Date(2017, 1, 26, 13, 26, 4, 320), false, false, null);
-    this.testitems =  new this.vis.DataSet({
+    this.testrange.setRange(
+      new Date(2017, 1, 26, 13, 26, 3, 320),
+      new Date(2017, 1, 26, 13, 26, 4, 320),
+      false,
+      false,
+      null
+    );
+    this.testitems = new this.vis.DataSet({
       type: {
         start: 'Date',
-        end: 'Date'
-      }
+        end: 'Date',
+      },
     });
     // add single items with different date types
-    this.testitems.add({id: 1, content: 'Item 1', start: new Date(2017, 1, 26, 13, 26, 3, 600), type: 'point'});
-    this.testitems.add({id: 2, content: 'Item 2', start: new Date(2017, 1, 26, 13, 26, 5, 600), type: 'point'});
-  })
+    this.testitems.add({
+      id: 1,
+      content: 'Item 1',
+      start: new Date(2017, 1, 26, 13, 26, 3, 600),
+      type: 'point',
+    });
+    this.testitems.add({
+      id: 2,
+      content: 'Item 2',
+      start: new Date(2017, 1, 26, 13, 26, 5, 600),
+      type: 'point',
+    });
+  });
 
   after(function () {
     this.jsdom();
-  })
+  });
 
-  var getBasicBody = function() {
+  var getBasicBody = function () {
     var body = {
       dom: {
         container: document.createElement('div'),
@@ -33,7 +49,7 @@ describe('Timeline ItemSet', function () {
         top: document.createElement('div'),
         left: document.createElement('div'),
         center: document.createElement('div'),
-        backgroundVertical: document.createElement('div')
+        backgroundVertical: document.createElement('div'),
       },
       domProps: {
         root: {},
@@ -48,15 +64,16 @@ describe('Timeline ItemSet', function () {
         bottom: {},
         border: {},
         scrollTop: 0,
-        scrollTopMin: 0
+        scrollTopMin: 0,
       },
       emitter: {
-        on: function() {return {};},
-        emit: function() {}
+        on: function () {
+          return {};
+        },
+        emit: function () {},
       },
-      util: {
-      }
-    }
+      util: {},
+    };
     return body;
   };
 
@@ -84,21 +101,25 @@ describe('Timeline ItemSet', function () {
     assert.equal(itemset.getItems(), null);
   });
 
-  it('should store items correctly', function() {
+  it('should store items correctly', function () {
     var body = getBasicBody();
     body.range = this.testrange;
     var DateUtil = this.vis.timeline.DateUtil;
-    body.util.toScreen = function(time) {
-      return DateUtil.toScreen({
-        body: {
-          hiddenDates: []
+    body.util.toScreen = function (time) {
+      return DateUtil.toScreen(
+        {
+          body: {
+            hiddenDates: [],
+          },
+          range: {
+            conversion: function () {
+              return { offset: 0, scale: 100 };
+            },
+          },
         },
-        range: {
-          conversion: function() {
-            return {offset: 0, scale: 100};
-          }
-        }
-      }, time, 900)
+        time,
+        900
+      );
     };
     var itemset = new this.vis.timeline.components.ItemSet(body, {});
     itemset.setItems(this.testitems);

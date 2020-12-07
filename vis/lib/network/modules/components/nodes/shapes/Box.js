@@ -1,6 +1,6 @@
 'use strict';
 
-import NodeBase from '../util/NodeBase'
+import NodeBase from '../util/NodeBase';
 
 /**
  * A Box Node/Cluster shape.
@@ -13,8 +13,8 @@ class Box extends NodeBase {
    * @param {Object} body
    * @param {Label} labelModule
    */
-  constructor (options, body, labelModule) {
-    super(options,body,labelModule);
+  constructor(options, body, labelModule) {
+    super(options, body, labelModule);
     this._setMargins(labelModule);
   }
 
@@ -28,7 +28,7 @@ class Box extends NodeBase {
     if (this.needsRefresh(selected, hover)) {
       var dimensions = this.getDimensionsFromLabel(ctx, selected, hover);
 
-      this.width  = dimensions.width + this.margin.right + this.margin.left;
+      this.width = dimensions.width + this.margin.right + this.margin.left;
       this.height = dimensions.height + this.margin.top + this.margin.bottom;
       this.radius = this.width / 2;
     }
@@ -49,12 +49,23 @@ class Box extends NodeBase {
     this.top = y - this.height / 2;
 
     this.initContextForDraw(ctx, values);
-    ctx.roundRect(this.left, this.top, this.width, this.height, values.borderRadius);
+    ctx.roundRect(
+      this.left,
+      this.top,
+      this.width,
+      this.height,
+      values.borderRadius
+    );
     this.performFill(ctx, values);
 
     this.updateBoundingBox(x, y, ctx, selected, hover);
-    this.labelModule.draw(ctx, this.left + this.textSize.width / 2 + this.margin.left,
-                               this.top + this.textSize.height / 2 + this.margin.top, selected, hover);
+    this.labelModule.draw(
+      ctx,
+      this.left + this.textSize.width / 2 + this.margin.left,
+      this.top + this.textSize.height / 2 + this.margin.top,
+      selected,
+      hover
+    );
   }
 
   /**
@@ -82,9 +93,12 @@ class Box extends NodeBase {
     this.resize(ctx);
     let borderWidth = this.options.borderWidth;
 
-    return Math.min(
-        Math.abs((this.width) / 2 / Math.cos(angle)),
-        Math.abs((this.height)  / 2 / Math.sin(angle))) + borderWidth;
+    return (
+      Math.min(
+        Math.abs(this.width / 2 / Math.cos(angle)),
+        Math.abs(this.height / 2 / Math.sin(angle))
+      ) + borderWidth
+    );
   }
 }
 

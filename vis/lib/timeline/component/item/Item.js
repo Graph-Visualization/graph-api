@@ -2,7 +2,6 @@ var Hammer = require('../../../module/hammer');
 var util = require('../../../util');
 var moment = require('../../../module/moment');
 
-
 /**
  * @constructor Item
  * @param {Object} data             Object containing (optional) parameters type,
@@ -12,7 +11,7 @@ var moment = require('../../../module/moment');
  * @param {Object} options          Configuration options
  *                                  // TODO: describe available options
  */
-function Item (data, conversion, options) {
+function Item(data, conversion, options) {
   this.id = null;
   this.parent = null;
   this.data = data;
@@ -39,7 +38,7 @@ Item.prototype.stack = true;
 /**
  * Select current item
  */
-Item.prototype.select = function() {
+Item.prototype.select = function () {
   this.selected = true;
   this.dirty = true;
   if (this.displayed) this.redraw();
@@ -48,7 +47,7 @@ Item.prototype.select = function() {
 /**
  * Unselect current item
  */
-Item.prototype.unselect = function() {
+Item.prototype.unselect = function () {
   this.selected = false;
   this.dirty = true;
   if (this.displayed) this.redraw();
@@ -59,17 +58,18 @@ Item.prototype.unselect = function() {
  * be changed. When the item is displayed, it will be redrawn immediately.
  * @param {Object} data
  */
-Item.prototype.setData = function(data) {
+Item.prototype.setData = function (data) {
   var groupChanged = data.group != undefined && this.data.group != data.group;
   if (groupChanged && this.parent != null) {
     this.parent.itemSet._moveToGroup(this, data.group);
   }
-  
+
   if (this.parent) {
     this.parent.stackDirty = true;
   }
-  
-  var subGroupChanged = data.subgroup != undefined && this.data.subgroup != data.subgroup;
+
+  var subGroupChanged =
+    data.subgroup != undefined && this.data.subgroup != data.subgroup;
   if (subGroupChanged && this.parent != null) {
     this.parent.changeSubgroup(this, this.data.subgroup, data.subgroup);
   }
@@ -84,15 +84,14 @@ Item.prototype.setData = function(data) {
  * Set a parent for the item
  * @param {Group} parent
  */
-Item.prototype.setParent = function(parent) {
+Item.prototype.setParent = function (parent) {
   if (this.displayed) {
     this.hide();
     this.parent = parent;
     if (this.parent) {
       this.show();
     }
-  }
-  else {
+  } else {
     this.parent = parent;
   }
 };
@@ -102,7 +101,8 @@ Item.prototype.setParent = function(parent) {
  * @param {vis.Range} range with a timestamp for start and end
  * @returns {boolean} True if visible
  */
-Item.prototype.isVisible = function(range) {  // eslint-disable-line no-unused-vars
+Item.prototype.isVisible = function (range) {
+  // eslint-disable-line no-unused-vars
   return false;
 };
 
@@ -110,7 +110,7 @@ Item.prototype.isVisible = function(range) {  // eslint-disable-line no-unused-v
  * Show the Item in the DOM (when not already visible)
  * @return {Boolean} changed
  */
-Item.prototype.show = function() {
+Item.prototype.show = function () {
   return false;
 };
 
@@ -118,28 +118,28 @@ Item.prototype.show = function() {
  * Hide the Item from the DOM (when visible)
  * @return {Boolean} changed
  */
-Item.prototype.hide = function() {
+Item.prototype.hide = function () {
   return false;
 };
 
 /**
  * Repaint the item
  */
-Item.prototype.redraw = function() {
+Item.prototype.redraw = function () {
   // should be implemented by the item
 };
 
 /**
  * Reposition the Item horizontally
  */
-Item.prototype.repositionX = function() {
+Item.prototype.repositionX = function () {
   // should be implemented by the item
 };
 
 /**
  * Reposition the Item vertically
  */
-Item.prototype.repositionY = function() {
+Item.prototype.repositionY = function () {
   // should be implemented by the item
 };
 
@@ -148,7 +148,11 @@ Item.prototype.repositionY = function() {
  * @protected
  */
 Item.prototype._repaintDragCenter = function () {
-  if (this.selected && this.options.editable.updateTime && !this.dom.dragCenter) {
+  if (
+    this.selected &&
+    this.options.editable.updateTime &&
+    !this.dom.dragCenter
+  ) {
     var me = this;
     // create and show drag area
     var dragCenter = document.createElement('div');
@@ -157,9 +161,9 @@ Item.prototype._repaintDragCenter = function () {
     var hammer = new Hammer(dragCenter);
 
     hammer.on('tap', function (event) {
-      me.parent.itemSet.body.emitter.emit('click',  {
+      me.parent.itemSet.body.emitter.emit('click', {
         event: event,
-        item: me.id
+        item: me.id,
       });
     });
     hammer.on('doubletap', function (event) {
@@ -167,25 +171,22 @@ Item.prototype._repaintDragCenter = function () {
       me.parent.itemSet._onUpdateItem(me);
       me.parent.itemSet.body.emitter.emit('doubleClick', {
         event: event,
-        item: me.id 
+        item: me.id,
       });
     });
 
     if (this.dom.box) {
       if (this.dom.dragLeft) {
         this.dom.box.insertBefore(dragCenter, this.dom.dragLeft);
-      }
-      else {
+      } else {
         this.dom.box.appendChild(dragCenter);
       }
-    }
-    else if (this.dom.point) {
+    } else if (this.dom.point) {
       this.dom.point.appendChild(dragCenter);
     }
-    
+
     this.dom.dragCenter = dragCenter;
-  }
-  else if (!this.selected && this.dom.dragCenter) {
+  } else if (!this.selected && this.dom.dragCenter) {
     // delete drag area
     if (this.dom.dragCenter.parentNode) {
       this.dom.dragCenter.parentNode.removeChild(this.dom.dragCenter);
@@ -200,8 +201,12 @@ Item.prototype._repaintDragCenter = function () {
  * @protected
  */
 Item.prototype._repaintDeleteButton = function (anchor) {
-  var editable = ((this.options.editable.overrideItems || this.editable == null) && this.options.editable.remove) ||
-                 (!this.options.editable.overrideItems && this.editable != null && this.editable.remove);
+  var editable =
+    ((this.options.editable.overrideItems || this.editable == null) &&
+      this.options.editable.remove) ||
+    (!this.options.editable.overrideItems &&
+      this.editable != null &&
+      this.editable.remove);
 
   if (this.selected && editable && !this.dom.deleteButton) {
     // create and show button
@@ -224,8 +229,7 @@ Item.prototype._repaintDeleteButton = function (anchor) {
 
     anchor.appendChild(deleteButton);
     this.dom.deleteButton = deleteButton;
-  }
-  else if (!this.selected && this.dom.deleteButton) {
+  } else if (!this.selected && this.dom.deleteButton) {
     // remove button
     if (this.dom.deleteButton.parentNode) {
       this.dom.deleteButton.parentNode.removeChild(this.dom.deleteButton);
@@ -242,9 +246,9 @@ Item.prototype._repaintDeleteButton = function (anchor) {
 Item.prototype._repaintOnItemUpdateTimeTooltip = function (anchor) {
   if (!this.options.tooltipOnItemUpdateTime) return;
 
-  var editable = (this.options.editable.updateTime || 
-                  this.data.editable === true) &&
-                 this.data.editable !== false;
+  var editable =
+    (this.options.editable.updateTime || this.data.editable === true) &&
+    this.data.editable !== false;
 
   if (this.selected && editable && !this.dom.onItemUpdateTimeTooltip) {
     var onItemUpdateTimeTooltip = document.createElement('div');
@@ -252,21 +256,24 @@ Item.prototype._repaintOnItemUpdateTimeTooltip = function (anchor) {
     onItemUpdateTimeTooltip.className = 'vis-onUpdateTime-tooltip';
     anchor.appendChild(onItemUpdateTimeTooltip);
     this.dom.onItemUpdateTimeTooltip = onItemUpdateTimeTooltip;
-
   } else if (!this.selected && this.dom.onItemUpdateTimeTooltip) {
     // remove button
     if (this.dom.onItemUpdateTimeTooltip.parentNode) {
-      this.dom.onItemUpdateTimeTooltip.parentNode.removeChild(this.dom.onItemUpdateTimeTooltip);
+      this.dom.onItemUpdateTimeTooltip.parentNode.removeChild(
+        this.dom.onItemUpdateTimeTooltip
+      );
     }
     this.dom.onItemUpdateTimeTooltip = null;
   }
 
   // position onChange tooltip
   if (this.dom.onItemUpdateTimeTooltip) {
-
     // only show when editing
-    this.dom.onItemUpdateTimeTooltip.style.visibility = this.parent.itemSet.touchParams.itemIsDragging ? 'visible' : 'hidden';
-    
+    this.dom.onItemUpdateTimeTooltip.style.visibility = this.parent.itemSet
+      .touchParams.itemIsDragging
+      ? 'visible'
+      : 'hidden';
+
     // position relative to item's content
     if (this.options.rtl) {
       this.dom.onItemUpdateTimeTooltip.style.right = this.dom.content.style.right;
@@ -278,41 +285,47 @@ Item.prototype._repaintOnItemUpdateTimeTooltip = function (anchor) {
     var tooltipOffset = 50; // TODO: should be tooltip height (depends on template)
     var scrollTop = this.parent.itemSet.body.domProps.scrollTop;
 
-      // TODO: this.top for orientation:true is actually the items distance from the bottom... 
-      // (should be this.bottom)
-    var itemDistanceFromTop 
+    // TODO: this.top for orientation:true is actually the items distance from the bottom...
+    // (should be this.bottom)
+    var itemDistanceFromTop;
     if (this.options.orientation.item == 'top') {
       itemDistanceFromTop = this.top;
     } else {
-      itemDistanceFromTop = (this.parent.height - this.top - this.height)
+      itemDistanceFromTop = this.parent.height - this.top - this.height;
     }
-    var isCloseToTop = itemDistanceFromTop + this.parent.top - tooltipOffset < -scrollTop;
+    var isCloseToTop =
+      itemDistanceFromTop + this.parent.top - tooltipOffset < -scrollTop;
 
     if (isCloseToTop) {
-      this.dom.onItemUpdateTimeTooltip.style.bottom = "";
-      this.dom.onItemUpdateTimeTooltip.style.top = this.height + 2 + "px";
+      this.dom.onItemUpdateTimeTooltip.style.bottom = '';
+      this.dom.onItemUpdateTimeTooltip.style.top = this.height + 2 + 'px';
     } else {
-      this.dom.onItemUpdateTimeTooltip.style.top = "";
-      this.dom.onItemUpdateTimeTooltip.style.bottom = this.height + 2 + "px";
+      this.dom.onItemUpdateTimeTooltip.style.top = '';
+      this.dom.onItemUpdateTimeTooltip.style.bottom = this.height + 2 + 'px';
     }
-    
+
     // handle tooltip content
     var content;
     var templateFunction;
 
-    if (this.options.tooltipOnItemUpdateTime && this.options.tooltipOnItemUpdateTime.template) {
-      templateFunction = this.options.tooltipOnItemUpdateTime.template.bind(this);
+    if (
+      this.options.tooltipOnItemUpdateTime &&
+      this.options.tooltipOnItemUpdateTime.template
+    ) {
+      templateFunction = this.options.tooltipOnItemUpdateTime.template.bind(
+        this
+      );
       content = templateFunction(this.data);
     } else {
       content = 'start: ' + moment(this.data.start).format('MM/DD/YYYY hh:mm');
-      if (this.data.end) { 
-        content += '<br> end: ' + moment(this.data.end).format('MM/DD/YYYY hh:mm');
+      if (this.data.end) {
+        content +=
+          '<br> end: ' + moment(this.data.end).format('MM/DD/YYYY hh:mm');
       }
     }
     this.dom.onItemUpdateTimeTooltip.innerHTML = content;
   }
 };
-
 
 /**
  * Set HTML contents for the item
@@ -324,41 +337,51 @@ Item.prototype._updateContents = function (element) {
   var changed;
   var templateFunction;
   var itemVisibleFrameContent;
-  var visibleFrameTemplateFunction; 
+  var visibleFrameTemplateFunction;
   var itemData = this.parent.itemSet.itemsData.get(this.id); // get a clone of the data from the dataset
 
   var frameElement = this.dom.box || this.dom.point;
-  var itemVisibleFrameContentElement = frameElement.getElementsByClassName('vis-item-visible-frame')[0]
+  var itemVisibleFrameContentElement = frameElement.getElementsByClassName(
+    'vis-item-visible-frame'
+  )[0];
 
   if (this.options.visibleFrameTemplate) {
     visibleFrameTemplateFunction = this.options.visibleFrameTemplate.bind(this);
-    itemVisibleFrameContent = visibleFrameTemplateFunction(itemData, frameElement);
+    itemVisibleFrameContent = visibleFrameTemplateFunction(
+      itemData,
+      frameElement
+    );
   } else {
     itemVisibleFrameContent = '';
   }
-  
+
   if (itemVisibleFrameContentElement) {
-    if ((itemVisibleFrameContent instanceof Object) && !(itemVisibleFrameContent instanceof Element)) {
-      visibleFrameTemplateFunction(itemData, itemVisibleFrameContentElement)
+    if (
+      itemVisibleFrameContent instanceof Object &&
+      !(itemVisibleFrameContent instanceof Element)
+    ) {
+      visibleFrameTemplateFunction(itemData, itemVisibleFrameContentElement);
     } else {
-       changed = this._contentToString(this.itemVisibleFrameContent) !== this._contentToString(itemVisibleFrameContent);
-       if (changed) {
+      changed =
+        this._contentToString(this.itemVisibleFrameContent) !==
+        this._contentToString(itemVisibleFrameContent);
+      if (changed) {
         // only replace the content when changed
         if (itemVisibleFrameContent instanceof Element) {
           itemVisibleFrameContentElement.innerHTML = '';
           itemVisibleFrameContentElement.appendChild(itemVisibleFrameContent);
-        }
-        else if (itemVisibleFrameContent != undefined) {
+        } else if (itemVisibleFrameContent != undefined) {
           itemVisibleFrameContentElement.innerHTML = itemVisibleFrameContent;
-        }
-        else {
-          if (!(this.data.type == 'background' && this.data.content === undefined)) {
+        } else {
+          if (
+            !(this.data.type == 'background' && this.data.content === undefined)
+          ) {
             throw new Error('Property "content" missing in item ' + this.id);
           }
         }
 
         this.itemVisibleFrameContent = itemVisibleFrameContent;
-       }
+      }
     }
   }
 
@@ -369,21 +392,22 @@ Item.prototype._updateContents = function (element) {
     content = this.data.content;
   }
 
-  if ((content instanceof Object) && !(content instanceof Element)) {
-    templateFunction(itemData, element)
+  if (content instanceof Object && !(content instanceof Element)) {
+    templateFunction(itemData, element);
   } else {
-    changed = this._contentToString(this.content) !== this._contentToString(content);
+    changed =
+      this._contentToString(this.content) !== this._contentToString(content);
     if (changed) {
       // only replace the content when changed
       if (content instanceof Element) {
         element.innerHTML = '';
         element.appendChild(content);
-      }
-      else if (content != undefined) {
+      } else if (content != undefined) {
         element.innerHTML = content;
-      }
-      else {
-        if (!(this.data.type == 'background' && this.data.content === undefined)) {
+      } else {
+        if (
+          !(this.data.type == 'background' && this.data.content === undefined)
+        ) {
           throw new Error('Property "content" missing in item ' + this.id);
         }
       }
@@ -397,17 +421,15 @@ Item.prototype._updateContents = function (element) {
  * @param {Element} element   HTML element to which the attributes will be attached
  * @private
  */
- Item.prototype._updateDataAttributes = function(element) {
+Item.prototype._updateDataAttributes = function (element) {
   if (this.options.dataAttributes && this.options.dataAttributes.length > 0) {
     var attributes = [];
 
     if (Array.isArray(this.options.dataAttributes)) {
       attributes = this.options.dataAttributes;
-    }
-    else if (this.options.dataAttributes == 'all') {
+    } else if (this.options.dataAttributes == 'all') {
       attributes = Object.keys(this.data);
-    }
-    else {
+    } else {
       return;
     }
 
@@ -417,8 +439,7 @@ Item.prototype._updateContents = function (element) {
 
       if (value != null) {
         element.setAttribute('data-' + name, value);
-      }
-      else {
+      } else {
         element.removeAttribute('data-' + name);
       }
     }
@@ -430,7 +451,7 @@ Item.prototype._updateContents = function (element) {
  * @param {Element} element
  * @private
  */
-Item.prototype._updateStyle = function(element) {
+Item.prototype._updateStyle = function (element) {
   // remove old styles
   if (this.style) {
     util.removeCssText(element, this.style);
@@ -443,7 +464,6 @@ Item.prototype._updateStyle = function(element) {
     this.style = this.data.style;
   }
 };
-
 
 /**
  * Stringify the items contents
@@ -460,33 +480,45 @@ Item.prototype._contentToString = function (content) {
 /**
  * Update the editability of this item.
  */
-Item.prototype._updateEditStatus = function() {
+Item.prototype._updateEditStatus = function () {
   if (this.options) {
-    if(typeof this.options.editable === 'boolean') {
+    if (typeof this.options.editable === 'boolean') {
       this.editable = {
         updateTime: this.options.editable,
         updateGroup: this.options.editable,
-        remove: this.options.editable
+        remove: this.options.editable,
       };
-    } else if(typeof this.options.editable === 'object') {
-        this.editable = {};
-        util.selectiveExtend(['updateTime', 'updateGroup', 'remove'], this.editable, this.options.editable);
+    } else if (typeof this.options.editable === 'object') {
+      this.editable = {};
+      util.selectiveExtend(
+        ['updateTime', 'updateGroup', 'remove'],
+        this.editable,
+        this.options.editable
+      );
     }
   }
   // Item data overrides, except if options.editable.overrideItems is set.
-  if (!this.options || !(this.options.editable) || (this.options.editable.overrideItems !== true)) {
+  if (
+    !this.options ||
+    !this.options.editable ||
+    this.options.editable.overrideItems !== true
+  ) {
     if (this.data) {
       if (typeof this.data.editable === 'boolean') {
         this.editable = {
           updateTime: this.data.editable,
           updateGroup: this.data.editable,
-          remove: this.data.editable
-        }
+          remove: this.data.editable,
+        };
       } else if (typeof this.data.editable === 'object') {
         // TODO: in vis.js 5.0, we should change this to not reset options from the timeline configuration.
         // Basically just remove the next line...
         this.editable = {};
-        util.selectiveExtend(['updateTime', 'updateGroup', 'remove'], this.editable, this.data.editable);
+        util.selectiveExtend(
+          ['updateTime', 'updateGroup', 'remove'],
+          this.editable,
+          this.data.editable
+        );
       }
     }
   }

@@ -23,21 +23,21 @@ function _initRequestAnimationFrame() {
   var func;
 
   if (window !== undefined) {
-    func = window.requestAnimationFrame
-        || window.mozRequestAnimationFrame
-        || window.webkitRequestAnimationFrame
-        || window.msRequestAnimationFrame;
+    func =
+      window.requestAnimationFrame ||
+      window.mozRequestAnimationFrame ||
+      window.webkitRequestAnimationFrame ||
+      window.msRequestAnimationFrame;
   }
 
   if (func === undefined) {
     // window or method not present, setting mock requestAnimationFrame
-    window.requestAnimationFrame =
-     function(callback) {
-       //console.log("Called mock requestAnimationFrame");
-       callback();
-     }
+    window.requestAnimationFrame = function (callback) {
+      //console.log("Called mock requestAnimationFrame");
+      callback();
+    };
   } else {
-     window.requestAnimationFrame = func;
+    window.requestAnimationFrame = func;
   }
 }
 
@@ -67,7 +67,7 @@ class CanvasRenderer {
     this.options = {};
     this.defaultOptions = {
       hideEdgesOnDrag: false,
-      hideNodesOnDrag: false
+      hideNodesOnDrag: false,
     };
     util.extend(this.options, this.defaultOptions);
 
@@ -79,40 +79,49 @@ class CanvasRenderer {
    * Binds event listeners
    */
   bindEventListeners() {
-    this.body.emitter.on("dragStart", () => { this.dragging = true; });
-    this.body.emitter.on("dragEnd", () => { this.dragging = false; });
-    this.body.emitter.on("_resizeNodes", () => { this._resizeNodes(); });
-    this.body.emitter.on("_redraw", () => {
+    this.body.emitter.on('dragStart', () => {
+      this.dragging = true;
+    });
+    this.body.emitter.on('dragEnd', () => {
+      this.dragging = false;
+    });
+    this.body.emitter.on('_resizeNodes', () => {
+      this._resizeNodes();
+    });
+    this.body.emitter.on('_redraw', () => {
       if (this.renderingActive === false) {
         this._redraw();
       }
     });
-    this.body.emitter.on("_blockRedraw", () => {this.allowRedraw = false;});
-    this.body.emitter.on("_allowRedraw", () => {this.allowRedraw = true; this.redrawRequested = false;});
-    this.body.emitter.on("_requestRedraw", this._requestRedraw.bind(this));
-    this.body.emitter.on("_startRendering", () => {
+    this.body.emitter.on('_blockRedraw', () => {
+      this.allowRedraw = false;
+    });
+    this.body.emitter.on('_allowRedraw', () => {
+      this.allowRedraw = true;
+      this.redrawRequested = false;
+    });
+    this.body.emitter.on('_requestRedraw', this._requestRedraw.bind(this));
+    this.body.emitter.on('_startRendering', () => {
       this.renderRequests += 1;
       this.renderingActive = true;
       this._startRendering();
     });
-    this.body.emitter.on("_stopRendering", () => {
+    this.body.emitter.on('_stopRendering', () => {
       this.renderRequests -= 1;
       this.renderingActive = this.renderRequests > 0;
       this.renderTimer = undefined;
     });
-    this.body.emitter.on('destroy',  () => {
+    this.body.emitter.on('destroy', () => {
       this.renderRequests = 0;
       this.allowRedraw = false;
       this.renderingActive = false;
       if (this.requiresTimeout === true) {
         clearTimeout(this.renderTimer);
-      }
-      else {
+      } else {
         window.cancelAnimationFrame(this.renderTimer);
       }
       this.body.emitter.off();
     });
-
   }
 
   /**
@@ -121,11 +130,10 @@ class CanvasRenderer {
    */
   setOptions(options) {
     if (options !== undefined) {
-      let fields = ['hideEdgesOnDrag','hideNodesOnDrag'];
-      util.selectiveDeepExtend(fields,this.options, options);
+      let fields = ['hideEdgesOnDrag', 'hideNodesOnDrag'];
+      util.selectiveDeepExtend(fields, this.options, options);
     }
   }
-
 
   /**
    * Prepare the drawing of the next frame.
@@ -137,7 +145,7 @@ class CanvasRenderer {
    * @returns {function|undefined}
    * @private
    */
-  _requestNextFrame(callback, delay) { 
+  _requestNextFrame(callback, delay) {
     // During unit testing, it happens that the mock window object is reset while
     // the next frame is still pending. Then, either 'window' is not present, or
     // 'requestAnimationFrame()' is not present because it is not defined on the
@@ -149,12 +157,12 @@ class CanvasRenderer {
     // This is not something that will happen in normal operation, but we still need
     // to take it into account.
     //
-    if (typeof window === 'undefined') return;  // Doing `if (window === undefined)` does not work here!
+    if (typeof window === 'undefined') return; // Doing `if (window === undefined)` does not work here!
 
     let timer;
 
-    var myWindow = window;  // Grab a reference to reduce the possibility that 'window' is reset
-                            // while running this method.
+    var myWindow = window; // Grab a reference to reduce the possibility that 'window' is reset
+    // while running this method.
 
     if (this.requiresTimeout === true) {
       // wait given number of milliseconds and perform the animation step function
@@ -175,7 +183,10 @@ class CanvasRenderer {
   _startRendering() {
     if (this.renderingActive === true) {
       if (this.renderTimer === undefined) {
-        this.renderTimer = this._requestNextFrame(this._renderStep.bind(this), this.simulationInterval);
+        this.renderTimer = this._requestNextFrame(
+          this._renderStep.bind(this),
+          this.simulationInterval
+        );
       }
     }
   }
@@ -217,9 +228,15 @@ class CanvasRenderer {
    * @private
    */
   _requestRedraw() {
-    if (this.redrawRequested !== true && this.renderingActive === false && this.allowRedraw === true) {
+    if (
+      this.redrawRequested !== true &&
+      this.renderingActive === false &&
+      this.allowRedraw === true
+    ) {
       this.redrawRequested = true;
-      this._requestNextFrame(() => {this._redraw(false);}, 0);
+      this._requestNextFrame(() => {
+        this._redraw(false);
+      }, 0);
     }
   }
 
@@ -231,12 +248,15 @@ class CanvasRenderer {
    */
   _redraw(hidden = false) {
     if (this.allowRedraw === true) {
-      this.body.emitter.emit("initRedraw");
+      this.body.emitter.emit('initRedraw');
 
       this.redrawRequested = false;
 
       // when the container div was hidden, this fixes it back up!
-      if (this.canvas.frame.canvas.width === 0 || this.canvas.frame.canvas.height === 0) {
+      if (
+        this.canvas.frame.canvas.width === 0 ||
+        this.canvas.frame.canvas.height === 0
+      ) {
         this.canvas.setSize();
       }
 
@@ -260,23 +280,28 @@ class CanvasRenderer {
       ctx.scale(this.body.view.scale, this.body.view.scale);
 
       ctx.beginPath();
-      this.body.emitter.emit("beforeDrawing", ctx);
+      this.body.emitter.emit('beforeDrawing', ctx);
       ctx.closePath();
 
       if (hidden === false) {
-        if (this.dragging === false || (this.dragging === true && this.options.hideEdgesOnDrag === false)) {
+        if (
+          this.dragging === false ||
+          (this.dragging === true && this.options.hideEdgesOnDrag === false)
+        ) {
           this._drawEdges(ctx);
         }
       }
 
-      if (this.dragging === false || (this.dragging === true && this.options.hideNodesOnDrag === false)) {
+      if (
+        this.dragging === false ||
+        (this.dragging === true && this.options.hideNodesOnDrag === false)
+      ) {
         this._drawNodes(ctx, hidden);
       }
 
       ctx.beginPath();
-      this.body.emitter.emit("afterDrawing", ctx);
+      this.body.emitter.emit('afterDrawing', ctx);
       ctx.closePath();
-
 
       // restore original scaling and translation
       ctx.restore();
@@ -285,7 +310,6 @@ class CanvasRenderer {
       }
     }
   }
-
 
   /**
    * Redraw all nodes
@@ -330,12 +354,17 @@ class CanvasRenderer {
     let node;
     let selected = [];
     let margin = 20;
-    let topLeft = this.canvas.DOMtoCanvas({x:-margin,y:-margin});
+    let topLeft = this.canvas.DOMtoCanvas({ x: -margin, y: -margin });
     let bottomRight = this.canvas.DOMtoCanvas({
-      x: this.canvas.frame.canvas.clientWidth+margin,
-      y: this.canvas.frame.canvas.clientHeight+margin
+      x: this.canvas.frame.canvas.clientWidth + margin,
+      y: this.canvas.frame.canvas.clientHeight + margin,
     });
-    let viewableArea = {top:topLeft.y,left:topLeft.x,bottom:bottomRight.y,right:bottomRight.x};
+    let viewableArea = {
+      top: topLeft.y,
+      left: topLeft.x,
+      bottom: bottomRight.y,
+      right: bottomRight.x,
+    };
 
     // draw unselected nodes;
     for (let i = 0; i < nodeIndices.length; i++) {
@@ -343,15 +372,12 @@ class CanvasRenderer {
       // set selected nodes aside
       if (node.isSelected()) {
         selected.push(nodeIndices[i]);
-      }
-      else {
+      } else {
         if (alwaysShow === true) {
           node.draw(ctx);
-        }
-        else if (node.isBoundingBoxOverlappingWith(viewableArea) === true) {
+        } else if (node.isBoundingBoxOverlappingWith(viewableArea) === true) {
           node.draw(ctx);
-        }
-        else {
+        } else {
           node.updateBoundingBox(ctx, node.selected);
         }
       }
@@ -363,7 +389,6 @@ class CanvasRenderer {
       node.draw(ctx);
     }
   }
-
 
   /**
    * Redraw all edges
@@ -392,16 +417,16 @@ class CanvasRenderer {
     if (typeof window !== 'undefined') {
       let browserType = navigator.userAgent.toLowerCase();
       this.requiresTimeout = false;
-      if (browserType.indexOf('msie 9.0') != -1) { // IE 9
+      if (browserType.indexOf('msie 9.0') != -1) {
+        // IE 9
         this.requiresTimeout = true;
-      }
-      else if (browserType.indexOf('safari') != -1) {  // safari
+      } else if (browserType.indexOf('safari') != -1) {
+        // safari
         if (browserType.indexOf('chrome') <= -1) {
           this.requiresTimeout = true;
         }
       }
-    }
-    else {
+    } else {
       this.requiresTimeout = true;
     }
   }

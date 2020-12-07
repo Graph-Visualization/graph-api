@@ -16,8 +16,8 @@
  * ====
  *
  * For label handling, this is an incomplete implementation. From docs (quote #3015):
- * 
- * > the escape sequences "\n", "\l" and "\r" divide the label into lines, centered, 
+ *
+ * > the escape sequences "\n", "\l" and "\r" divide the label into lines, centered,
  * > left-justified, and right-justified, respectively.
  *
  * Source: http://www.graphviz.org/content/attrs#kescString
@@ -34,21 +34,21 @@
  * - Note that text explicitly says 'labels'; the dot parser currently handles escape
  *   sequences in **all** strings.
  */
-function parseDOT (data) {
+function parseDOT(data) {
   dot = data;
   return parseGraph();
 }
 
 // mapping of attributes from DOT (the keys) to vis.js (the values)
 var NODE_ATTR_MAPPING = {
-  'fontsize': 'font.size',
-  'fontcolor': 'font.color',
-  'labelfontcolor': 'font.color',
-  'fontname': 'font.face',
-  'color': ['color.border', 'color.background'],
-  'fillcolor': 'color.background',
-  'tooltip': 'title',
-  'labeltooltip': 'title'
+  fontsize: 'font.size',
+  fontcolor: 'font.color',
+  labelfontcolor: 'font.color',
+  fontname: 'font.face',
+  color: ['color.border', 'color.background'],
+  fillcolor: 'color.background',
+  tooltip: 'title',
+  labeltooltip: 'title',
 };
 var EDGE_ATTR_MAPPING = Object.create(NODE_ATTR_MAPPING);
 EDGE_ATTR_MAPPING.color = 'color.color';
@@ -56,10 +56,10 @@ EDGE_ATTR_MAPPING.style = 'dashes';
 
 // token types enumeration
 var TOKENTYPE = {
-  NULL : 0,
-  DELIMITER : 1,
+  NULL: 0,
+  DELIMITER: 1,
   IDENTIFIER: 2,
-  UNKNOWN : 3
+  UNKNOWN: 3,
 };
 
 // map with all delimiters
@@ -73,13 +73,13 @@ var DELIMITERS = {
   ',': true,
 
   '->': true,
-  '--': true
+  '--': true,
 };
 
-var dot = '';                   // current dot file
-var index = 0;                  // current index in dot file
-var c = '';                     // current token character in expr
-var token = '';                 // current token
+var dot = ''; // current dot file
+var index = 0; // current index in dot file
+var c = ''; // current token character in expr
+var token = ''; // current token
 var tokenType = TOKENTYPE.NULL; // type of the token
 
 /**
@@ -126,7 +126,7 @@ function isAlphaNumeric(c) {
  * @param {Object} b
  * @return {Object} a
  */
-function merge (a, b) {
+function merge(a, b) {
   if (!a) {
     a = {};
   }
@@ -164,8 +164,7 @@ function setValue(obj, path, value) {
         o[key] = {};
       }
       o = o[key];
-    }
-    else {
+    } else {
       // this is the end point
       o[key] = value;
     }
@@ -203,7 +202,7 @@ function addNode(graph, node) {
   if (!current) {
     // this is a new node
     current = {
-      id: node.id
+      id: node.id,
     };
     if (graph.node) {
       // clone default attributes
@@ -240,7 +239,7 @@ function addEdge(graph, edge) {
   }
   graph.edges.push(edge);
   if (graph.edge) {
-    var attr = merge({}, graph.edge);     // clone default attributes
+    var attr = merge({}, graph.edge); // clone default attributes
     edge.attr = merge(attr, edge.attr); // merge attributes
   }
 }
@@ -258,11 +257,11 @@ function createEdge(graph, from, to, type, attr) {
   var edge = {
     from: from,
     to: to,
-    type: type
+    type: type,
   };
 
   if (graph.edge) {
-    edge.attr = merge({}, graph.edge);  // clone default attributes
+    edge.attr = merge({}, graph.edge); // clone default attributes
   }
   edge.attr = merge(edge.attr || {}, attr); // merge attributes
 
@@ -278,7 +277,8 @@ function getToken() {
   token = '';
 
   // skip over whitespaces
-  while (c === ' ' || c === '\t' || c === '\n' || c === '\r') {  // space, tab, enter
+  while (c === ' ' || c === '\t' || c === '\n' || c === '\r') {
+    // space, tab, enter
     next();
   }
 
@@ -315,8 +315,7 @@ function getToken() {
           next();
           next();
           break;
-        }
-        else {
+        } else {
           next();
         }
       }
@@ -324,11 +323,11 @@ function getToken() {
     }
 
     // skip over whitespaces
-    while (c === ' ' || c === '\t' || c === '\n' || c === '\r') {  // space, tab, enter
+    while (c === ' ' || c === '\t' || c === '\n' || c === '\r') {
+      // space, tab, enter
       next();
     }
-  }
-  while (isComment);
+  } while (isComment);
 
   // check for end of dot file
   if (c === '') {
@@ -366,12 +365,10 @@ function getToken() {
       next();
     }
     if (token === 'false') {
-      token = false;   // convert to boolean
-    }
-    else if (token === 'true') {
-      token = true;   // convert to boolean
-    }
-    else if (!isNaN(Number(token))) {
+      token = false; // convert to boolean
+    } else if (token === 'true') {
+      token = true; // convert to boolean
+    } else if (!isNaN(Number(token))) {
       token = Number(token); // convert to number
     }
     tokenType = TOKENTYPE.IDENTIFIER;
@@ -382,10 +379,12 @@ function getToken() {
   if (c === '"') {
     next();
     while (c != '' && (c != '"' || (c === '"' && nextPreview() === '"'))) {
-      if (c === '"') {                                  // skip the escape character
+      if (c === '"') {
+        // skip the escape character
         token += c;
         next();
-      } else if (c === '\\' && nextPreview() === 'n') { // Honor a newline escape sequence
+      } else if (c === '\\' && nextPreview() === 'n') {
+        // Honor a newline escape sequence
         token += '\n';
         next();
       } else {
@@ -471,7 +470,7 @@ function parseGraph() {
  * Parse a list with statements.
  * @param {Object} graph
  */
-function parseStatements (graph) {
+function parseStatements(graph) {
   while (token !== '' && token != '}') {
     parseStatement(graph);
     if (token === ';') {
@@ -518,8 +517,7 @@ function parseStatement(graph) {
     graph[id] = token;
     getToken();
     // TODO: implement comma separated list with "a_list: ID=ID [','] [a_list] "
-  }
-  else {
+  } else {
     parseNodeStatement(graph, id);
   }
 }
@@ -529,7 +527,7 @@ function parseStatement(graph) {
  * @param {Object} graph    parent graph object
  * @return {Object | null} subgraph
  */
-function parseSubgraph (graph) {
+function parseSubgraph(graph) {
   var subgraph = null;
 
   // optional subgraph keyword
@@ -591,7 +589,7 @@ function parseSubgraph (graph) {
  *                                  (node, edge, graph), or null if nothing
  *                                  is parsed.
  */
-function parseAttributeStatement (graph) {
+function parseAttributeStatement(graph) {
   // attribute statements
   if (token === 'node') {
     getToken();
@@ -599,15 +597,13 @@ function parseAttributeStatement (graph) {
     // node attributes
     graph.node = parseAttributeList();
     return 'node';
-  }
-  else if (token === 'edge') {
+  } else if (token === 'edge') {
     getToken();
 
     // edge attributes
     graph.edge = parseAttributeList();
     return 'edge';
-  }
-  else if (token === 'graph') {
+  } else if (token === 'graph') {
     getToken();
 
     // graph attributes
@@ -626,7 +622,7 @@ function parseAttributeStatement (graph) {
 function parseNodeStatement(graph, id) {
   // node statement
   var node = {
-    id: id
+    id: id,
   };
   var attr = parseAttributeList();
   if (attr) {
@@ -652,14 +648,13 @@ function parseEdge(graph, from) {
     var subgraph = parseSubgraph(graph);
     if (subgraph) {
       to = subgraph;
-    }
-    else {
+    } else {
       if (tokenType != TOKENTYPE.IDENTIFIER) {
         throw newSyntaxError('Identifier or subgraph expected');
       }
       to = token;
       addNode(graph, {
-        id: to
+        id: to,
       });
       getToken();
     }
@@ -685,9 +680,9 @@ function parseAttributeList() {
 
   // edge styles of dot and vis
   var edgeStyles = {
-    'dashed': true,
-    'solid': false,
-    'dotted': [1, 5]
+    dashed: true,
+    solid: false,
+    dotted: [1, 5],
   };
 
   while (token === '[') {
@@ -718,7 +713,7 @@ function parseAttributeList() {
       setValue(attr, name, value); // name can be a path
 
       getToken();
-      if (token ==',') {
+      if (token == ',') {
         getToken();
       }
     }
@@ -738,7 +733,9 @@ function parseAttributeList() {
  * @returns {SyntaxError} err
  */
 function newSyntaxError(message) {
-  return new SyntaxError(message + ', got "' + chop(token, 30) + '" (char ' + index + ')');
+  return new SyntaxError(
+    message + ', got "' + chop(token, 30) + '" (char ' + index + ')'
+  );
 }
 
 /**
@@ -747,8 +744,8 @@ function newSyntaxError(message) {
  * @param {number} maxLength
  * @returns {String}
  */
-function chop (text, maxLength) {
-  return (text.length <= maxLength) ? text : (text.substr(0, 27) + '...');
+function chop(text, maxLength) {
+  return text.length <= maxLength ? text : text.substr(0, 27) + '...';
 }
 
 /**
@@ -761,22 +758,19 @@ function forEach2(array1, array2, fn) {
   if (Array.isArray(array1)) {
     array1.forEach(function (elem1) {
       if (Array.isArray(array2)) {
-        array2.forEach(function (elem2)  {
+        array2.forEach(function (elem2) {
           fn(elem1, elem2);
         });
-      }
-      else {
+      } else {
         fn(elem1, array2);
       }
     });
-  }
-  else {
+  } else {
     if (Array.isArray(array2)) {
-      array2.forEach(function (elem2)  {
+      array2.forEach(function (elem2) {
         fn(array1, elem2);
       });
-    }
-    else {
+    } else {
       fn(array1, array2);
     }
   }
@@ -817,7 +811,7 @@ function setProp(object, path, value) {
  * @param {Object} mapping
  * @return {Object}         Returns an object with vis.js attributes
  */
-function convertAttr (attr, mapping) {
+function convertAttr(attr, mapping) {
   var converted = {};
 
   for (var prop in attr) {
@@ -826,12 +820,10 @@ function convertAttr (attr, mapping) {
       if (Array.isArray(visProp)) {
         visProp.forEach(function (visPropI) {
           setProp(converted, visPropI, attr[prop]);
-        })
-      }
-      else if (typeof visProp === 'string') {
+        });
+      } else if (typeof visProp === 'string') {
         setProp(converted, visProp, attr[prop]);
-      }
-      else {
+      } else {
         setProp(converted, prop, attr[prop]);
       }
     }
@@ -846,13 +838,13 @@ function convertAttr (attr, mapping) {
  * @param {string} data         Text containing a graph in DOT-notation
  * @return {Object} graphData
  */
-function DOTToGraph (data) {
+function DOTToGraph(data) {
   // parse the DOT file
   var dotData = parseDOT(data);
   var graphData = {
     nodes: [],
     edges: [],
-    options: {}
+    options: {},
   };
 
   // copy the nodes
@@ -860,7 +852,7 @@ function DOTToGraph (data) {
     dotData.nodes.forEach(function (dotNode) {
       var graphNode = {
         id: dotNode.id,
-        label: String(dotNode.label || dotNode.id)
+        label: String(dotNode.label || dotNode.id),
       };
       merge(graphNode, convertAttr(dotNode.attr, NODE_ATTR_MAPPING));
       if (graphNode.image) {
@@ -880,10 +872,10 @@ function DOTToGraph (data) {
     var convertEdge = function (dotEdge) {
       var graphEdge = {
         from: dotEdge.from,
-        to: dotEdge.to
+        to: dotEdge.to,
       };
       merge(graphEdge, convertAttr(dotEdge.attr, EDGE_ATTR_MAPPING));
-      graphEdge.arrows = (dotEdge.type === '->') ? 'to' : undefined;
+      graphEdge.arrows = dotEdge.type === '->' ? 'to' : undefined;
 
       return graphEdge;
     };
@@ -892,22 +884,20 @@ function DOTToGraph (data) {
       var from, to;
       if (dotEdge.from instanceof Object) {
         from = dotEdge.from.nodes;
-      }
-      else {
+      } else {
         from = {
-          id: dotEdge.from
-        }
+          id: dotEdge.from,
+        };
       }
 
       // TODO: support for attributes 'dir' and 'arrowhead' (edge arrows)
 
       if (dotEdge.to instanceof Object) {
         to = dotEdge.to.nodes;
-      }
-      else {
+      } else {
         to = {
-          id: dotEdge.to
-        }
+          id: dotEdge.to,
+        };
       }
 
       if (dotEdge.from instanceof Object && dotEdge.from.edges) {
@@ -918,7 +908,13 @@ function DOTToGraph (data) {
       }
 
       forEach2(from, to, function (from, to) {
-        var subEdge = createEdge(graphData, from.id, to.id, dotEdge.type, dotEdge.attr);
+        var subEdge = createEdge(
+          graphData,
+          from.id,
+          to.id,
+          dotEdge.type,
+          dotEdge.attr
+        );
         var graphEdge = convertEdge(subEdge);
         graphData.edges.push(graphEdge);
       });
@@ -941,5 +937,5 @@ function DOTToGraph (data) {
 }
 
 // exports
-exports.parseDOT   = parseDOT;
+exports.parseDOT = parseDOT;
 exports.DOTToGraph = DOTToGraph;

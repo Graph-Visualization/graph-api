@@ -3,7 +3,6 @@
 // first check if moment.js is already loaded in the browser window, if so,
 // use this instance. Else, load via commonjs.
 
-
 var moment = require('./module/moment');
 var uuid = require('./module/uuid');
 
@@ -13,9 +12,8 @@ var uuid = require('./module/uuid');
  * @return {Boolean} isNumber
  */
 exports.isNumber = function (object) {
-  return (object instanceof Number || typeof object == 'number');
+  return object instanceof Number || typeof object == 'number';
 };
-
 
 /**
  * Remove everything in the DOM object
@@ -42,8 +40,7 @@ exports.recursiveDOMDelete = function (DOMobject) {
 exports.giveRange = function (min, max, total, value) {
   if (max == min) {
     return 0.5;
-  }
-  else {
+  } else {
     var scale = 1 / (max - min);
     return Math.max(0, (value - min) * scale);
   }
@@ -55,7 +52,7 @@ exports.giveRange = function (min, max, total, value) {
  * @return {Boolean} isString
  */
 exports.isString = function (object) {
-  return (object instanceof String || typeof object == 'string');
+  return object instanceof String || typeof object == 'string';
 };
 
 /**
@@ -66,14 +63,12 @@ exports.isString = function (object) {
 exports.isDate = function (object) {
   if (object instanceof Date) {
     return true;
-  }
-  else if (exports.isString(object)) {
+  } else if (exports.isString(object)) {
     // test whether this string contains a date
     var match = ASPDateRegex.exec(object);
     if (match) {
       return true;
-    }
-    else if (!isNaN(Date.parse(object))) {
+    } else if (!isNaN(Date.parse(object))) {
       return true;
     }
   }
@@ -105,7 +100,6 @@ exports.assignAllKeys = function (obj, value) {
   }
 };
 
-
 /**
  * Copy property from b to a if property present in a.
  * If property in b explicitly set to null, delete it if `allowDeletion` set.
@@ -115,22 +109,21 @@ exports.assignAllKeys = function (obj, value) {
  * @param {object} a  target object
  * @param {object} b  source object
  * @param {string} prop  name of property to copy to a
- * @param {boolean} allowDeletion  if true, delete property in a if explicitly set to null in b 
+ * @param {boolean} allowDeletion  if true, delete property in a if explicitly set to null in b
  * @private
  */
 function copyOrDelete(a, b, prop, allowDeletion) {
   var doDeletion = false;
   if (allowDeletion === true) {
-    doDeletion = (b[prop] === null && a[prop] !== undefined);
+    doDeletion = b[prop] === null && a[prop] !== undefined;
   }
 
   if (doDeletion) {
-      delete a[prop];
+    delete a[prop];
   } else {
-    a[prop] = b[prop];  // Remember, this is a reference copy!
+    a[prop] = b[prop]; // Remember, this is a reference copy!
   }
 }
-
 
 /**
  * Fill an object with a possibly partially defined other object.
@@ -140,14 +133,15 @@ function copyOrDelete(a, b, prop, allowDeletion) {
  *
  * @param {object} a
  * @param {object} b
- * @param {boolean} [allowDeletion=false]  if true, delete properties in a that are explicitly set to null in b 
+ * @param {boolean} [allowDeletion=false]  if true, delete properties in a that are explicitly set to null in b
  */
 exports.fillIfDefined = function (a, b, allowDeletion = false) {
   // NOTE: iteration of properties of a
   // NOTE: prototype properties iterated over as well
   for (var prop in a) {
     if (b[prop] !== undefined) {
-      if (b[prop] === null || typeof b[prop] !== 'object') { // Note: typeof null === 'object'
+      if (b[prop] === null || typeof b[prop] !== 'object') {
+        // Note: typeof null === 'object'
         copyOrDelete(a, b, prop, allowDeletion);
       } else {
         if (typeof a[prop] === 'object') {
@@ -158,7 +152,6 @@ exports.fillIfDefined = function (a, b, allowDeletion = false) {
   }
 };
 
-
 /**
  * Extend object a with the properties of object b or a series of objects
  * Only properties with defined values are copied
@@ -166,7 +159,8 @@ exports.fillIfDefined = function (a, b, allowDeletion = false) {
  * @param {...Object} b
  * @return {Object} a
  */
-exports.extend = function (a, b) {  // eslint-disable-line no-unused-vars
+exports.extend = function (a, b) {
+  // eslint-disable-line no-unused-vars
   for (var i = 1; i < arguments.length; i++) {
     var other = arguments[i];
     for (var prop in other) {
@@ -186,7 +180,8 @@ exports.extend = function (a, b) {  // eslint-disable-line no-unused-vars
  * @param {Object} b
  * @return {Object} a
  */
-exports.selectiveExtend = function (props, a, b) {  // eslint-disable-line no-unused-vars
+exports.selectiveExtend = function (props, a, b) {
+  // eslint-disable-line no-unused-vars
   if (!Array.isArray(props)) {
     throw new Error('Array with property names expected as first argument');
   }
@@ -204,7 +199,6 @@ exports.selectiveExtend = function (props, a, b) {  // eslint-disable-line no-un
   return a;
 };
 
-
 /**
  * Extend object a with selected properties of object b.
  * Only properties with defined values are copied.
@@ -217,7 +211,7 @@ exports.selectiveExtend = function (props, a, b) {  // eslint-disable-line no-un
  * @param {Array.<string>} props names of first-level properties to copy over
  * @param {object} a  target object
  * @param {object} b  source object
- * @param {boolean} [allowDeletion=false]  if true, delete property in a if explicitly set to null in b 
+ * @param {boolean} [allowDeletion=false]  if true, delete property in a if explicitly set to null in b
  * @returns {Object} a
  */
 exports.selectiveDeepExtend = function (props, a, b, allowDeletion = false) {
@@ -235,8 +229,7 @@ exports.selectiveDeepExtend = function (props, a, b, allowDeletion = false) {
         }
         if (a[prop].constructor === Object) {
           exports.deepExtend(a[prop], b[prop], false, allowDeletion);
-        }
-        else {
+        } else {
           copyOrDelete(a, b, prop, allowDeletion);
         }
       } else if (Array.isArray(b[prop])) {
@@ -249,11 +242,10 @@ exports.selectiveDeepExtend = function (props, a, b, allowDeletion = false) {
   return a;
 };
 
-
 /**
- * Extend object `a` with properties of object `b`, ignoring properties which are explicitly 
+ * Extend object `a` with properties of object `b`, ignoring properties which are explicitly
  * specified to be excluded.
- * 
+ *
  * The properties of `b` are considered for copying.
  * Properties which are themselves objects are are also extended.
  * Only properties with defined values are copied
@@ -261,28 +253,32 @@ exports.selectiveDeepExtend = function (props, a, b, allowDeletion = false) {
  * @param {Array.<string>} propsToExclude  names of properties which should *not* be copied
  * @param {Object}                      a  object to extend
  * @param {Object}                      b  object to take properties from for extension
- * @param {boolean} [allowDeletion=false]  if true, delete properties in a that are explicitly set to null in b 
+ * @param {boolean} [allowDeletion=false]  if true, delete properties in a that are explicitly set to null in b
  * @return {Object} a
  */
-exports.selectiveNotDeepExtend = function (propsToExclude, a, b, allowDeletion = false) {
+exports.selectiveNotDeepExtend = function (
+  propsToExclude,
+  a,
+  b,
+  allowDeletion = false
+) {
   // TODO: add support for Arrays to deepExtend
-  // NOTE: array properties have an else-below; apparently, there is a problem here. 
+  // NOTE: array properties have an else-below; apparently, there is a problem here.
   if (Array.isArray(b)) {
     throw new TypeError('Arrays are not supported by deepExtend');
   }
 
   for (var prop in b) {
-    if (!b.hasOwnProperty(prop)) continue;              // Handle local properties only 
-    if (propsToExclude.indexOf(prop) !== -1) continue;  // In exclusion list, skip
+    if (!b.hasOwnProperty(prop)) continue; // Handle local properties only
+    if (propsToExclude.indexOf(prop) !== -1) continue; // In exclusion list, skip
 
     if (b[prop] && b[prop].constructor === Object) {
       if (a[prop] === undefined) {
         a[prop] = {};
       }
       if (a[prop].constructor === Object) {
-        exports.deepExtend(a[prop], b[prop]);  // NOTE: allowDeletion not propagated!
-      }
-      else {
+        exports.deepExtend(a[prop], b[prop]); // NOTE: allowDeletion not propagated!
+      } else {
         copyOrDelete(a, b, prop, allowDeletion);
       }
     } else if (Array.isArray(b[prop])) {
@@ -298,7 +294,6 @@ exports.selectiveNotDeepExtend = function (propsToExclude, a, b, allowDeletion =
   return a;
 };
 
-
 /**
  * Deep extend an object a with the properties of object b
  *
@@ -309,7 +304,12 @@ exports.selectiveNotDeepExtend = function (propsToExclude, a, b, allowDeletion =
  * @param {boolean} [allowDeletion=false] If true, the values of fields that are null will be deleted
  * @returns {Object}
  */
-exports.deepExtend = function (a, b, protoExtend=false, allowDeletion=false) {
+exports.deepExtend = function (
+  a,
+  b,
+  protoExtend = false,
+  allowDeletion = false
+) {
   for (var prop in b) {
     if (b.hasOwnProperty(prop) || protoExtend === true) {
       if (b[prop] && b[prop].constructor === Object) {
@@ -317,9 +317,8 @@ exports.deepExtend = function (a, b, protoExtend=false, allowDeletion=false) {
           a[prop] = {};
         }
         if (a[prop].constructor === Object) {
-          exports.deepExtend(a[prop], b[prop], protoExtend);  // NOTE: allowDeletion not propagated!
-        }
-        else {
+          exports.deepExtend(a[prop], b[prop], protoExtend); // NOTE: allowDeletion not propagated!
+        } else {
           copyOrDelete(a, b, prop, allowDeletion);
         }
       } else if (Array.isArray(b[prop])) {
@@ -334,7 +333,6 @@ exports.deepExtend = function (a, b, protoExtend=false, allowDeletion=false) {
   }
   return a;
 };
-
 
 /**
  * Test whether all elements in two arrays are equal.
@@ -402,8 +400,7 @@ exports.convert = function (object, type) {
       }
       if (object instanceof Date) {
         return new Date(object.valueOf());
-      }
-      else if (moment.isMoment(object)) {
+      } else if (moment.isMoment(object)) {
         return new Date(object.valueOf());
       }
       if (exports.isString(object)) {
@@ -411,15 +408,15 @@ exports.convert = function (object, type) {
         if (match) {
           // object is an ASP date
           return new Date(Number(match[1])); // parse number
-        }
-        else {
+        } else {
           return moment(new Date(object)).toDate(); // parse string
         }
-      }
-      else {
+      } else {
         throw new Error(
-          'Cannot convert object of type ' + exports.getType(object) +
-          ' to type Date');
+          'Cannot convert object of type ' +
+            exports.getType(object) +
+            ' to type Date'
+        );
       }
 
     case 'Moment':
@@ -428,8 +425,7 @@ exports.convert = function (object, type) {
       }
       if (object instanceof Date) {
         return moment(object.valueOf());
-      }
-      else if (moment.isMoment(object)) {
+      } else if (moment.isMoment(object)) {
         return moment(object);
       }
       if (exports.isString(object)) {
@@ -437,66 +433,61 @@ exports.convert = function (object, type) {
         if (match) {
           // object is an ASP date
           return moment(Number(match[1])); // parse number
-        }
-        else {
+        } else {
           return moment(object); // parse string
         }
-      }
-      else {
+      } else {
         throw new Error(
-          'Cannot convert object of type ' + exports.getType(object) +
-          ' to type Date');
+          'Cannot convert object of type ' +
+            exports.getType(object) +
+            ' to type Date'
+        );
       }
 
     case 'ISODate':
       if (exports.isNumber(object)) {
         return new Date(object);
-      }
-      else if (object instanceof Date) {
+      } else if (object instanceof Date) {
         return object.toISOString();
-      }
-      else if (moment.isMoment(object)) {
+      } else if (moment.isMoment(object)) {
         return object.toDate().toISOString();
-      }
-      else if (exports.isString(object)) {
+      } else if (exports.isString(object)) {
         match = ASPDateRegex.exec(object);
         if (match) {
           // object is an ASP date
           return new Date(Number(match[1])).toISOString(); // parse number
-        }
-        else {
+        } else {
           return moment(object).format(); // ISO 8601
         }
-      }
-      else {
+      } else {
         throw new Error(
-          'Cannot convert object of type ' + exports.getType(object) +
-          ' to type ISODate');
+          'Cannot convert object of type ' +
+            exports.getType(object) +
+            ' to type ISODate'
+        );
       }
 
     case 'ASPDate':
       if (exports.isNumber(object)) {
         return '/Date(' + object + ')/';
-      }
-      else if (object instanceof Date) {
+      } else if (object instanceof Date) {
         return '/Date(' + object.valueOf() + ')/';
-      }
-      else if (exports.isString(object)) {
+      } else if (exports.isString(object)) {
         match = ASPDateRegex.exec(object);
         var value;
         if (match) {
           // object is an ASP date
           value = new Date(Number(match[1])).valueOf(); // parse number
-        }
-        else {
+        } else {
           value = new Date(object).valueOf(); // parse string
         }
         return '/Date(' + value + ')/';
-      }
-      else {
+      } else {
         throw new Error(
-          'Cannot convert object of type ' + exports.getType(object) +
-          ' to type ASPDate');
+          'Cannot convert object of type ' +
+            exports.getType(object) +
+            ' to type ASPDate'
+        );
       }
 
     default:
@@ -537,24 +528,18 @@ exports.getType = function (object) {
       return 'Date';
     }
     return 'Object';
-  }
-  else if (type == 'number') {
+  } else if (type == 'number') {
     return 'Number';
-  }
-  else if (type == 'boolean') {
+  } else if (type == 'boolean') {
     return 'Boolean';
-  }
-  else if (type == 'string') {
+  } else if (type == 'string') {
     return 'String';
-  }
-  else if (type === undefined) {
+  } else if (type === undefined) {
     return 'undefined';
   }
 
-
   return type;
 };
-
 
 /**
  * Used to extend an array and copy it. This is used to propagate paths recursively.
@@ -618,9 +603,11 @@ exports.getAbsoluteTop = function (elem) {
 exports.addClassName = function (elem, classNames) {
   var classes = elem.className.split(' ');
   var newClasses = classNames.split(' ');
-  classes = classes.concat(newClasses.filter(function(className) {
-    return classes.indexOf(className) < 0;
-  }));
+  classes = classes.concat(
+    newClasses.filter(function (className) {
+      return classes.indexOf(className) < 0;
+    })
+  );
   elem.className = classes.join(' ');
 };
 
@@ -632,7 +619,7 @@ exports.addClassName = function (elem, classNames) {
 exports.removeClassName = function (elem, classNames) {
   var classes = elem.className.split(' ');
   var oldClasses = classNames.split(' ');
-  classes = classes.filter(function(className) {
+  classes = classes.filter(function (className) {
     return oldClasses.indexOf(className) < 0;
   });
   elem.className = classes.join(' ');
@@ -648,15 +635,13 @@ exports.removeClassName = function (elem, classNames) {
  *                                  callback(value, index, object)
  */
 exports.forEach = function (object, callback) {
-  var i,
-    len;
+  var i, len;
   if (Array.isArray(object)) {
     // array
     for (i = 0, len = object.length; i < len; i++) {
       callback(object[i], i, object);
     }
-  }
-  else {
+  } else {
     // object
     for (i in object) {
       if (object.hasOwnProperty(i)) {
@@ -693,8 +678,7 @@ exports.updateProperty = function (object, key, value) {
   if (object[key] !== value) {
     object[key] = value;
     return true;
-  }
-  else {
+  } else {
     return false;
   }
 };
@@ -707,7 +691,7 @@ exports.updateProperty = function (object, key, value) {
 exports.throttle = function (fn) {
   var scheduled = false;
 
-  return function throttled () {
+  return function throttled() {
     if (!scheduled) {
       scheduled = true;
       requestAnimationFrame(function () {
@@ -715,7 +699,7 @@ exports.throttle = function (fn) {
         fn();
       });
     }
-  }
+  };
 };
 
 /**
@@ -728,16 +712,18 @@ exports.throttle = function (fn) {
  */
 exports.addEventListener = function (element, action, listener, useCapture) {
   if (element.addEventListener) {
-    if (useCapture === undefined)
-      useCapture = false;
+    if (useCapture === undefined) useCapture = false;
 
-    if (action === "mousewheel" && navigator.userAgent.indexOf("Firefox") >= 0) {
-      action = "DOMMouseScroll";  // For Firefox
+    if (
+      action === 'mousewheel' &&
+      navigator.userAgent.indexOf('Firefox') >= 0
+    ) {
+      action = 'DOMMouseScroll'; // For Firefox
     }
 
     element.addEventListener(action, listener, useCapture);
   } else {
-    element.attachEvent("on" + action, listener);  // IE browsers
+    element.attachEvent('on' + action, listener); // IE browsers
   }
 };
 
@@ -751,17 +737,19 @@ exports.addEventListener = function (element, action, listener, useCapture) {
 exports.removeEventListener = function (element, action, listener, useCapture) {
   if (element.removeEventListener) {
     // non-IE browsers
-    if (useCapture === undefined)
-      useCapture = false;
+    if (useCapture === undefined) useCapture = false;
 
-    if (action === "mousewheel" && navigator.userAgent.indexOf("Firefox") >= 0) {
-      action = "DOMMouseScroll";  // For Firefox
+    if (
+      action === 'mousewheel' &&
+      navigator.userAgent.indexOf('Firefox') >= 0
+    ) {
+      action = 'DOMMouseScroll'; // For Firefox
     }
 
     element.removeEventListener(action, listener, useCapture);
   } else {
     // IE browsers
-    element.detachEvent("on" + action, listener);
+    element.detachEvent('on' + action, listener);
   }
 };
 
@@ -770,14 +758,12 @@ exports.removeEventListener = function (element, action, listener, useCapture) {
  * @param {Event} event
  */
 exports.preventDefault = function (event) {
-  if (!event)
-    event = window.event;
+  if (!event) event = window.event;
 
   if (event.preventDefault) {
-    event.preventDefault();  // non-IE browsers
-  }
-  else {
-    event.returnValue = false;  // IE browsers
+    event.preventDefault(); // non-IE browsers
+  } else {
+    event.returnValue = false; // IE browsers
   }
 };
 
@@ -796,8 +782,7 @@ exports.getTarget = function (event) {
 
   if (event.target) {
     target = event.target;
-  }
-  else if (event.srcElement) {
+  } else if (event.srcElement) {
     target = event.srcElement;
   }
 
@@ -842,7 +827,7 @@ exports.option.asBoolean = function (value, defaultValue) {
   }
 
   if (value != null) {
-    return (value != false);
+    return value != false;
   }
 
   return defaultValue || null;
@@ -897,11 +882,9 @@ exports.option.asSize = function (value, defaultValue) {
 
   if (exports.isString(value)) {
     return value;
-  }
-  else if (exports.isNumber(value)) {
+  } else if (exports.isNumber(value)) {
     return value + 'px';
-  }
-  else {
+  } else {
     return defaultValue || null;
   }
 };
@@ -933,11 +916,13 @@ exports.hexToRGB = function (hex) {
     return r + r + g + g + b + b;
   });
   var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
-  return result ? {
-    r: parseInt(result[1], 16),
-    g: parseInt(result[2], 16),
-    b: parseInt(result[3], 16)
-  } : null;
+  return result
+    ? {
+        r: parseInt(result[1], 16),
+        g: parseInt(result[2], 16),
+        b: parseInt(result[3], 16),
+      }
+    : null;
 };
 
 /**
@@ -948,20 +933,20 @@ exports.hexToRGB = function (hex) {
  */
 exports.overrideOpacity = function (color, opacity) {
   var rgb;
-  if (color.indexOf("rgba") != -1) {
+  if (color.indexOf('rgba') != -1) {
     return color;
-  }
-  else if (color.indexOf("rgb") != -1) {
-    rgb = color.substr(color.indexOf("(") + 1).replace(")", "").split(",");
-    return "rgba(" + rgb[0] + "," + rgb[1] + "," + rgb[2] + "," + opacity + ")"
-  }
-  else {
+  } else if (color.indexOf('rgb') != -1) {
+    rgb = color
+      .substr(color.indexOf('(') + 1)
+      .replace(')', '')
+      .split(',');
+    return 'rgba(' + rgb[0] + ',' + rgb[1] + ',' + rgb[2] + ',' + opacity + ')';
+  } else {
     rgb = exports.hexToRGB(color);
     if (rgb == null) {
       return color;
-    }
-    else {
-      return "rgba(" + rgb.r + "," + rgb.g + "," + rgb.b + "," + opacity + ")"
+    } else {
+      return 'rgba(' + rgb.r + ',' + rgb.g + ',' + rgb.b + ',' + opacity + ')';
     }
   }
 };
@@ -975,7 +960,9 @@ exports.overrideOpacity = function (color, opacity) {
  * @constructor
  */
 exports.RGBToHex = function (red, green, blue) {
-  return "#" + ((1 << 24) + (red << 16) + (green << 8) + blue).toString(16).slice(1);
+  return (
+    '#' + ((1 << 24) + (red << 16) + (green << 8) + blue).toString(16).slice(1)
+  );
 };
 
 /**
@@ -988,44 +975,64 @@ exports.parseColor = function (color) {
   var c;
   if (exports.isString(color) === true) {
     if (exports.isValidRGB(color) === true) {
-      var rgb = color.substr(4).substr(0, color.length - 5).split(',').map(function (value) { return parseInt(value) });
+      var rgb = color
+        .substr(4)
+        .substr(0, color.length - 5)
+        .split(',')
+        .map(function (value) {
+          return parseInt(value);
+        });
       color = exports.RGBToHex(rgb[0], rgb[1], rgb[2]);
     }
     if (exports.isValidHex(color) === true) {
       var hsv = exports.hexToHSV(color);
-      var lighterColorHSV = { h: hsv.h, s: hsv.s * 0.8, v: Math.min(1, hsv.v * 1.02) };
-      var darkerColorHSV = { h: hsv.h, s: Math.min(1, hsv.s * 1.25), v: hsv.v * 0.8 };
-      var darkerColorHex = exports.HSVToHex(darkerColorHSV.h, darkerColorHSV.s, darkerColorHSV.v);
-      var lighterColorHex = exports.HSVToHex(lighterColorHSV.h, lighterColorHSV.s, lighterColorHSV.v);
+      var lighterColorHSV = {
+        h: hsv.h,
+        s: hsv.s * 0.8,
+        v: Math.min(1, hsv.v * 1.02),
+      };
+      var darkerColorHSV = {
+        h: hsv.h,
+        s: Math.min(1, hsv.s * 1.25),
+        v: hsv.v * 0.8,
+      };
+      var darkerColorHex = exports.HSVToHex(
+        darkerColorHSV.h,
+        darkerColorHSV.s,
+        darkerColorHSV.v
+      );
+      var lighterColorHex = exports.HSVToHex(
+        lighterColorHSV.h,
+        lighterColorHSV.s,
+        lighterColorHSV.v
+      );
       c = {
         background: color,
         border: darkerColorHex,
         highlight: {
           background: lighterColorHex,
-          border: darkerColorHex
+          border: darkerColorHex,
         },
         hover: {
           background: lighterColorHex,
-          border: darkerColorHex
-        }
+          border: darkerColorHex,
+        },
       };
-    }
-    else {
+    } else {
       c = {
         background: color,
         border: color,
         highlight: {
           background: color,
-          border: color
+          border: color,
         },
         hover: {
           background: color,
-          border: color
-        }
+          border: color,
+        },
       };
     }
-  }
-  else {
+  } else {
     c = {};
     c.background = color.background || undefined;
     c.border = color.border || undefined;
@@ -1033,32 +1040,30 @@ exports.parseColor = function (color) {
     if (exports.isString(color.highlight)) {
       c.highlight = {
         border: color.highlight,
-        background: color.highlight
-      }
-    }
-    else {
+        background: color.highlight,
+      };
+    } else {
       c.highlight = {};
-      c.highlight.background = color.highlight && color.highlight.background || undefined;
-      c.highlight.border = color.highlight && color.highlight.border || undefined;
+      c.highlight.background =
+        (color.highlight && color.highlight.background) || undefined;
+      c.highlight.border =
+        (color.highlight && color.highlight.border) || undefined;
     }
 
     if (exports.isString(color.hover)) {
       c.hover = {
         border: color.hover,
-        background: color.hover
-      }
-    }
-    else {
+        background: color.hover,
+      };
+    } else {
       c.hover = {};
-      c.hover.background = color.hover && color.hover.background || undefined;
-      c.hover.border = color.hover && color.hover.border || undefined;
+      c.hover.background = (color.hover && color.hover.background) || undefined;
+      c.hover.border = (color.hover && color.hover.border) || undefined;
     }
   }
 
   return c;
 };
-
-
 
 /**
  * http://www.javascripter.net/faq/rgb2hsv.htm
@@ -1070,7 +1075,9 @@ exports.parseColor = function (color) {
  * @constructor
  */
 exports.RGBToHSV = function (red, green, blue) {
-  red = red / 255; green = green / 255; blue = blue / 255;
+  red = red / 255;
+  green = green / 255;
+  blue = blue / 255;
   var minRGB = Math.min(red, Math.min(green, blue));
   var maxRGB = Math.max(red, Math.max(green, blue));
 
@@ -1080,9 +1087,10 @@ exports.RGBToHSV = function (red, green, blue) {
   }
 
   // Colors other than black-gray-white:
-  var d = (red == minRGB) ? green - blue : ((blue == minRGB) ? red - green : blue - red);
-  var h = (red == minRGB) ? 3 : ((blue == minRGB) ? 1 : 5);
-  var hue = 60 * (h - d / (maxRGB - minRGB)) / 360;
+  var d =
+    red == minRGB ? green - blue : blue == minRGB ? red - green : blue - red;
+  var h = red == minRGB ? 3 : blue == minRGB ? 1 : 5;
+  var hue = (60 * (h - d / (maxRGB - minRGB))) / 360;
   var saturation = (maxRGB - minRGB) / maxRGB;
   var value = maxRGB;
   return { h: hue, s: saturation, v: value };
@@ -1112,7 +1120,7 @@ var cssUtil = {
         return key + ': ' + styles[key];
       })
       .join('; ');
-  }
+  },
 };
 
 /**
@@ -1164,15 +1172,31 @@ exports.HSVToRGB = function (h, s, v) {
   var t = v * (1 - (1 - f) * s);
 
   switch (i % 6) {
-    case 0: r = v, g = t, b = p; break;
-    case 1: r = q, g = v, b = p; break;
-    case 2: r = p, g = v, b = t; break;
-    case 3: r = p, g = q, b = v; break;
-    case 4: r = t, g = p, b = v; break;
-    case 5: r = v, g = p, b = q; break;
+    case 0:
+      (r = v), (g = t), (b = p);
+      break;
+    case 1:
+      (r = q), (g = v), (b = p);
+      break;
+    case 2:
+      (r = p), (g = v), (b = t);
+      break;
+    case 3:
+      (r = p), (g = q), (b = v);
+      break;
+    case 4:
+      (r = t), (g = p), (b = v);
+      break;
+    case 5:
+      (r = v), (g = p), (b = q);
+      break;
   }
 
-  return { r: Math.floor(r * 255), g: Math.floor(g * 255), b: Math.floor(b * 255) };
+  return {
+    r: Math.floor(r * 255),
+    g: Math.floor(g * 255),
+    b: Math.floor(b * 255),
+  };
 };
 
 exports.HSVToHex = function (h, s, v) {
@@ -1191,12 +1215,12 @@ exports.isValidHex = function (hex) {
 };
 
 exports.isValidRGB = function (rgb) {
-  rgb = rgb.replace(" ", "");
+  rgb = rgb.replace(' ', '');
   var isOk = /rgb\((\d{1,3}),(\d{1,3}),(\d{1,3})\)/i.test(rgb);
   return isOk;
 };
 exports.isValidRGBA = function (rgba) {
-  rgba = rgba.replace(" ", "");
+  rgba = rgba.replace(' ', '');
   var isOk = /rgba\((\d{1,3}),(\d{1,3}),(\d{1,3}),(.{1,3})\)/i.test(rgba);
   return isOk;
 };
@@ -1210,18 +1234,20 @@ exports.isValidRGBA = function (rgba) {
  * @returns {*}
  */
 exports.selectiveBridgeObject = function (fields, referenceObject) {
-  if (referenceObject !== null && typeof referenceObject === "object") {  // !!! typeof null === 'object'
+  if (referenceObject !== null && typeof referenceObject === 'object') {
+    // !!! typeof null === 'object'
     var objectTo = Object.create(referenceObject);
     for (var i = 0; i < fields.length; i++) {
       if (referenceObject.hasOwnProperty(fields[i])) {
-        if (typeof referenceObject[fields[i]] == "object") {
-          objectTo[fields[i]] = exports.bridgeObject(referenceObject[fields[i]]);
+        if (typeof referenceObject[fields[i]] == 'object') {
+          objectTo[fields[i]] = exports.bridgeObject(
+            referenceObject[fields[i]]
+          );
         }
       }
     }
     return objectTo;
-  }
-  else {
+  } else {
     return null;
   }
 };
@@ -1234,7 +1260,8 @@ exports.selectiveBridgeObject = function (fields, referenceObject) {
  * @returns {*}
  */
 exports.bridgeObject = function (referenceObject) {
-  if (referenceObject !== null && typeof referenceObject === "object") {  // !!! typeof null === 'object'
+  if (referenceObject !== null && typeof referenceObject === 'object') {
+    // !!! typeof null === 'object'
     var objectTo = Object.create(referenceObject);
     if (referenceObject instanceof Element) {
       // Avoid bridging DOM objects
@@ -1243,15 +1270,14 @@ exports.bridgeObject = function (referenceObject) {
       objectTo = Object.create(referenceObject);
       for (var i in referenceObject) {
         if (referenceObject.hasOwnProperty(i)) {
-          if (typeof referenceObject[i] == "object") {
+          if (typeof referenceObject[i] == 'object') {
             objectTo[i] = exports.bridgeObject(referenceObject[i]);
           }
         }
       }
     }
     return objectTo;
-  }
-  else {
+  } else {
     return null;
   }
 };
@@ -1263,17 +1289,16 @@ exports.bridgeObject = function (referenceObject) {
  * @param {function} compare an order comparator
  * @returns {Array}
  */
-exports.insertSort = function (a,compare) {
+exports.insertSort = function (a, compare) {
   for (var i = 0; i < a.length; i++) {
     var k = a[i];
-    for (var j = i; j > 0 && compare(k,a[j - 1])<0; j--) {
+    for (var j = i; j > 0 && compare(k, a[j - 1]) < 0; j--) {
       a[j] = a[j - 1];
     }
     a[j] = k;
   }
   return a;
-}
-
+};
 
 /**
  * This is used to set the options of subobjects in the options object.
@@ -1289,19 +1314,26 @@ exports.insertSort = function (a,compare) {
  * @param {string} option        | option key in the options argument
  * @param {object} globalOptions | global options, passed in to determine value of option 'enabled'
  */
-exports.mergeOptions = function (mergeTarget, options, option, globalOptions = {}) {
+exports.mergeOptions = function (
+  mergeTarget,
+  options,
+  option,
+  globalOptions = {}
+) {
   // Local helpers
-  var isPresent = function(obj) {
+  var isPresent = function (obj) {
     return obj !== null && obj !== undefined;
-  }
+  };
 
-  var isObject = function(obj) {
+  var isObject = function (obj) {
     return obj !== null && typeof obj === 'object';
-  }
+  };
 
   // https://stackoverflow.com/a/34491287/1223531
-  var isEmpty = function(obj) {
-    for (var x in obj) { if (obj.hasOwnProperty(x)) return false; }
+  var isEmpty = function (obj) {
+    for (var x in obj) {
+      if (obj.hasOwnProperty(x)) return false;
+    }
     return true;
   };
 
@@ -1322,12 +1354,11 @@ exports.mergeOptions = function (mergeTarget, options, option, globalOptions = {
     throw new Error('Parameter globalOptions must be an object');
   }
 
-
   //
   // Actual merge routine, separated from main logic
   // Only a single level of options is merged. Deeper levels are ref'd. This may actually be an issue.
   //
-  var doMerge = function(target, options, option) {
+  var doMerge = function (target, options, option) {
     if (!isObject(target[option])) {
       target[option] = {};
     }
@@ -1341,37 +1372,34 @@ exports.mergeOptions = function (mergeTarget, options, option, globalOptions = {
     }
   };
 
-
   // Local initialization
-  var srcOption     = options[option];
-  var globalPassed  = isObject(globalOptions) && !isEmpty(globalOptions);
-  var globalOption  = globalPassed? globalOptions[option]: undefined;
-  var globalEnabled = globalOption? globalOption.enabled: undefined;
-
+  var srcOption = options[option];
+  var globalPassed = isObject(globalOptions) && !isEmpty(globalOptions);
+  var globalOption = globalPassed ? globalOptions[option] : undefined;
+  var globalEnabled = globalOption ? globalOption.enabled : undefined;
 
   /////////////////////////////////////////
   // Main routine
   /////////////////////////////////////////
   if (srcOption === undefined) {
-    return;  // Nothing to do
+    return; // Nothing to do
   }
 
-
-  if ((typeof srcOption) === 'boolean') {
+  if (typeof srcOption === 'boolean') {
     if (!isObject(mergeTarget[option])) {
       mergeTarget[option] = {};
     }
 
     mergeTarget[option].enabled = srcOption;
     return;
-  } 
+  }
 
   if (srcOption === null && !isObject(mergeTarget[option])) {
     // If possible, explicit copy from globals
     if (isPresent(globalOption)) {
       mergeTarget[option] = Object.create(globalOption);
     } else {
-      return;  // Nothing to do
+      return; // Nothing to do
     }
   }
 
@@ -1383,7 +1411,7 @@ exports.mergeOptions = function (mergeTarget, options, option, globalOptions = {
   // Ensure that 'enabled' is properly set. It is required internally
   // Note that the value from options will always overwrite the existing value
   //
-  let enabled = true;  // default value
+  let enabled = true; // default value
 
   if (srcOption.enabled !== undefined) {
     enabled = srcOption.enabled;
@@ -1396,8 +1424,7 @@ exports.mergeOptions = function (mergeTarget, options, option, globalOptions = {
 
   doMerge(mergeTarget, options, option);
   mergeTarget[option].enabled = enabled;
-}
-
+};
 
 /**
  * This function does a binary search for a visible item in a sorted list. If we find a visible item, the code that uses
@@ -1410,7 +1437,12 @@ exports.mergeOptions = function (mergeTarget, options, option, globalOptions = {
  * @returns {number}
  * @private
  */
-exports.binarySearchCustom = function (orderedItems, comparator, field, field2) {
+exports.binarySearchCustom = function (
+  orderedItems,
+  comparator,
+  field,
+  field2
+) {
   var maxIterations = 10000;
   var iteration = 0;
   var low = 0;
@@ -1420,16 +1452,17 @@ exports.binarySearchCustom = function (orderedItems, comparator, field, field2) 
     var middle = Math.floor((low + high) / 2);
 
     var item = orderedItems[middle];
-    var value = (field2 === undefined) ? item[field] : item[field][field2];
+    var value = field2 === undefined ? item[field] : item[field][field2];
 
     var searchResult = comparator(value);
-    if (searchResult == 0) { // jihaa, found a visible item!
+    if (searchResult == 0) {
+      // jihaa, found a visible item!
       return middle;
-    }
-    else if (searchResult == -1) {  // it is too small --> increase low
+    } else if (searchResult == -1) {
+      // it is too small --> increase low
       low = middle + 1;
-    }
-    else {  // it is too big --> decrease high
+    } else {
+      // it is too big --> decrease high
       high = middle - 1;
     }
 
@@ -1452,38 +1485,58 @@ exports.binarySearchCustom = function (orderedItems, comparator, field, field2) 
  * @returns {number}
  * @private
  */
-exports.binarySearchValue = function (orderedItems, target, field, sidePreference, comparator) {
+exports.binarySearchValue = function (
+  orderedItems,
+  target,
+  field,
+  sidePreference,
+  comparator
+) {
   var maxIterations = 10000;
   var iteration = 0;
   var low = 0;
   var high = orderedItems.length - 1;
   var prevValue, value, nextValue, middle;
 
-  comparator = comparator != undefined ? comparator : function (a, b) {
-    return a == b ? 0 : a < b ? -1 : 1
-  };
+  comparator =
+    comparator != undefined
+      ? comparator
+      : function (a, b) {
+          return a == b ? 0 : a < b ? -1 : 1;
+        };
 
   while (low <= high && iteration < maxIterations) {
     // get a new guess
     middle = Math.floor(0.5 * (high + low));
     prevValue = orderedItems[Math.max(0, middle - 1)][field];
     value = orderedItems[middle][field];
-    nextValue = orderedItems[Math.min(orderedItems.length - 1, middle + 1)][field];
+    nextValue =
+      orderedItems[Math.min(orderedItems.length - 1, middle + 1)][field];
 
-    if (comparator(value, target) == 0) { // we found the target
+    if (comparator(value, target) == 0) {
+      // we found the target
       return middle;
-    }
-    else if (comparator(prevValue, target) < 0 && comparator(value, target) > 0) {  // target is in between of the previous and the current
+    } else if (
+      comparator(prevValue, target) < 0 &&
+      comparator(value, target) > 0
+    ) {
+      // target is in between of the previous and the current
       return sidePreference == 'before' ? Math.max(0, middle - 1) : middle;
-    }
-    else if (comparator(value, target) < 0 && comparator(nextValue, target) > 0) { // target is in between of the current and the next
-      return sidePreference == 'before' ? middle : Math.min(orderedItems.length - 1, middle + 1);
-    }
-    else {  // didnt find the target, we need to change our boundaries.
-      if (comparator(value, target) < 0) { // it is too small --> increase low
+    } else if (
+      comparator(value, target) < 0 &&
+      comparator(nextValue, target) > 0
+    ) {
+      // target is in between of the current and the next
+      return sidePreference == 'before'
+        ? middle
+        : Math.min(orderedItems.length - 1, middle + 1);
+    } else {
+      // didnt find the target, we need to change our boundaries.
+      if (comparator(value, target) < 0) {
+        // it is too small --> increase low
         low = middle + 1;
-      }
-      else {  // it is too big --> decrease high
+      } else {
+        // it is too big --> decrease high
         high = middle - 1;
       }
     }
@@ -1502,84 +1555,83 @@ exports.binarySearchValue = function (orderedItems, target, field, sidePreferenc
 exports.easingFunctions = {
   // no easing, no acceleration
   linear: function (t) {
-    return t
+    return t;
   },
   // accelerating from zero velocity
   easeInQuad: function (t) {
-    return t * t
+    return t * t;
   },
   // decelerating to zero velocity
   easeOutQuad: function (t) {
-    return t * (2 - t)
+    return t * (2 - t);
   },
   // acceleration until halfway, then deceleration
   easeInOutQuad: function (t) {
-    return t < .5 ? 2 * t * t : -1 + (4 - 2 * t) * t
+    return t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t;
   },
   // accelerating from zero velocity
   easeInCubic: function (t) {
-    return t * t * t
+    return t * t * t;
   },
   // decelerating to zero velocity
   easeOutCubic: function (t) {
-    return (--t) * t * t + 1
+    return --t * t * t + 1;
   },
   // acceleration until halfway, then deceleration
   easeInOutCubic: function (t) {
-    return t < .5 ? 4 * t * t * t : (t - 1) * (2 * t - 2) * (2 * t - 2) + 1
+    return t < 0.5 ? 4 * t * t * t : (t - 1) * (2 * t - 2) * (2 * t - 2) + 1;
   },
   // accelerating from zero velocity
   easeInQuart: function (t) {
-    return t * t * t * t
+    return t * t * t * t;
   },
   // decelerating to zero velocity
   easeOutQuart: function (t) {
-    return 1 - (--t) * t * t * t
+    return 1 - --t * t * t * t;
   },
   // acceleration until halfway, then deceleration
   easeInOutQuart: function (t) {
-    return t < .5 ? 8 * t * t * t * t : 1 - 8 * (--t) * t * t * t
+    return t < 0.5 ? 8 * t * t * t * t : 1 - 8 * --t * t * t * t;
   },
   // accelerating from zero velocity
   easeInQuint: function (t) {
-    return t * t * t * t * t
+    return t * t * t * t * t;
   },
   // decelerating to zero velocity
   easeOutQuint: function (t) {
-    return 1 + (--t) * t * t * t * t
+    return 1 + --t * t * t * t * t;
   },
   // acceleration until halfway, then deceleration
   easeInOutQuint: function (t) {
-    return t < .5 ? 16 * t * t * t * t * t : 1 + 16 * (--t) * t * t * t * t
-  }
+    return t < 0.5 ? 16 * t * t * t * t * t : 1 + 16 * --t * t * t * t * t;
+  },
 };
 
 exports.getScrollBarWidth = function () {
   var inner = document.createElement('p');
-  inner.style.width = "100%";
-  inner.style.height = "200px";
+  inner.style.width = '100%';
+  inner.style.height = '200px';
 
   var outer = document.createElement('div');
-  outer.style.position = "absolute";
-  outer.style.top = "0px";
-  outer.style.left = "0px";
-  outer.style.visibility = "hidden";
-  outer.style.width = "200px";
-  outer.style.height = "150px";
-  outer.style.overflow = "hidden";
-  outer.appendChild (inner);
+  outer.style.position = 'absolute';
+  outer.style.top = '0px';
+  outer.style.left = '0px';
+  outer.style.visibility = 'hidden';
+  outer.style.width = '200px';
+  outer.style.height = '150px';
+  outer.style.overflow = 'hidden';
+  outer.appendChild(inner);
 
-  document.body.appendChild (outer);
+  document.body.appendChild(outer);
   var w1 = inner.offsetWidth;
   outer.style.overflow = 'scroll';
   var w2 = inner.offsetWidth;
   if (w1 == w2) w2 = outer.clientWidth;
 
-  document.body.removeChild (outer);
+  document.body.removeChild(outer);
 
-  return (w1 - w2);
+  return w1 - w2;
 };
-
 
 exports.topMost = function (pile, accessors) {
   let candidate;
@@ -1589,9 +1641,9 @@ exports.topMost = function (pile, accessors) {
   for (const member of pile) {
     if (member) {
       candidate = member[accessors[0]];
-      for (let i = 1; i < accessors.length; i++){
+      for (let i = 1; i < accessors.length; i++) {
         if (candidate) {
-          candidate = candidate[accessors[i]]
+          candidate = candidate[accessors[i]];
         } else {
           continue;
         }

@@ -12,12 +12,12 @@ class ColorPicker {
   constructor(pixelRatio = 1) {
     this.pixelRatio = pixelRatio;
     this.generated = false;
-    this.centerCoordinates = {x:289/2, y:289/2};
+    this.centerCoordinates = { x: 289 / 2, y: 289 / 2 };
     this.r = 289 * 0.49;
-    this.color = {r:255,g:255,b:255,a:1.0};
+    this.color = { r: 255, g: 255, b: 255, a: 1.0 };
     this.hueCircle = undefined;
-    this.initialColor = {r:255,g:255,b:255,a:1.0};
-    this.previousColor= undefined;
+    this.initialColor = { r: 255, g: 255, b: 255, a: 1.0 };
+    this.previousColor = undefined;
     this.applied = false;
 
     // bound by
@@ -27,7 +27,6 @@ class ColorPicker {
     // create all DOM elements
     this._create();
   }
-
 
   /**
    * this inserts the colorPicker into a div from the DOM
@@ -52,9 +51,10 @@ class ColorPicker {
   setUpdateCallback(callback) {
     if (typeof callback === 'function') {
       this.updateCallback = callback;
-    }
-    else {
-      throw new Error("Function attempted to set as colorPicker update callback is not a function.");
+    } else {
+      throw new Error(
+        'Function attempted to set as colorPicker update callback is not a function.'
+      );
     }
   }
 
@@ -65,9 +65,10 @@ class ColorPicker {
   setCloseCallback(callback) {
     if (typeof callback === 'function') {
       this.closeCallback = callback;
-    }
-    else {
-      throw new Error("Function attempted to set as colorPicker closing callback is not a function.");
+    } else {
+      throw new Error(
+        'Function attempted to set as colorPicker closing callback is not a function.'
+      );
     }
   }
 
@@ -78,12 +79,152 @@ class ColorPicker {
    * @private
    */
   _isColorString(color) {
-    var htmlColors = {black: '#000000',navy: '#000080',darkblue: '#00008B',mediumblue: '#0000CD',blue: '#0000FF',darkgreen: '#006400',green: '#008000',teal: '#008080',darkcyan: '#008B8B',deepskyblue: '#00BFFF',darkturquoise: '#00CED1',mediumspringgreen: '#00FA9A',lime: '#00FF00',springgreen: '#00FF7F',aqua: '#00FFFF',cyan: '#00FFFF',midnightblue: '#191970',dodgerblue: '#1E90FF',lightseagreen: '#20B2AA',forestgreen: '#228B22',seagreen: '#2E8B57',darkslategray: '#2F4F4F',limegreen: '#32CD32',mediumseagreen: '#3CB371',turquoise: '#40E0D0',royalblue: '#4169E1',steelblue: '#4682B4',darkslateblue: '#483D8B',mediumturquoise: '#48D1CC',indigo: '#4B0082',darkolivegreen: '#556B2F',cadetblue: '#5F9EA0',cornflowerblue: '#6495ED',mediumaquamarine: '#66CDAA',dimgray: '#696969',slateblue: '#6A5ACD',olivedrab: '#6B8E23',slategray: '#708090',lightslategray: '#778899',mediumslateblue: '#7B68EE',lawngreen: '#7CFC00',chartreuse: '#7FFF00',aquamarine: '#7FFFD4',maroon: '#800000',purple: '#800080',olive: '#808000',gray: '#808080',skyblue: '#87CEEB',lightskyblue: '#87CEFA',blueviolet: '#8A2BE2',darkred: '#8B0000',darkmagenta: '#8B008B',saddlebrown: '#8B4513',darkseagreen: '#8FBC8F',lightgreen: '#90EE90',mediumpurple: '#9370D8',darkviolet: '#9400D3',palegreen: '#98FB98',darkorchid: '#9932CC',yellowgreen: '#9ACD32',sienna: '#A0522D',brown: '#A52A2A',darkgray: '#A9A9A9',lightblue: '#ADD8E6',greenyellow: '#ADFF2F',paleturquoise: '#AFEEEE',lightsteelblue: '#B0C4DE',powderblue: '#B0E0E6',firebrick: '#B22222',darkgoldenrod: '#B8860B',mediumorchid: '#BA55D3',rosybrown: '#BC8F8F',darkkhaki: '#BDB76B',silver: '#C0C0C0',mediumvioletred: '#C71585',indianred: '#CD5C5C',peru: '#CD853F',chocolate: '#D2691E',tan: '#D2B48C',lightgrey: '#D3D3D3',palevioletred: '#D87093',thistle: '#D8BFD8',orchid: '#DA70D6',goldenrod: '#DAA520',crimson: '#DC143C',gainsboro: '#DCDCDC',plum: '#DDA0DD',burlywood: '#DEB887',lightcyan: '#E0FFFF',lavender: '#E6E6FA',darksalmon: '#E9967A',violet: '#EE82EE',palegoldenrod: '#EEE8AA',lightcoral: '#F08080',khaki: '#F0E68C',aliceblue: '#F0F8FF',honeydew: '#F0FFF0',azure: '#F0FFFF',sandybrown: '#F4A460',wheat: '#F5DEB3',beige: '#F5F5DC',whitesmoke: '#F5F5F5',mintcream: '#F5FFFA',ghostwhite: '#F8F8FF',salmon: '#FA8072',antiquewhite: '#FAEBD7',linen: '#FAF0E6',lightgoldenrodyellow: '#FAFAD2',oldlace: '#FDF5E6',red: '#FF0000',fuchsia: '#FF00FF',magenta: '#FF00FF',deeppink: '#FF1493',orangered: '#FF4500',tomato: '#FF6347',hotpink: '#FF69B4',coral: '#FF7F50',darkorange: '#FF8C00',lightsalmon: '#FFA07A',orange: '#FFA500',lightpink: '#FFB6C1',pink: '#FFC0CB',gold: '#FFD700',peachpuff: '#FFDAB9',navajowhite: '#FFDEAD',moccasin: '#FFE4B5',bisque: '#FFE4C4',mistyrose: '#FFE4E1',blanchedalmond: '#FFEBCD',papayawhip: '#FFEFD5',lavenderblush: '#FFF0F5',seashell: '#FFF5EE',cornsilk: '#FFF8DC',lemonchiffon: '#FFFACD',floralwhite: '#FFFAF0',snow: '#FFFAFA',yellow: '#FFFF00',lightyellow: '#FFFFE0',ivory: '#FFFFF0',white: '#FFFFFF'};
+    var htmlColors = {
+      black: '#000000',
+      navy: '#000080',
+      darkblue: '#00008B',
+      mediumblue: '#0000CD',
+      blue: '#0000FF',
+      darkgreen: '#006400',
+      green: '#008000',
+      teal: '#008080',
+      darkcyan: '#008B8B',
+      deepskyblue: '#00BFFF',
+      darkturquoise: '#00CED1',
+      mediumspringgreen: '#00FA9A',
+      lime: '#00FF00',
+      springgreen: '#00FF7F',
+      aqua: '#00FFFF',
+      cyan: '#00FFFF',
+      midnightblue: '#191970',
+      dodgerblue: '#1E90FF',
+      lightseagreen: '#20B2AA',
+      forestgreen: '#228B22',
+      seagreen: '#2E8B57',
+      darkslategray: '#2F4F4F',
+      limegreen: '#32CD32',
+      mediumseagreen: '#3CB371',
+      turquoise: '#40E0D0',
+      royalblue: '#4169E1',
+      steelblue: '#4682B4',
+      darkslateblue: '#483D8B',
+      mediumturquoise: '#48D1CC',
+      indigo: '#4B0082',
+      darkolivegreen: '#556B2F',
+      cadetblue: '#5F9EA0',
+      cornflowerblue: '#6495ED',
+      mediumaquamarine: '#66CDAA',
+      dimgray: '#696969',
+      slateblue: '#6A5ACD',
+      olivedrab: '#6B8E23',
+      slategray: '#708090',
+      lightslategray: '#778899',
+      mediumslateblue: '#7B68EE',
+      lawngreen: '#7CFC00',
+      chartreuse: '#7FFF00',
+      aquamarine: '#7FFFD4',
+      maroon: '#800000',
+      purple: '#800080',
+      olive: '#808000',
+      gray: '#808080',
+      skyblue: '#87CEEB',
+      lightskyblue: '#87CEFA',
+      blueviolet: '#8A2BE2',
+      darkred: '#8B0000',
+      darkmagenta: '#8B008B',
+      saddlebrown: '#8B4513',
+      darkseagreen: '#8FBC8F',
+      lightgreen: '#90EE90',
+      mediumpurple: '#9370D8',
+      darkviolet: '#9400D3',
+      palegreen: '#98FB98',
+      darkorchid: '#9932CC',
+      yellowgreen: '#9ACD32',
+      sienna: '#A0522D',
+      brown: '#A52A2A',
+      darkgray: '#A9A9A9',
+      lightblue: '#ADD8E6',
+      greenyellow: '#ADFF2F',
+      paleturquoise: '#AFEEEE',
+      lightsteelblue: '#B0C4DE',
+      powderblue: '#B0E0E6',
+      firebrick: '#B22222',
+      darkgoldenrod: '#B8860B',
+      mediumorchid: '#BA55D3',
+      rosybrown: '#BC8F8F',
+      darkkhaki: '#BDB76B',
+      silver: '#C0C0C0',
+      mediumvioletred: '#C71585',
+      indianred: '#CD5C5C',
+      peru: '#CD853F',
+      chocolate: '#D2691E',
+      tan: '#D2B48C',
+      lightgrey: '#D3D3D3',
+      palevioletred: '#D87093',
+      thistle: '#D8BFD8',
+      orchid: '#DA70D6',
+      goldenrod: '#DAA520',
+      crimson: '#DC143C',
+      gainsboro: '#DCDCDC',
+      plum: '#DDA0DD',
+      burlywood: '#DEB887',
+      lightcyan: '#E0FFFF',
+      lavender: '#E6E6FA',
+      darksalmon: '#E9967A',
+      violet: '#EE82EE',
+      palegoldenrod: '#EEE8AA',
+      lightcoral: '#F08080',
+      khaki: '#F0E68C',
+      aliceblue: '#F0F8FF',
+      honeydew: '#F0FFF0',
+      azure: '#F0FFFF',
+      sandybrown: '#F4A460',
+      wheat: '#F5DEB3',
+      beige: '#F5F5DC',
+      whitesmoke: '#F5F5F5',
+      mintcream: '#F5FFFA',
+      ghostwhite: '#F8F8FF',
+      salmon: '#FA8072',
+      antiquewhite: '#FAEBD7',
+      linen: '#FAF0E6',
+      lightgoldenrodyellow: '#FAFAD2',
+      oldlace: '#FDF5E6',
+      red: '#FF0000',
+      fuchsia: '#FF00FF',
+      magenta: '#FF00FF',
+      deeppink: '#FF1493',
+      orangered: '#FF4500',
+      tomato: '#FF6347',
+      hotpink: '#FF69B4',
+      coral: '#FF7F50',
+      darkorange: '#FF8C00',
+      lightsalmon: '#FFA07A',
+      orange: '#FFA500',
+      lightpink: '#FFB6C1',
+      pink: '#FFC0CB',
+      gold: '#FFD700',
+      peachpuff: '#FFDAB9',
+      navajowhite: '#FFDEAD',
+      moccasin: '#FFE4B5',
+      bisque: '#FFE4C4',
+      mistyrose: '#FFE4E1',
+      blanchedalmond: '#FFEBCD',
+      papayawhip: '#FFEFD5',
+      lavenderblush: '#FFF0F5',
+      seashell: '#FFF5EE',
+      cornsilk: '#FFF8DC',
+      lemonchiffon: '#FFFACD',
+      floralwhite: '#FFFAF0',
+      snow: '#FFFAFA',
+      yellow: '#FFFF00',
+      lightyellow: '#FFFFE0',
+      ivory: '#FFFFF0',
+      white: '#FFFFFF',
+    };
     if (typeof color === 'string') {
       return htmlColors[color];
     }
   }
-
 
   /**
    * Set the color of the colorPicker
@@ -113,36 +254,49 @@ class ColorPicker {
     // check format
     if (util.isString(color) === true) {
       if (util.isValidRGB(color) === true) {
-        let rgbaArray = color.substr(4).substr(0, color.length - 5).split(',');
-        rgba = {r:rgbaArray[0], g:rgbaArray[1], b:rgbaArray[2], a:1.0};
-      }
-      else if (util.isValidRGBA(color) === true) {
-        let rgbaArray = color.substr(5).substr(0, color.length - 6).split(',');
-        rgba = {r:rgbaArray[0], g:rgbaArray[1], b:rgbaArray[2], a:rgbaArray[3]};
-      }
-      else if (util.isValidHex(color) === true) {
+        let rgbaArray = color
+          .substr(4)
+          .substr(0, color.length - 5)
+          .split(',');
+        rgba = { r: rgbaArray[0], g: rgbaArray[1], b: rgbaArray[2], a: 1.0 };
+      } else if (util.isValidRGBA(color) === true) {
+        let rgbaArray = color
+          .substr(5)
+          .substr(0, color.length - 6)
+          .split(',');
+        rgba = {
+          r: rgbaArray[0],
+          g: rgbaArray[1],
+          b: rgbaArray[2],
+          a: rgbaArray[3],
+        };
+      } else if (util.isValidHex(color) === true) {
         let rgbObj = util.hexToRGB(color);
-        rgba = {r:rgbObj.r, g:rgbObj.g, b:rgbObj.b, a:1.0};
+        rgba = { r: rgbObj.r, g: rgbObj.g, b: rgbObj.b, a: 1.0 };
       }
-    }
-    else {
+    } else {
       if (color instanceof Object) {
-        if (color.r !== undefined && color.g !== undefined && color.b !== undefined) {
+        if (
+          color.r !== undefined &&
+          color.g !== undefined &&
+          color.b !== undefined
+        ) {
           let alpha = color.a !== undefined ? color.a : '1.0';
-          rgba = {r:color.r, g:color.g, b:color.b, a:alpha};
+          rgba = { r: color.r, g: color.g, b: color.b, a: alpha };
         }
       }
     }
 
     // set color
     if (rgba === undefined) {
-      throw new Error("Unknown color passed to the colorPicker. Supported are strings: rgb, hex, rgba. Object: rgb ({r:r,g:g,b:b,[a:a]}). Supplied: " + JSON.stringify(color));
-    }
-    else {
+      throw new Error(
+        'Unknown color passed to the colorPicker. Supported are strings: rgb, hex, rgba. Object: rgb ({r:r,g:g,b:b,[a:a]}). Supplied: ' +
+          JSON.stringify(color)
+      );
+    } else {
       this._setColor(rgba, setInitial);
     }
   }
-
 
   /**
    * this shows the color picker.
@@ -186,9 +340,8 @@ class ColorPicker {
         this.closeCallback();
         this.closeCallback = undefined;
       }
-    },0);
+    }, 0);
   }
-
 
   /**
    * bound to the save button. Saves and hides.
@@ -200,7 +353,6 @@ class ColorPicker {
     this._hide();
   }
 
-
   /**
    * Bound to apply button. Saves but does not close. Is undone by the cancel button.
    * @private
@@ -211,7 +363,6 @@ class ColorPicker {
     this._updatePicker(this.color);
   }
 
-
   /**
    * load the color from the previous session.
    * @private
@@ -219,12 +370,10 @@ class ColorPicker {
   _loadLast() {
     if (this.previousColor !== undefined) {
       this.setColor(this.previousColor, false);
-    }
-    else {
-      alert("There is no last color to load...");
+    } else {
+      alert('There is no last color to load...');
     }
   }
-
 
   /**
    * set the color, place the picker
@@ -246,12 +395,13 @@ class ColorPicker {
     let x = this.centerCoordinates.x + radius * Math.sin(angleConvert * hsv.h);
     let y = this.centerCoordinates.y + radius * Math.cos(angleConvert * hsv.h);
 
-    this.colorPickerSelector.style.left = x - 0.5 * this.colorPickerSelector.clientWidth + 'px';
-    this.colorPickerSelector.style.top = y - 0.5 * this.colorPickerSelector.clientHeight + 'px';
+    this.colorPickerSelector.style.left =
+      x - 0.5 * this.colorPickerSelector.clientWidth + 'px';
+    this.colorPickerSelector.style.top =
+      y - 0.5 * this.colorPickerSelector.clientHeight + 'px';
 
     this._updatePicker(rgba);
   }
-
 
   /**
    * bound to opacity control
@@ -262,7 +412,6 @@ class ColorPicker {
     this.color.a = value / 100;
     this._updatePicker(this.color);
   }
-
 
   /**
    * bound to brightness control
@@ -278,7 +427,6 @@ class ColorPicker {
     this._updatePicker();
   }
 
-
   /**
    * update the color picker. A black circle overlays the hue circle to mimic the brightness decreasing.
    * @param {Object} rgba
@@ -288,11 +436,14 @@ class ColorPicker {
     let hsv = util.RGBToHSV(rgba.r, rgba.g, rgba.b);
     let ctx = this.colorPickerCanvas.getContext('2d');
     if (this.pixelRation === undefined) {
-      this.pixelRatio = (window.devicePixelRatio || 1) / (ctx.webkitBackingStorePixelRatio ||
-      ctx.mozBackingStorePixelRatio ||
-      ctx.msBackingStorePixelRatio ||
-      ctx.oBackingStorePixelRatio ||
-      ctx.backingStorePixelRatio || 1);
+      this.pixelRatio =
+        (window.devicePixelRatio || 1) /
+        (ctx.webkitBackingStorePixelRatio ||
+          ctx.mozBackingStorePixelRatio ||
+          ctx.msBackingStorePixelRatio ||
+          ctx.oBackingStorePixelRatio ||
+          ctx.backingStorePixelRatio ||
+          1);
     }
     ctx.setTransform(this.pixelRatio, 0, 0, this.pixelRatio, 0, 0);
 
@@ -301,18 +452,35 @@ class ColorPicker {
     let h = this.colorPickerCanvas.clientHeight;
     ctx.clearRect(0, 0, w, h);
 
-    ctx.putImageData(this.hueCircle, 0,0);
-    ctx.fillStyle = 'rgba(0,0,0,' + (1- hsv.v) + ')';
+    ctx.putImageData(this.hueCircle, 0, 0);
+    ctx.fillStyle = 'rgba(0,0,0,' + (1 - hsv.v) + ')';
     ctx.circle(this.centerCoordinates.x, this.centerCoordinates.y, this.r);
     ctx.fill();
 
     this.brightnessRange.value = 100 * hsv.v;
-    this.opacityRange.value    = 100 * rgba.a;
+    this.opacityRange.value = 100 * rgba.a;
 
-    this.initialColorDiv.style.backgroundColor = 'rgba(' + this.initialColor.r + ',' + this.initialColor.g + ',' + this.initialColor.b + ',' + this.initialColor.a + ')';
-    this.newColorDiv.style.backgroundColor = 'rgba(' + this.color.r + ',' + this.color.g + ',' + this.color.b + ',' + this.color.a + ')';
+    this.initialColorDiv.style.backgroundColor =
+      'rgba(' +
+      this.initialColor.r +
+      ',' +
+      this.initialColor.g +
+      ',' +
+      this.initialColor.b +
+      ',' +
+      this.initialColor.a +
+      ')';
+    this.newColorDiv.style.backgroundColor =
+      'rgba(' +
+      this.color.r +
+      ',' +
+      this.color.g +
+      ',' +
+      this.color.b +
+      ',' +
+      this.color.a +
+      ')';
   }
-
 
   /**
    * used by create to set the size of the canvas.
@@ -325,7 +493,6 @@ class ColorPicker {
     this.colorPickerCanvas.width = 289 * this.pixelRatio;
     this.colorPickerCanvas.height = 289 * this.pixelRatio;
   }
-
 
   /**
    * create all dom elements
@@ -345,22 +512,26 @@ class ColorPicker {
     this.colorPickerDiv.appendChild(this.colorPickerCanvas);
 
     if (!this.colorPickerCanvas.getContext) {
-      let noCanvas = document.createElement( 'DIV' );
+      let noCanvas = document.createElement('DIV');
       noCanvas.style.color = 'red';
-      noCanvas.style.fontWeight =  'bold' ;
-      noCanvas.style.padding =  '10px';
-      noCanvas.innerHTML =  'Error: your browser does not support HTML canvas';
+      noCanvas.style.fontWeight = 'bold';
+      noCanvas.style.padding = '10px';
+      noCanvas.innerHTML = 'Error: your browser does not support HTML canvas';
       this.colorPickerCanvas.appendChild(noCanvas);
-    }
-    else {
-      let ctx = this.colorPickerCanvas.getContext("2d");
-      this.pixelRatio = (window.devicePixelRatio || 1) / (ctx.webkitBackingStorePixelRatio ||
-      ctx.mozBackingStorePixelRatio ||
-      ctx.msBackingStorePixelRatio ||
-      ctx.oBackingStorePixelRatio ||
-      ctx.backingStorePixelRatio || 1);
+    } else {
+      let ctx = this.colorPickerCanvas.getContext('2d');
+      this.pixelRatio =
+        (window.devicePixelRatio || 1) /
+        (ctx.webkitBackingStorePixelRatio ||
+          ctx.mozBackingStorePixelRatio ||
+          ctx.msBackingStorePixelRatio ||
+          ctx.oBackingStorePixelRatio ||
+          ctx.backingStorePixelRatio ||
+          1);
 
-      this.colorPickerCanvas.getContext("2d").setTransform(this.pixelRatio, 0, 0, this.pixelRatio, 0, 0);
+      this.colorPickerCanvas
+        .getContext('2d')
+        .setTransform(this.pixelRatio, 0, 0, this.pixelRatio, 0, 0);
     }
 
     this.colorPickerDiv.className = 'vis-color';
@@ -379,9 +550,9 @@ class ColorPicker {
       this.opacityRange.type = 'range'; // Not supported on IE9
       this.opacityRange.min = '0';
       this.opacityRange.max = '100';
-    }
-    // TODO: Add some error handling and remove this lint exception
-    catch (err) {}  // eslint-disable-line no-empty
+    } catch (err) {
+      // TODO: Add some error handling and remove this lint exception
+    } // eslint-disable-line no-empty
     this.opacityRange.value = '100';
     this.opacityRange.className = 'vis-range';
 
@@ -390,9 +561,9 @@ class ColorPicker {
       this.brightnessRange.type = 'range'; // Not supported on IE9
       this.brightnessRange.min = '0';
       this.brightnessRange.max = '100';
-    }
-    // TODO: Add some error handling and remove this lint exception
-    catch (err) {}  // eslint-disable-line no-empty
+    } catch (err) {
+      // TODO: Add some error handling and remove this lint exception
+    } // eslint-disable-line no-empty
     this.brightnessRange.value = '100';
     this.brightnessRange.className = 'vis-range';
 
@@ -400,44 +571,52 @@ class ColorPicker {
     this.brightnessDiv.appendChild(this.brightnessRange);
 
     var me = this;
-    this.opacityRange.onchange = function () {me._setOpacity(this.value);};
-    this.opacityRange.oninput  = function () {me._setOpacity(this.value);};
-    this.brightnessRange.onchange = function () {me._setBrightness(this.value);};
-    this.brightnessRange.oninput  = function () {me._setBrightness(this.value);};
+    this.opacityRange.onchange = function () {
+      me._setOpacity(this.value);
+    };
+    this.opacityRange.oninput = function () {
+      me._setOpacity(this.value);
+    };
+    this.brightnessRange.onchange = function () {
+      me._setBrightness(this.value);
+    };
+    this.brightnessRange.oninput = function () {
+      me._setBrightness(this.value);
+    };
 
-    this.brightnessLabel = document.createElement("div");
-    this.brightnessLabel.className = "vis-label vis-brightness";
+    this.brightnessLabel = document.createElement('div');
+    this.brightnessLabel.className = 'vis-label vis-brightness';
     this.brightnessLabel.innerHTML = 'brightness:';
 
-    this.opacityLabel = document.createElement("div");
-    this.opacityLabel.className = "vis-label vis-opacity";
+    this.opacityLabel = document.createElement('div');
+    this.opacityLabel.className = 'vis-label vis-opacity';
     this.opacityLabel.innerHTML = 'opacity:';
 
-    this.newColorDiv = document.createElement("div");
-    this.newColorDiv.className = "vis-new-color";
+    this.newColorDiv = document.createElement('div');
+    this.newColorDiv.className = 'vis-new-color';
     this.newColorDiv.innerHTML = 'new';
 
-    this.initialColorDiv = document.createElement("div");
-    this.initialColorDiv.className = "vis-initial-color";
+    this.initialColorDiv = document.createElement('div');
+    this.initialColorDiv.className = 'vis-initial-color';
     this.initialColorDiv.innerHTML = 'initial';
 
-    this.cancelButton = document.createElement("div");
-    this.cancelButton.className = "vis-button vis-cancel";
+    this.cancelButton = document.createElement('div');
+    this.cancelButton.className = 'vis-button vis-cancel';
     this.cancelButton.innerHTML = 'cancel';
     this.cancelButton.onclick = this._hide.bind(this, false);
 
-    this.applyButton = document.createElement("div");
-    this.applyButton.className = "vis-button vis-apply";
+    this.applyButton = document.createElement('div');
+    this.applyButton.className = 'vis-button vis-apply';
     this.applyButton.innerHTML = 'apply';
     this.applyButton.onclick = this._apply.bind(this);
 
-    this.saveButton = document.createElement("div");
-    this.saveButton.className = "vis-button vis-save";
+    this.saveButton = document.createElement('div');
+    this.saveButton.className = 'vis-button vis-save';
     this.saveButton.innerHTML = 'save';
     this.saveButton.onclick = this._save.bind(this);
 
-    this.loadButton = document.createElement("div");
-    this.loadButton.className = "vis-button vis-load";
+    this.loadButton = document.createElement('div');
+    this.loadButton.className = 'vis-button vis-load';
     this.loadButton.innerHTML = 'load last';
     this.loadButton.onclick = this._loadLast.bind(this);
 
@@ -456,7 +635,6 @@ class ColorPicker {
     this.frame.appendChild(this.loadButton);
   }
 
-
   /**
    * bind hammer to the color picker
    * @private
@@ -465,15 +643,24 @@ class ColorPicker {
     this.drag = {};
     this.pinch = {};
     this.hammer = new Hammer(this.colorPickerCanvas);
-    this.hammer.get('pinch').set({enable: true});
+    this.hammer.get('pinch').set({ enable: true });
 
-    hammerUtil.onTouch(this.hammer, (event) => {this._moveSelector(event)});
-    this.hammer.on('tap',       (event) => {this._moveSelector(event)});
-    this.hammer.on('panstart',  (event) => {this._moveSelector(event)});
-    this.hammer.on('panmove',   (event) => {this._moveSelector(event)});
-    this.hammer.on('panend',    (event) => {this._moveSelector(event)});
+    hammerUtil.onTouch(this.hammer, (event) => {
+      this._moveSelector(event);
+    });
+    this.hammer.on('tap', (event) => {
+      this._moveSelector(event);
+    });
+    this.hammer.on('panstart', (event) => {
+      this._moveSelector(event);
+    });
+    this.hammer.on('panmove', (event) => {
+      this._moveSelector(event);
+    });
+    this.hammer.on('panend', (event) => {
+      this._moveSelector(event);
+    });
   }
-
 
   /**
    * generate the hue circle. This is relatively heavy (200ms) and is done only once on the first time it is shown.
@@ -483,11 +670,14 @@ class ColorPicker {
     if (this.generated === false) {
       let ctx = this.colorPickerCanvas.getContext('2d');
       if (this.pixelRation === undefined) {
-        this.pixelRatio = (window.devicePixelRatio || 1) / (ctx.webkitBackingStorePixelRatio ||
-        ctx.mozBackingStorePixelRatio ||
-        ctx.msBackingStorePixelRatio ||
-        ctx.oBackingStorePixelRatio ||
-        ctx.backingStorePixelRatio || 1);
+        this.pixelRatio =
+          (window.devicePixelRatio || 1) /
+          (ctx.webkitBackingStorePixelRatio ||
+            ctx.mozBackingStorePixelRatio ||
+            ctx.msBackingStorePixelRatio ||
+            ctx.oBackingStorePixelRatio ||
+            ctx.backingStorePixelRatio ||
+            1);
       }
       ctx.setTransform(this.pixelRatio, 0, 0, this.pixelRatio, 0, 0);
 
@@ -496,10 +686,9 @@ class ColorPicker {
       let h = this.colorPickerCanvas.clientHeight;
       ctx.clearRect(0, 0, w, h);
 
-
       // draw hue circle
       let x, y, hue, sat;
-      this.centerCoordinates = {x: w * 0.5, y: h * 0.5};
+      this.centerCoordinates = { x: w * 0.5, y: h * 0.5 };
       this.r = 0.49 * w;
       let angleConvert = (2 * Math.PI) / 360;
       let hfac = 1 / 360;
@@ -518,11 +707,10 @@ class ColorPicker {
       ctx.circle(this.centerCoordinates.x, this.centerCoordinates.y, this.r);
       ctx.stroke();
 
-      this.hueCircle = ctx.getImageData(0,0,w,h);
+      this.hueCircle = ctx.getImageData(0, 0, w, h);
     }
     this.generated = true;
   }
-
 
   /**
    * move the selector. This is called by hammer functions.
@@ -541,14 +729,16 @@ class ColorPicker {
     let x = left - centerX;
     let y = top - centerY;
 
-    let angle = Math.atan2(x,y);
+    let angle = Math.atan2(x, y);
     let radius = 0.98 * Math.min(Math.sqrt(x * x + y * y), centerX);
 
     let newTop = Math.cos(angle) * radius + centerY;
     let newLeft = Math.sin(angle) * radius + centerX;
 
-    this.colorPickerSelector.style.top = newTop - 0.5 * this.colorPickerSelector.clientHeight + 'px';
-    this.colorPickerSelector.style.left = newLeft - 0.5 * this.colorPickerSelector.clientWidth + 'px';
+    this.colorPickerSelector.style.top =
+      newTop - 0.5 * this.colorPickerSelector.clientHeight + 'px';
+    this.colorPickerSelector.style.left =
+      newLeft - 0.5 * this.colorPickerSelector.clientWidth + 'px';
 
     // set color
     let h = angle / (2 * Math.PI);
@@ -562,8 +752,26 @@ class ColorPicker {
     this.color = rgba;
 
     // update previews
-    this.initialColorDiv.style.backgroundColor = 'rgba(' + this.initialColor.r + ',' + this.initialColor.g + ',' + this.initialColor.b + ',' + this.initialColor.a + ')';
-    this.newColorDiv.style.backgroundColor = 'rgba(' + this.color.r + ',' + this.color.g + ',' + this.color.b + ',' + this.color.a + ')';
+    this.initialColorDiv.style.backgroundColor =
+      'rgba(' +
+      this.initialColor.r +
+      ',' +
+      this.initialColor.g +
+      ',' +
+      this.initialColor.b +
+      ',' +
+      this.initialColor.a +
+      ')';
+    this.newColorDiv.style.backgroundColor =
+      'rgba(' +
+      this.color.r +
+      ',' +
+      this.color.g +
+      ',' +
+      this.color.b +
+      ',' +
+      this.color.a +
+      ')';
   }
 }
 

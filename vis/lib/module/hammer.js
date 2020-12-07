@@ -14,25 +14,24 @@ function hammerMock() {
     destroy: noop,
     emit: noop,
 
-    get: function(m) {	//eslint-disable-line no-unused-vars
+    get: function (m) {
+      //eslint-disable-line no-unused-vars
       return {
-        set: noop
+        set: noop,
       };
-    }
+    },
   };
 }
-
 
 if (typeof window !== 'undefined') {
   var propagating = require('propagating-hammerjs');
   var Hammer = window['Hammer'] || require('hammerjs');
   module.exports = propagating(Hammer, {
-    preventDefault: 'mouse'
+    preventDefault: 'mouse',
   });
-}
-else {
+} else {
   module.exports = function () {
     // hammer.js is only available in a browser, not in node.js. Replacing it with a mock object.
     return hammerMock();
-  }
+  };
 }

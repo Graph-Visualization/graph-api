@@ -5,7 +5,7 @@ var EPSILON = 0.001; // used when checking collisions, to prevent round-off erro
  * Order items by their start data
  * @param {Item[]} items
  */
-exports.orderByStart = function(items) {
+exports.orderByStart = function (items) {
   items.sort(function (a, b) {
     return a.data.start - b.data.start;
   });
@@ -16,10 +16,10 @@ exports.orderByStart = function(items) {
  * is used.
  * @param {Item[]} items
  */
-exports.orderByEnd = function(items) {
+exports.orderByEnd = function (items) {
   items.sort(function (a, b) {
-    var aTime = ('end' in a.data) ? a.data.end : a.data.start,
-        bTime = ('end' in b.data) ? b.data.end : b.data.start;
+    var aTime = 'end' in a.data ? a.data.end : a.data.start,
+      bTime = 'end' in b.data ? b.data.end : b.data.start;
 
     return aTime - bTime;
   });
@@ -36,7 +36,7 @@ exports.orderByEnd = function(items) {
  *            If true, all items will be repositioned. If false (default), only
  *            items having a top===null will be re-stacked
  */
-exports.stack = function(items, margin, force) {
+exports.stack = function (items, margin, force) {
   if (force) {
     // reset top position of all items
     for (var i = 0; i < items.length; i++) {
@@ -45,7 +45,8 @@ exports.stack = function(items, margin, force) {
   }
 
   // calculate new, non-overlapping positions
-  for (var i = 0; i < items.length; i++) {  // eslint-disable-line no-redeclare
+  for (var i = 0; i < items.length; i++) {
+    // eslint-disable-line no-redeclare
     var item = items[i];
     if (item.stack && item.top === null) {
       // initialize top position
@@ -57,7 +58,12 @@ exports.stack = function(items, margin, force) {
         var collidingItem = null;
         for (var j = 0, jj = items.length; j < jj; j++) {
           var other = items[j];
-          if (other.top !== null && other !== item && other.stack && exports.collision(item, other, margin.item, other.options.rtl)) {
+          if (
+            other.top !== null &&
+            other !== item &&
+            other.stack &&
+            exports.collision(item, other, margin.item, other.options.rtl)
+          ) {
             collidingItem = other;
             break;
           }
@@ -65,7 +71,8 @@ exports.stack = function(items, margin, force) {
 
         if (collidingItem != null) {
           // There is a collision. Reposition the items above the colliding element
-          item.top = collidingItem.top + collidingItem.height + margin.item.vertical;
+          item.top =
+            collidingItem.top + collidingItem.height + margin.item.vertical;
         }
       } while (collidingItem);
     }
@@ -73,14 +80,14 @@ exports.stack = function(items, margin, force) {
 };
 
 /**
- * Adjust vertical positions of the items within a single subgroup such that they 
+ * Adjust vertical positions of the items within a single subgroup such that they
  * don't overlap each other.
  * @param {Item[]} items
  *            All items withina subgroup
  * @param {{item: {horizontal: number, vertical: number}, axis: number}} margin
  *            Margins between items and between items and the axis.
  * @param {subgroup} subgroup
- *            The subgroup that is being stacked 
+ *            The subgroup that is being stacked
  */
 exports.substack = function (items, margin, subgroup) {
   for (var i = 0; i < items.length; i++) {
@@ -96,7 +103,7 @@ exports.substack = function (items, margin, subgroup) {
 
     if (item.stack && item.top === null) {
       // initialize top position
-      item.top = item.baseTop;//margin.axis + item.baseTop;
+      item.top = item.baseTop; //margin.axis + item.baseTop;
 
       do {
         // TODO: optimize checking for overlap. when there is a gap without items,
@@ -104,7 +111,11 @@ exports.substack = function (items, margin, subgroup) {
         var collidingItem = null;
         for (var j = 0, jj = items.length; j < jj; j++) {
           var other = items[j];
-          if (other.top !== null && other !== item /*&& other.stack*/ && exports.collision(item, other, margin.item, other.options.rtl)) {
+          if (
+            other.top !== null &&
+            other !== item /*&& other.stack*/ &&
+            exports.collision(item, other, margin.item, other.options.rtl)
+          ) {
             collidingItem = other;
             break;
           }
@@ -112,7 +123,8 @@ exports.substack = function (items, margin, subgroup) {
 
         if (collidingItem != null) {
           // There is a collision. Reposition the items above the colliding element
-          item.top = collidingItem.top + collidingItem.height + margin.item.vertical;// + item.baseTop;
+          item.top =
+            collidingItem.top + collidingItem.height + margin.item.vertical; // + item.baseTop;
         }
 
         if (item.top + item.height > subgroupHeight) {
@@ -136,7 +148,7 @@ exports.substack = function (items, margin, subgroup) {
  *            All subgroups
  * @param {boolean} stackSubgroups
  */
-exports.nostack = function(items, margin, subgroups, stackSubgroups) {
+exports.nostack = function (items, margin, subgroups, stackSubgroups) {
   for (var i = 0; i < items.length; i++) {
     if (items[i].data.subgroup == undefined) {
       items[i].top = margin.item.vertical;
@@ -144,7 +156,10 @@ exports.nostack = function(items, margin, subgroups, stackSubgroups) {
       var newTop = 0;
       for (var subgroup in subgroups) {
         if (subgroups.hasOwnProperty(subgroup)) {
-          if (subgroups[subgroup].visible == true && subgroups[subgroup].index < subgroups[items[i].data.subgroup].index) {
+          if (
+            subgroups[subgroup].visible == true &&
+            subgroups[subgroup].index < subgroups[items[i].data.subgroup].index
+          ) {
             newTop += subgroups[subgroup].height;
             subgroups[items[i].data.subgroup].top = newTop;
           }
@@ -154,7 +169,7 @@ exports.nostack = function(items, margin, subgroups, stackSubgroups) {
     }
   }
   if (!stackSubgroups) {
-    exports.stackSubgroups(items, margin, subgroups)
+    exports.stackSubgroups(items, margin, subgroups);
   }
 };
 
@@ -166,18 +181,24 @@ exports.nostack = function(items, margin, subgroups, stackSubgroups) {
  * @param {subgroups[]} subgroups
  *            All subgroups
  */
-exports.stackSubgroups = function(items, margin, subgroups) {
+exports.stackSubgroups = function (items, margin, subgroups) {
   for (var subgroup in subgroups) {
     if (subgroups.hasOwnProperty(subgroup)) {
-
-
       subgroups[subgroup].top = 0;
       do {
         // TODO: optimize checking for overlap. when there is a gap without items,
         //       you only need to check for items from the next item on, not from zero
         var collidingItem = null;
         for (var otherSubgroup in subgroups) {
-          if (subgroups[otherSubgroup].top !== null && otherSubgroup !== subgroup && subgroups[subgroup].index > subgroups[otherSubgroup].index && exports.collisionByTimes(subgroups[subgroup], subgroups[otherSubgroup])) {
+          if (
+            subgroups[otherSubgroup].top !== null &&
+            otherSubgroup !== subgroup &&
+            subgroups[subgroup].index > subgroups[otherSubgroup].index &&
+            exports.collisionByTimes(
+              subgroups[subgroup],
+              subgroups[otherSubgroup]
+            )
+          ) {
             collidingItem = subgroups[otherSubgroup];
             break;
           }
@@ -192,7 +213,8 @@ exports.stackSubgroups = function(items, margin, subgroups) {
   }
   for (var i = 0; i < items.length; i++) {
     if (items[i].data.subgroup !== undefined) {
-      items[i].top = subgroups[items[i].data.subgroup].top + 0.5 * margin.item.vertical;
+      items[i].top =
+        subgroups[items[i].data.subgroup].top + 0.5 * margin.item.vertical;
     }
   }
 };
@@ -205,52 +227,58 @@ exports.stackSubgroups = function(items, margin, subgroups) {
  * @param {{item: {horizontal: number, vertical: number}, axis: number}} margin
  *            Margins between items and between items and the axis.
  * @param {subgroups[]} subgroups
- *            All subgroups 
+ *            All subgroups
  */
-exports.stackSubgroupsWithInnerStack = function (subgroupItems, margin, subgroups) {
+exports.stackSubgroupsWithInnerStack = function (
+  subgroupItems,
+  margin,
+  subgroups
+) {
   var doSubStack = false;
-  
+
   // Run subgroups in their order (if any)
   var subgroupOrder = [];
 
-  for(var subgroup in subgroups) {
-    if (subgroups[subgroup].hasOwnProperty("index")) {
+  for (var subgroup in subgroups) {
+    if (subgroups[subgroup].hasOwnProperty('index')) {
       subgroupOrder[subgroups[subgroup].index] = subgroup;
-    }
-    else {
+    } else {
       subgroupOrder.push(subgroup);
     }
   }
 
-  for(var j = 0; j < subgroupOrder.length; j++) {
+  for (var j = 0; j < subgroupOrder.length; j++) {
     subgroup = subgroupOrder[j];
     if (subgroups.hasOwnProperty(subgroup)) {
-
       doSubStack = doSubStack || subgroups[subgroup].stack;
-      subgroups[subgroup].top = 0;      
+      subgroups[subgroup].top = 0;
 
       for (var otherSubgroup in subgroups) {
-        if (subgroups[otherSubgroup].visible && subgroups[subgroup].index > subgroups[otherSubgroup].index) {
+        if (
+          subgroups[otherSubgroup].visible &&
+          subgroups[subgroup].index > subgroups[otherSubgroup].index
+        ) {
           subgroups[subgroup].top += subgroups[otherSubgroup].height;
         }
       }
 
       var items = subgroupItems[subgroup];
-      for(var i = 0; i < items.length; i++) {
+      for (var i = 0; i < items.length; i++) {
         if (items[i].data.subgroup !== undefined) {
-          items[i].top = subgroups[items[i].data.subgroup].top + 0.5 * margin.item.vertical;
+          items[i].top =
+            subgroups[items[i].data.subgroup].top + 0.5 * margin.item.vertical;
 
           if (subgroups[subgroup].stack) {
-            items[i].baseTop = items[i].top;              
+            items[i].baseTop = items[i].top;
           }
-        } 
+        }
       }
 
       if (doSubStack && subgroups[subgroup].stack) {
-        exports.substack(subgroupItems[subgroup], margin, subgroups[subgroup]);        
+        exports.substack(subgroupItems[subgroup], margin, subgroups[subgroup]);
       }
     }
-  }    
+  }
 };
 
 /**
@@ -264,17 +292,21 @@ exports.stackSubgroupsWithInnerStack = function (subgroupItems, margin, subgroup
  * @param {boolean} rtl
  * @return {boolean}        true if a and b collide, else false
  */
-exports.collision = function(a, b, margin, rtl) {
+exports.collision = function (a, b, margin, rtl) {
   if (rtl) {
-    return  ((a.right - margin.horizontal + EPSILON)  < (b.right + b.width) &&
-    (a.right + a.width + margin.horizontal - EPSILON) > b.right &&
-    (a.top - margin.vertical + EPSILON)              < (b.top + b.height) &&
-    (a.top + a.height + margin.vertical - EPSILON)   > b.top);
+    return (
+      a.right - margin.horizontal + EPSILON < b.right + b.width &&
+      a.right + a.width + margin.horizontal - EPSILON > b.right &&
+      a.top - margin.vertical + EPSILON < b.top + b.height &&
+      a.top + a.height + margin.vertical - EPSILON > b.top
+    );
   } else {
-    return ((a.left - margin.horizontal + EPSILON)   < (b.left + b.width) &&
-    (a.left + a.width + margin.horizontal - EPSILON) > b.left &&
-    (a.top - margin.vertical + EPSILON)              < (b.top + b.height) &&
-    (a.top + a.height + margin.vertical - EPSILON)   > b.top);
+    return (
+      a.left - margin.horizontal + EPSILON < b.left + b.width &&
+      a.left + a.width + margin.horizontal - EPSILON > b.left &&
+      a.top - margin.vertical + EPSILON < b.top + b.height &&
+      a.top + a.height + margin.vertical - EPSILON > b.top
+    );
   }
 };
 
@@ -285,9 +317,15 @@ exports.collision = function(a, b, margin, rtl) {
  * @param {Object} b          The second Object
  * @return {boolean}        true if a and b collide, else false
  */
-exports.collisionByTimes = function(a, b) {
+exports.collisionByTimes = function (a, b) {
   return (
-    (a.start <= b.start && a.end >= b.start && a.top < (b.top + b.height) && (a.top + a.height) > b.top ) ||
-    (b.start <= a.start && b.end >= a.start && b.top < (a.top + a.height) && (b.top + b.height) > a.top )
-  )
-}
+    (a.start <= b.start &&
+      a.end >= b.start &&
+      a.top < b.top + b.height &&
+      a.top + a.height > b.top) ||
+    (b.start <= a.start &&
+      b.end >= a.start &&
+      b.top < a.top + a.height &&
+      b.top + b.height > a.top)
+  );
+};

@@ -6,11 +6,3 @@ The [Open Source Guides](https://opensource.guide/) website has a collection of 
 
 - [How to Contribute to Open Source](https://opensource.guide/how-to-contribute/)
 - [Building Welcoming Communities](https://opensource.guide/building-community/)
-
-## Getting Started with ESLint
-
-Follow the [ESLint documentation](https://eslint.org/docs/user-guide/command-line-interface) to get started with ESLint on your local system.
-
-## Getting Started with Prettier
-
-Follow the [Prettier documentation](https://prettier.io/docs/en/install.html) to get started with ESLint on your local system.

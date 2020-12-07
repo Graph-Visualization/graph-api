@@ -19,8 +19,16 @@
   "dependencies": {
     "express": "^4.17.1",
     "live-server": "^1.2.1",
-    "nodemon": "^1.19.4",
+    "nodemon": "^2.0.6",
     "size-limited-stack": "^1.0.0",
-    "vis-network": "^6.4.0"
+    "vis-network": "^8.5.4"
+  },
+  "devDependencies": {
+    "eslint": "^7.15.0",
+    "eslint-config-airbnb-base": "^14.2.1",
+    "eslint-config-prettier": "^7.0.0",
+    "eslint-plugin-import": "^2.22.1",
+    "eslint-plugin-prettier": "^3.2.0",
+    "prettier": "^2.2.1"
   }
 }

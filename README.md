@@ -1,21 +1,27 @@
-# Graph-API
-Backend containing all the algorithms of graphs.
-
-<div style="text-align:center"><img src="https://github.com/Graph-Visualization/graph-api/blob/master/graph-apiv1.png" /></div>
+<div align="center">
+<h1>Graph-API</h1>
+<p>Backend containing all the algorithms of graphs.</p>
+</div>
 
 ## Description
-This project achieves to provide all the basic algorithms associated with graphs to available as an **API** endpoint. 
-The request can be made as a **POST** request and the body should contain the **json** data of the edge list that defines
-the graph. If the data is correctly parsed, a suitable algorithm can be applied to it to return a result of the 
+
+<div align="center">
+<img src="assets/images/graph-apiv1.png" />
+</div>
+
+This project achieves to provide all the basic algorithms associated with graphs to available as an **API** endpoint.
+The request can be made as a **POST** request and the body should contain the **JSON** data of the edge list that defines
+the graph. If the data is correctly parsed, a suitable algorithm can be applied to it to return a result of the
 vertices(currently) or metadata associated to it. Below are some examples that demonstrate the usage of the rest-api.
 
 If you want to check the return values, then check the main page for accessing the algorithms.
 
-Currently we are in a beta stage, so only **BFS** and **DFS** have been added. 
+Currently, we are in a beta stage, so only **BFS** and **DFS** have been added.
 
 ## List of Algorithms supported
- Since we are in beta stage, only **BFS** and **DFS** have been added. We are planning to add 
-the following algorithms - 
+
+Since we are in beta stage, only **BFS** and **DFS** have been added. We are planning to add
+the following algorithms -
 
 ### GRAPH TRAVERSAL :
 
@@ -27,7 +33,7 @@ the following algorithms -
 - [ ] Bipartite graph check
 - [ ] Graph edges property check via DFS spanning tree
 - [ ] Finding articulation points and bridges
-- [ ] Finding strongly connected components in directed 
+- [ ] Finding strongly connected components in directed
 
 ### MINIMUM SPANNING TREE :
 
@@ -38,7 +44,7 @@ the following algorithms -
 
 - [ ] SSSP on unweighted graph
 - [ ] SSSP on weighted graph
-- [ ] SSSP on Graph with negative weight cycle 
+- [ ] SSSP on Graph with negative weight cycle
 
 ### ALL PAIRS SHORTEST PATH :
 
@@ -58,29 +64,36 @@ the following algorithms -
 - [ ] Bipartite Graph
 
 # Using the Graph-API
-There are two ways to use the Graph-API. 
+
+There are two ways to use Graph-API.
+
 - [Use the web version](https://graph-apiv1.herokuapp.com)
 - Make a POST request
 
 ## Making a POST request
 
-We are using command line terminal to make a request to the graph-api. You can make the same request using other languages
+We are using the command line terminal to request the graph-api. You can make the same request using other languages
 at the API Endpoint - `http://graph-apiv1.herokuapp.com/api`
 
 ```
 curl -H "Content-Type: application/json" --data @body.json http://graph-apiv1.herokuapp.com/api
 
-# body.json contains the json data of the request
+# body.json contains the JSON data of the request
 ```
 
 ## Format of the JSON request
-Since at the beta stage we are supporting only 2 algorithms, the json format of the request is rather simple -
-Supported Algorithms - 
+
+Since at the beta stage we are supporting only 2 algorithms, the JSON format of the request is rather simple -
+Supported Algorithms -
+
 - `"algo" : "bfs"` BFS
 - `"algo" : "dfs"` DFS
+
 ```
 {"algo" : "bfs", "values" : [{"src" : "0", "dest" : "1", "weight" : "11"},{"src" : "1", "dest" : "2", "weight" : "11"},{"src" : "2", "dest" : "3", "weight" : "11"},{"src" : "3", "dest" : "0", "weight" : "11"}]}
 ```
-# Support
+
+## Support
+
 If there are any issues with the API or the web-app, please create [an issue](https://github.com/Graph-Visualization/graph-api/issues/new).<br>
 _Open Source Project made with love by Yash Sharma [`@yashrsharma44`](https://github.com/yashrsharma44) and Biswajit Ghosh [`@Biswajitghosh98`](https://github.com/Biswajitghosh98)_

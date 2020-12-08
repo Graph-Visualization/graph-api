@@ -1,41 +1,40 @@
-const GraphBase = require('./graph-base')
+const GraphBase = require('./graph-base');
 
-class FloodFill extends GraphBase{
+class FloodFill extends GraphBase {
+  constructor(numVertices = 0, numEdges = 0, startingPoint = 0) {
+    super(numVertices, numEdges);
+    this.startingPoint = startingPoint;
+  }
 
-    constructor(numVertices=0, numEdges=0, startingPoint=0){
-        super(numVertices, numEdges)
-        this.startingPoint = startingPoint
+  floodFill() {
+    let Adj = this.getSimpleAdj();
+
+    let visited = [];
+    let vertex = [];
+
+    Adj.forEach((value, key) => {
+      visited[key] = false;
+      vertex.push(key);
+    });
+
+    let root = this.startingPoint;
+    let listOfNodes = [];
+
+    this.floodFillHelper(root, visited, listOfNodes, Adj);
+
+    return listOfNodes;
+  }
+
+  floodFillHelper(node, visited, listOfNodes, Adj) {
+    visited[node] = true;
+    for (let i = 0; i < Adj.get(node).length; i++) {
+      if (!visited[Adj.get(node)[i]]) {
+        this.floodFillHelper(Adj.get(node)[i], visited, listOfNodes, Adj);
+      }
     }
 
-    floodFill(){
-        let Adj = this.getSimpleAdj()
-
-        let visited = []
-        let vertex = []
-
-        Adj.forEach((value, key) => {
-            visited[key] = false
-            vertex.push(key)
-        })
-
-        let root = this.startingPoint
-        let listOfNodes = []
-
-        this.floodFillHelper(root, visited, listOfNodes, Adj)
-
-        return listOfNodes
-    }
-
-    floodFillHelper(node, visited, listOfNodes, Adj){
-        visited[node] = true
-        for(let i = 0;i < Adj.get(node).length;i++){
-            if(!visited[Adj.get(node)[i]]){
-                this.floodFillHelper(Adj.get(node)[i], visited, listOfNodes, Adj)
-            }
-        }
-
-        listOfNodes.push(node);
-    }
+    listOfNodes.push(node);
+  }
 }
 
 /*-------------Test Case Starts---------------------*/
@@ -74,4 +73,4 @@ class FloodFill extends GraphBase{
 
 /*+++++++++++++++++Test Case Ends++++++++++++++++++++++*/
 
-module.exports = FloodFill
+module.exports = FloodFill;

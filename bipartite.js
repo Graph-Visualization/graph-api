@@ -98,15 +98,15 @@ class Bipartite extends GraphBase {
 
 
 // ----------Ex. of a bipartite graph
-const g = new Bipartite(5);
-vertices = [0, 1, 2, 3]
-for (let i = 0; i < vertices.length; i++) {
-    g.addVertex(vertices[i]);
-}
-g.addEdge(0, 1);
-g.addEdge(0, 2);
-g.addEdge(1, 3);
-g.addEdge(2, 3);
-console.log(g.bipartiteCheck());
+// const g = new Bipartite(5);
+// vertices = [0, 1, 2, 3]
+// for (let i = 0; i < vertices.length; i++) {
+//     g.addVertex(vertices[i]);
+// }
+// g.addEdge(0, 1);
+// g.addEdge(0, 2);
+// g.addEdge(1, 3);
+// g.addEdge(2, 3);
+// console.log(g.bipartiteCheck());
 
 module.exports = Bipartite;

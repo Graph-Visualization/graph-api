@@ -39,6 +39,40 @@ class DFS extends GraphBase {
 
     return dfs_order;
   }
+  
+//   dfs for a transpose graph
+  dfsForTranspose() {
+    let stack = new Stack();
+    let Adj = this.getTransposeAdj();
+
+    let visited = [];
+    let vertex = [];
+
+    Adj.forEach((value, key) => {
+      visited[key] = false;
+      vertex.push(key);
+    });
+
+    let root = vertex[0];
+    stack.push(root);
+    let dfs_order = [];
+
+    while (!stack.isEmpty()) {
+      let node = stack.pop();
+      if (!visited[node]) {
+        dfs_order.push(node);
+        visited[node] = true;
+      }
+
+      for (let i = 0; i < Adj.get(node).length; i++) {
+        if (!visited[Adj.get(node)[i]]) {
+          stack.push(Adj.get(node)[i]);
+        }
+      }
+    }
+
+    return dfs_order;
+  }
 }
 
 // const g = new DFS(5)

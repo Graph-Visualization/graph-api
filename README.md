@@ -1,4 +1,7 @@
 <div align="center">
+<!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
+[![All Contributors](https://img.shields.io/badge/all_contributors-1-orange.svg?style=flat-square)](#contributors-)
+<!-- ALL-CONTRIBUTORS-BADGE:END -->
 <h1>Graph-API</h1>
 <p>Backend containing all the algorithms of graphs.</p>
 </div>
@@ -97,3 +100,22 @@ Supported Algorithms -
 
 If there are any issues with the API or the web-app, please create [an issue](https://github.com/Graph-Visualization/graph-api/issues/new).<br>
 _Open Source Project made with love by Yash Sharma [`@yashrsharma44`](https://github.com/yashrsharma44) and Biswajit Ghosh [`@Biswajitghosh98`](https://github.com/Biswajitghosh98)_
+
+## Contributors ✨
+
+Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/docs/en/emoji-key)):
+
+<!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
+<!-- prettier-ignore-start -->
+<!-- markdownlint-disable -->
+<table>
+  <tr>
+    <td align="center"><a href="https://yashrsharma44.github.io"><img src="https://avatars1.githubusercontent.com/u/31438680?v=4" width="100px;" alt=""/><br /><sub><b>Yash Sharma</b></sub></a><br /><a href="https://github.com/codewithvk/graph-api/commits?author=yashrsharma44" title="Code">💻</a></td>
+  </tr>
+</table>
+
+<!-- markdownlint-enable -->
+<!-- prettier-ignore-end -->
+<!-- ALL-CONTRIBUTORS-LIST:END -->
+
+This project follows the [all-contributors](https://github.com/all-contributors/all-contributors) specification. Contributions of any kind welcome!

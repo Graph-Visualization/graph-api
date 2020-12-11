@@ -39,8 +39,8 @@ class DFS extends GraphBase {
 
     return dfs_order;
   }
-  
-//   dfs for a transpose graph
+
+  //   dfs for a transpose graph
   dfsForTranspose() {
     let stack = new Stack();
     let Adj = this.getTransposeAdj();

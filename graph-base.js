@@ -102,8 +102,8 @@ class GraphBase {
     this.Adj = Adj;
     return Adj;
   }
-  
-//   An adjacency list for a transpose graph
+
+  //   An adjacency list for a transpose graph
   getTransposeAdj() {
     let Adj = new Map();
     let mp = this.adj;

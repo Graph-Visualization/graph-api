@@ -1,6 +1,6 @@
 <div align="center">
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
-[![All Contributors](https://img.shields.io/badge/all_contributors-1-orange.svg?style=flat-square)](#contributors-)
+[![All Contributors](https://img.shields.io/badge/all_contributors-2-orange.svg?style=flat-square)](#contributors-)
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 <h1>Graph-API</h1>
 <p>Backend containing all the algorithms of graphs.</p>
@@ -111,6 +111,7 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
 <table>
   <tr>
     <td align="center"><a href="https://yashrsharma44.github.io"><img src="https://avatars1.githubusercontent.com/u/31438680?v=4" width="100px;" alt=""/><br /><sub><b>Yash Sharma</b></sub></a><br /><a href="https://github.com/codewithvk/graph-api/commits?author=yashrsharma44" title="Code">💻</a></td>
+    <td align="center"><a href="https://github.com/Biswajitghosh98"><img src="https://avatars3.githubusercontent.com/u/34703680?v=4" width="100px;" alt=""/><br /><sub><b>Biswajit Ghosh</b></sub></a><br /><a href="https://github.com/codewithvk/graph-api/commits?author=Biswajitghosh98" title="Code">💻</a></td>
   </tr>
 </table>
 

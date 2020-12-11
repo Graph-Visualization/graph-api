@@ -102,6 +102,39 @@ class GraphBase {
     this.Adj = Adj;
     return Adj;
   }
+  
+//   An adjacency list for a transpose graph
+  getTransposeAdj() {
+    let Adj = new Map();
+    let mp = this.adj;
+    // console.log(this.adj)
+    // Object.assign(mp, this.adj)
+    // console.log(mp)
+    mp.forEach(function (value, key) {
+      // console.log("K"+key+"V"+value)
+      Adj.set(key, []);
+    });
+    // console.log(mp)
+    mp.forEach(function (value, key) {
+      // value = ;
+      // console.log(mp[key]);
+      // Adj.set(key, [])
+      // console.log(value)
+      for (let i = 0; i < value.length; i++) {
+        let val = value[i];
+        Adj.get(val.dest).push(val.src);
+        // Adj.get(val.dest).push(val.src)
+      }
+      // value.forEach((val) => {
+      //     console.log(Adj.get(val))
+      // Adj.get(val.src).push(val.dest)
+      // Adj.get(val.dest).push(val.src)
+      // })
+    });
+    // console.log(Adj)
+    this.Adj = Adj;
+    return Adj;
+  }
 }
 
 // const graph = new GraphBase(4)

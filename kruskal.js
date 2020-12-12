@@ -73,10 +73,11 @@ class Kruskal extends GraphBase{
 
 //     let mst = g.kruskal()
 //     console.log(mst)
-    // output_data.set('Testcase ' + testcase, mst ) ;
+
+//     // output_data.set('Testcase ' + testcase, mst ) ;
 
 
-}
+// }
 
 // fs.writeFileSync(
 //     'testfiles/output.json',

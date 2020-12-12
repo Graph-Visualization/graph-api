@@ -1,0 +1,87 @@
+{
+  "files": [
+    "README.md"
+  ],
+  "imageSize": 100,
+  "commit": false,
+  "contributors": [
+    {
+      "login": "yashrsharma44",
+      "name": "Yash Sharma",
+      "avatar_url": "https://avatars1.githubusercontent.com/u/31438680?v=4",
+      "profile": "https://yashrsharma44.github.io",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "Biswajitghosh98",
+      "name": "Biswajit Ghosh",
+      "avatar_url": "https://avatars3.githubusercontent.com/u/34703680?v=4",
+      "profile": "https://github.com/Biswajitghosh98",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "iamrajiv",
+      "name": "Rajiv Singh",
+      "avatar_url": "https://avatars0.githubusercontent.com/u/42106787?v=4",
+      "profile": "http://iamrajiv.github.io",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "devartstar",
+      "name": "Devjit_Choudhury",
+      "avatar_url": "https://avatars1.githubusercontent.com/u/61665451?v=4",
+      "profile": "https://devartstar.github.io/Portfolio/",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "Debanjan2001",
+      "name": "Debanjan Saha",
+      "avatar_url": "https://avatars3.githubusercontent.com/u/56274058?v=4",
+      "profile": "https://github.com/Debanjan2001",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "aaditya-ag",
+      "name": "aaditya-ag",
+      "avatar_url": "https://avatars0.githubusercontent.com/u/69107814?v=4",
+      "profile": "https://github.com/aaditya-ag",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "130sayan",
+      "name": "130sayan",
+      "avatar_url": "https://avatars0.githubusercontent.com/u/58626120?v=4",
+      "profile": "https://github.com/130sayan",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "codewithvk",
+      "name": "Vivek Javiya",
+      "avatar_url": "https://avatars1.githubusercontent.com/u/61119120?v=4",
+      "profile": "https://github.com/codewithvk",
+      "contributions": [
+        "code"
+      ]
+    }
+  ],
+  "contributorsPerLine": 7,
+  "projectName": "graph-api",
+  "projectOwner": "codewithvk",
+  "repoType": "github",
+  "repoHost": "https://github.com",
+  "skipCi": true
+}

@@ -1,7 +1,9 @@
-<div align="center">
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
 [![All Contributors](https://img.shields.io/badge/all_contributors-8-orange.svg?style=flat-square)](#contributors-)
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
+
+<div align="center">
+
 <h1>Graph-API</h1>
 <p>Backend containing all the algorithms of graphs.</p>
 </div>
@@ -110,16 +112,16 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
 <!-- markdownlint-disable -->
 <table>
   <tr>
-    <td align="center"><a href="https://yashrsharma44.github.io"><img src="https://avatars1.githubusercontent.com/u/31438680?v=4" width="100px;" alt=""/><br /><sub><b>Yash Sharma</b></sub></a><br /><a href="https://github.com/codewithvk/graph-api/commits?author=yashrsharma44" title="Code">💻</a></td>
-    <td align="center"><a href="https://github.com/Biswajitghosh98"><img src="https://avatars3.githubusercontent.com/u/34703680?v=4" width="100px;" alt=""/><br /><sub><b>Biswajit Ghosh</b></sub></a><br /><a href="https://github.com/codewithvk/graph-api/commits?author=Biswajitghosh98" title="Code">💻</a></td>
-    <td align="center"><a href="http://iamrajiv.github.io"><img src="https://avatars0.githubusercontent.com/u/42106787?v=4" width="100px;" alt=""/><br /><sub><b>Rajiv Singh</b></sub></a><br /><a href="https://github.com/codewithvk/graph-api/commits?author=iamrajiv" title="Code">💻</a></td>
-    <td align="center"><a href="https://devartstar.github.io/Portfolio/"><img src="https://avatars1.githubusercontent.com/u/61665451?v=4" width="100px;" alt=""/><br /><sub><b>Devjit_Choudhury</b></sub></a><br /><a href="https://github.com/codewithvk/graph-api/commits?author=devartstar" title="Code">💻</a></td>
-    <td align="center"><a href="https://github.com/Debanjan2001"><img src="https://avatars3.githubusercontent.com/u/56274058?v=4" width="100px;" alt=""/><br /><sub><b>Debanjan Saha</b></sub></a><br /><a href="https://github.com/codewithvk/graph-api/commits?author=Debanjan2001" title="Code">💻</a></td>
-    <td align="center"><a href="https://github.com/aaditya-ag"><img src="https://avatars0.githubusercontent.com/u/69107814?v=4" width="100px;" alt=""/><br /><sub><b>aaditya-ag</b></sub></a><br /><a href="https://github.com/codewithvk/graph-api/commits?author=aaditya-ag" title="Code">💻</a></td>
-    <td align="center"><a href="https://github.com/130sayan"><img src="https://avatars0.githubusercontent.com/u/58626120?v=4" width="100px;" alt=""/><br /><sub><b>130sayan</b></sub></a><br /><a href="https://github.com/codewithvk/graph-api/commits?author=130sayan" title="Code">💻</a></td>
+    <td align="center"><a href="https://yashrsharma44.github.io"><img src="https://avatars1.githubusercontent.com/u/31438680?v=4" width="100px;" alt=""/><br /><sub><b>Yash Sharma</b></sub></a><br /><a href="https://github.com/Graph-Visualization/graph-api/commits?author=yashrsharma44" title="Code">💻</a></td>
+    <td align="center"><a href="https://github.com/Biswajitghosh98"><img src="https://avatars3.githubusercontent.com/u/34703680?v=4" width="100px;" alt=""/><br /><sub><b>Biswajit Ghosh</b></sub></a><br /><a href="https://github.com/Graph-Visualization/graph-api/commits?author=Biswajitghosh98" title="Code">💻</a></td>
+    <td align="center"><a href="http://iamrajiv.github.io"><img src="https://avatars0.githubusercontent.com/u/42106787?v=4" width="100px;" alt=""/><br /><sub><b>Rajiv Singh</b></sub></a><br /><a href="https://github.com/Graph-Visualization/graph-api/commits?author=iamrajiv" title="Code">💻</a></td>
+    <td align="center"><a href="https://devartstar.github.io/Portfolio/"><img src="https://avatars1.githubusercontent.com/u/61665451?v=4" width="100px;" alt=""/><br /><sub><b>Devjit_Choudhury</b></sub></a><br /><a href="https://github.com/Graph-Visualization/graph-api/commits?author=devartstar" title="Code">💻</a></td>
+    <td align="center"><a href="https://github.com/Debanjan2001"><img src="https://avatars3.githubusercontent.com/u/56274058?v=4" width="100px;" alt=""/><br /><sub><b>Debanjan Saha</b></sub></a><br /><a href="https://github.com/Graph-Visualization/graph-api/commits?author=Debanjan2001" title="Code">💻</a></td>
+    <td align="center"><a href="https://github.com/aaditya-ag"><img src="https://avatars0.githubusercontent.com/u/69107814?v=4" width="100px;" alt=""/><br /><sub><b>aaditya-ag</b></sub></a><br /><a href="https://github.com/Graph-Visualization/graph-api/commits?author=aaditya-ag" title="Code">💻</a></td>
+    <td align="center"><a href="https://github.com/130sayan"><img src="https://avatars0.githubusercontent.com/u/58626120?v=4" width="100px;" alt=""/><br /><sub><b>130sayan</b></sub></a><br /><a href="https://github.com/Graph-Visualization/graph-api/commits?author=130sayan" title="Code">💻</a></td>
   </tr>
   <tr>
-    <td align="center"><a href="https://github.com/codewithvk"><img src="https://avatars1.githubusercontent.com/u/61119120?v=4" width="100px;" alt=""/><br /><sub><b>Vivek Javiya</b></sub></a><br /><a href="https://github.com/codewithvk/graph-api/commits?author=codewithvk" title="Code">💻</a></td>
+    <td align="center"><a href="https://github.com/codewithvk"><img src="https://avatars1.githubusercontent.com/u/61119120?v=4" width="100px;" alt=""/><br /><sub><b>Vivek Javiya</b></sub></a><br /><a href="https://github.com/Graph-Visualization/graph-api/commits?author=codewithvk" title="Code">💻</a></td>
   </tr>
 </table>
 

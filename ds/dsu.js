@@ -1,6 +1,6 @@
 class DSU{
 
-    constructor(vertices)
+    constructor(vertices) //You need to pass a list or array of vertices
     {
         this.vertices = vertices
         this.parent = {}

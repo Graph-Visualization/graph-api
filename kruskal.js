@@ -2,15 +2,27 @@ const GraphBase = require('./graph-base');
 const DSU = require('./ds/dsu')
 
 class Kruskal extends GraphBase{
-    constructor(numVertices = 0, numEdges = 0 ,edgeset){
+    constructor(numVertices = 0, numEdges = 0 ,edges){
         super(numVertices, numEdges)
-        this.edges = edgeset
+        this.edges = edges
     }
 
-    sort_edges(edgeset)
+    sort_edges()
     {
-        let edges = edgeset
-        edges.sort(function(a,b){ return b[2]<=a[2] })
+        let edges = this.edges
+
+        for(let i=0;i<edges.length;i++ )
+        {
+            for(let j=i+1;j<edges.length;j++)
+            {
+                if(edges[i][2]>edges[j][2])
+                {
+                    let temp = edges[i]
+                    edges[i] = edges[j]
+                    edges[j] = temp
+                }
+            }
+        }
         return edges
     }
 
@@ -18,7 +30,7 @@ class Kruskal extends GraphBase{
     {
         let minSpanningTree = { "edgeset" : [] , "total_weight": 0 }
 
-        let sorted_edges = this.sort_edges(this.edges)
+        let sorted_edges = this.sort_edges()
 
         let vertices = []
         let Adj = this.getSimpleAdj()
@@ -45,12 +57,11 @@ class Kruskal extends GraphBase{
         return minSpanningTree 
 
     }
-
 }
 
 /******************************* TEST ************************/
 
-// const input_file = require('./testfiles/kruskal_test.json');
+// const input_file = require('./testfiles/mst_test_kruskal_prim.json');
 // const fs = require('fs');
 // output_data = new Map();
 
@@ -69,13 +80,14 @@ class Kruskal extends GraphBase{
 //     for (let i = 0; i < input.numEdges; i++) {
 //         let edge = input.edges[i];
 //         g.addEdge(edge[0], edge[1], edge[2]);
+//         g.addEdge(edge[1], edge[0], edge[2]);
 //     }
 
 //     let mst = g.kruskal()
+
 //     console.log(mst)
 
 //     // output_data.set('Testcase ' + testcase, mst ) ;
-
 
 // }
 

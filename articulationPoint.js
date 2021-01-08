@@ -13,20 +13,16 @@ class ArticulationPoint extends GraphBase {
         graph[v].disc = time;
         graph[v].low = time;
         var child = 0;
-        // console.log(graph[v].al.length);
         for (var i = 0; i < graph[v].al.length; i++) {
             var av = graph[v].al[i];
-            // console.log(i);
             if (graph[av].visited == false) {
                 child++;
                 graph[av].parent = v;
                 this.findArtiPt(graph, av, time);
                 graph[v].low = Math.min(graph[v].low, graph[av].low);
                 if (graph[v].parent == -1 && child > 1) {
-                    // console.log("-------"+v);
                     graph[v].res = true;
                 } else if (graph[v].parent != -1 && graph[av].low >= graph[v].disc) {
-                    // console.log("-------"+v);
                     graph[v].res = true;
                 }
             } else if (av != graph[v].parent) {
@@ -36,18 +32,7 @@ class ArticulationPoint extends GraphBase {
     }
 
     ArticulationPointCheck() {
-        // let queue = new Queue();
         let Adj = this.getSimpleAdj();
-        // console.log(Adj);
-
-        // defining the color array and initializing all the vertices initially to -1
-        // var color = [];
-        // color = new Array(this.numVertices);
-        // for (var i = 0; i < this.numVertices; i++) {
-        //   color[i] = -1;
-        // }
-
-        // initializing a 2D Array for adjacency matrix representation
         var graph = [];
         for (var i = 0; i < this.numVertices; i++) {
 
@@ -60,25 +45,21 @@ class ArticulationPoint extends GraphBase {
                 res: false
             }
         }
-        // console.log(graph);
 
         // building the array of objects
         Adj.forEach((value, key) => {
             value.forEach((i) => {
-                // console.log(i);
-                // if (!graph[key].al.includes(i)) {
+                if (!graph[key].al.includes(i)) {
                 graph[key].al.push(i);
-                // }
-                // if (!graph[i].al.includes(key)) {
+                }
+                if (!graph[i].al.includes(key)) {
                 graph[i].al.push(key);
-                // }
+                }
             });
         });
-        // console.log(graph);
 
         this.findArtiPt(graph, 0, 0);
 
-        // console.log(graph);
 
         var res = [];
         for (var i = 0; i < this.numVertices; i++) {

@@ -6,7 +6,7 @@ class ArticulationPoint extends GraphBase {
         super(numVertices, numEdges);
     }
 
-    findArtiPt(graph, v, time) {
+    findArticulationPoint(graph, v, time) {
         // console.log("hello from node "+v);
         graph[v].visited = true;
         time++;

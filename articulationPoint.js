@@ -7,7 +7,6 @@ class ArticulationPoint extends GraphBase {
     }
 
     findArticulationPoint(graph, v, time) {
-        // console.log("hello from node "+v);
         graph[v].visited = true;
         time++;
         graph[v].disc = time;
@@ -18,7 +17,7 @@ class ArticulationPoint extends GraphBase {
             if (graph[av].visited == false) {
                 child++;
                 graph[av].parent = v;
-                this.findArtiPt(graph, av, time);
+                this.findArticulationPoint(graph, av, time);
                 graph[v].low = Math.min(graph[v].low, graph[av].low);
                 if (graph[v].parent == -1 && child > 1) {
                     graph[v].res = true;
@@ -58,7 +57,7 @@ class ArticulationPoint extends GraphBase {
             });
         });
 
-        this.findArtiPt(graph, 0, 0);
+        this.findArticulationPoint(graph, 0, 0);
 
 
         var res = [];

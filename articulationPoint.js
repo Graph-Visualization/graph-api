@@ -108,16 +108,16 @@ class ArticulationPoint extends GraphBase {
 // console.log(g.ArticulationPointCheck());
 
 // ----------Ex. of a ArticulationPoint graph
- const f = new ArticulationPoint(5);
- vertices = [0, 1, 2, 3]
- for (let i = 0; i < vertices.length; i++) {
-     f.addVertex(vertices[i]);
- }
- f.addEdge(1,0);
- f.addEdge(0, 2);
- f.addEdge(2,1);
- f.addEdge(0,3);
- f.addEdge(3,4);
- console.log(f.ArticulationPointCheck());
+ //const f = new ArticulationPoint(5);
+ //vertices = [0, 1, 2, 3]
+ //for (let i = 0; i < vertices.length; i++) {
+ //    f.addVertex(vertices[i]);
+ //}
+ //f.addEdge(1,0);
+ //f.addEdge(0, 2);
+ //f.addEdge(2,1);
+ //f.addEdge(0,3);
+ //f.addEdge(3,4);
+ //console.log(f.ArticulationPointCheck());
 
 module.exports = ArticulationPoint;
